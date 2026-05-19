@@ -17,7 +17,10 @@ export function BottomNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-40 lg:hidden">
+    <nav
+      className="fixed bottom-0 inset-x-0 z-40 lg:hidden"
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+    >
       <div className="mx-auto max-w-md px-4 pb-3 pt-2">
         <div className="relative grid grid-cols-5 items-end gap-1 rounded-3xl border border-white/[0.08] bg-bg-2/85 px-2 py-2 backdrop-blur-xl shadow-glass">
           {TABS.map((tab) => {

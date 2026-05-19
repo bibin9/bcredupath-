@@ -37,7 +37,10 @@ export default async function DashboardLayout({
           xp={user.xp}
           streak={user.streak}
         />
-        <main className="mx-auto w-full max-w-7xl flex-1 px-4 pb-24 pt-4 lg:px-8 lg:pb-8">
+        <main
+          className="mx-auto w-full max-w-7xl flex-1 px-4 pt-4 lg:px-8 lg:pb-8"
+          style={{ paddingBottom: "calc(6rem + env(safe-area-inset-bottom))" }}
+        >
           {children}
         </main>
       </div>

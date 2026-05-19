@@ -65,6 +65,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
+  viewportFit: "cover", // enables env(safe-area-inset-*) on iOS notch/home-indicator
 };
 
 export default function RootLayout({
