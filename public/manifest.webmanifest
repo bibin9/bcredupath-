@@ -1,0 +1,38 @@
+{
+  "name": "BCRedupath — Crack Boards 2026",
+  "short_name": "BCRedupath",
+  "description": "Gamified CBSE Class 10 & 12 prep with AI-predicted questions, PYQs, streaks and leaderboards.",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0a0a1f",
+  "theme_color": "#0a0a1f",
+  "categories": ["education", "productivity"],
+  "lang": "en-IN",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Daily Challenge",
+      "short_name": "Daily",
+      "description": "Today's curated 10 questions",
+      "url": "/dashboard/practice/daily-challenge",
+      "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "AI Predictor",
+      "short_name": "Predict",
+      "description": "Top 20 likely board questions",
+      "url": "/dashboard/predictor",
+      "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    }
+  ]
+}

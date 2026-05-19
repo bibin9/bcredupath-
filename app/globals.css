@@ -1,0 +1,152 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* KaTeX (loaded only on pages that need it via dynamic import) */
+
+@layer base {
+  :root {
+    --background: 240 33% 7%;
+    --foreground: 0 0% 100%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body {
+    @apply bg-bg text-foreground antialiased;
+    font-family: var(--font-sans), system-ui, sans-serif;
+    background-image:
+      radial-gradient(ellipse 1200px 800px at 0% 0%, rgba(168, 85, 247, 0.18), transparent 60%),
+      radial-gradient(ellipse 1000px 700px at 100% 100%, rgba(6, 214, 255, 0.14), transparent 60%),
+      radial-gradient(ellipse 800px 600px at 100% 0%, rgba(255, 62, 136, 0.10), transparent 70%);
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background: rgba(168, 85, 247, 0.4);
+    color: white;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display), system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer components {
+  .glass {
+    @apply bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] shadow-glass;
+  }
+
+  .glass-strong {
+    @apply bg-white/[0.07] backdrop-blur-2xl border border-white/[0.12] shadow-glass;
+  }
+
+  .card-glass {
+    @apply glass rounded-3xl p-6 transition-all duration-300;
+  }
+
+  .card-glass-hover {
+    @apply hover:bg-white/[0.07] hover:border-white/[0.18] hover:-translate-y-0.5;
+  }
+
+  .neon-text-pink {
+    @apply text-neon-pink;
+    text-shadow: 0 0 24px rgba(255, 62, 136, 0.55);
+  }
+  .neon-text-cyan {
+    @apply text-neon-cyan;
+    text-shadow: 0 0 24px rgba(6, 214, 255, 0.55);
+  }
+  .neon-text-green {
+    @apply text-neon-green;
+    text-shadow: 0 0 24px rgba(0, 245, 160, 0.55);
+  }
+  .neon-text-yellow {
+    @apply text-neon-yellow;
+    text-shadow: 0 0 24px rgba(255, 214, 10, 0.55);
+  }
+
+  .grad-text {
+    @apply bg-clip-text text-transparent bg-grad-pink-purple;
+  }
+  .grad-text-cyan {
+    @apply bg-clip-text text-transparent bg-grad-cyan-purple;
+  }
+  .grad-text-yellow {
+    @apply bg-clip-text text-transparent bg-grad-yellow-pink;
+  }
+
+  .btn-neon {
+    @apply relative inline-flex items-center justify-center gap-2
+           px-6 py-3 rounded-2xl font-semibold text-white
+           bg-grad-pink-purple shadow-glow-pink
+           transition-all duration-200
+           hover:shadow-glow-purple hover:scale-[1.02]
+           active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2
+           px-5 py-2.5 rounded-2xl font-medium
+           bg-white/[0.04] border border-white/[0.10]
+           hover:bg-white/[0.08] hover:border-white/[0.18]
+           transition-all duration-200;
+  }
+
+  .pill {
+    @apply inline-flex items-center gap-1.5 px-3 py-1
+           rounded-full text-xs font-semibold
+           bg-white/[0.06] border border-white/[0.10];
+  }
+
+  .pill-neon-pink {
+    @apply pill text-neon-pink border-neon-pink/30 bg-neon-pink/10;
+  }
+  .pill-neon-cyan {
+    @apply pill text-neon-cyan border-neon-cyan/30 bg-neon-cyan/10;
+  }
+  .pill-neon-green {
+    @apply pill text-neon-green border-neon-green/30 bg-neon-green/10;
+  }
+  .pill-neon-yellow {
+    @apply pill text-neon-yellow border-neon-yellow/30 bg-neon-yellow/10;
+  }
+
+  .stat-num {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    @apply font-bold tracking-tight;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { scrollbar-width: none; }
+
+  .mask-fade-r {
+    mask-image: linear-gradient(to right, black 80%, transparent 100%);
+  }
+}

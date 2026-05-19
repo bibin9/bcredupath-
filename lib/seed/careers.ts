@@ -1,0 +1,1095 @@
+/**
+ * 35+ career profiles for India. Each maps to interest tags (matching
+ * the onboarding quiz) so we can score Holland Code-style matches.
+ *
+ * Salaries are approximate INR/year ranges seen in 2024-2025 in India.
+ */
+
+export type SeedCareer = {
+  name: string;
+  emoji: string;
+  category:
+    | "engineering"
+    | "medical"
+    | "commerce"
+    | "law"
+    | "arts"
+    | "design"
+    | "media"
+    | "defense"
+    | "research"
+    | "civil-services"
+    | "education"
+    | "tech";
+  description: string;
+  dayInLife: string;
+  qualifications: string[];
+  entranceExams: { name: string; link: string; dates: string }[];
+  salaryRanges: { entry: number; mid: number; senior: number };
+  topColleges: string[]; // names — resolved to IDs in seeder if matched
+  skillsRequired: string[];
+  /** Tags must overlap with onboarding interest tags */
+  interestTags: string[];
+  growthProspects: string;
+};
+
+export const CAREERS: SeedCareer[] = [
+  /* ─── ENGINEERING ─── */
+  {
+    name: "Software Engineer",
+    emoji: "💻",
+    category: "tech",
+    description:
+      "Build software products — from web apps to AI systems. Highest-paying entry-level path in India and the easiest to switch into mid-career.",
+    dayInLife:
+      "Write code, review pull requests, debug production issues, meet product/design to plan features. Most work remote or hybrid. Free time on personal side projects is common.",
+    qualifications: ["B.Tech / B.E. in CS/IT/related", "BCA + Master's", "Self-taught + portfolio (rare but growing)"],
+    entranceExams: [
+      { name: "JEE Main", link: "https://jeemain.nta.nic.in", dates: "Jan & Apr" },
+      { name: "JEE Advanced", link: "https://jeeadv.ac.in", dates: "May" },
+      { name: "BITSAT", link: "https://bitsadmission.com", dates: "May-Jun" },
+    ],
+    salaryRanges: { entry: 1_200_000, mid: 3_000_000, senior: 8_000_000 },
+    topColleges: ["IIT Bombay", "IIT Delhi", "IIT Madras", "BITS Pilani", "IIIT Hyderabad"],
+    skillsRequired: ["Programming", "Problem solving", "System design", "Communication"],
+    interestTags: ["math", "logic", "tech", "cs", "engineering"],
+    growthProspects:
+      "Senior Engineer → Staff/Principal → Engineering Manager. Or pivot to product, founding, AI/ML. Strongest tech-to-finance pipeline in India.",
+  },
+  {
+    name: "Mechanical Engineer",
+    emoji: "⚙️",
+    category: "engineering",
+    description:
+      "Design and build machines, vehicles, robotics, and manufacturing systems. Core sector with deep crossovers into automotive, aerospace, and EV.",
+    dayInLife:
+      "CAD modeling, prototype testing, supply-chain coordination, factory visits. Mix of desk + shop floor.",
+    qualifications: ["B.Tech / B.E. Mechanical Engineering", "M.Tech for R&D roles"],
+    entranceExams: [
+      { name: "JEE Main", link: "https://jeemain.nta.nic.in", dates: "Jan & Apr" },
+      { name: "JEE Advanced", link: "https://jeeadv.ac.in", dates: "May" },
+    ],
+    salaryRanges: { entry: 600_000, mid: 1_500_000, senior: 4_000_000 },
+    topColleges: ["IIT Madras", "IIT Bombay", "NIT Trichy", "VIT Vellore"],
+    skillsRequired: ["CAD (SolidWorks/AutoCAD)", "Thermodynamics", "Materials science"],
+    interestTags: ["engineering", "math", "tech"],
+    growthProspects:
+      "Design lead → Product manager → Plant head. EV and aerospace are fastest-growing sub-segments.",
+  },
+  {
+    name: "Civil Engineer",
+    emoji: "🏗️",
+    category: "engineering",
+    description:
+      "Design and oversee construction of buildings, roads, bridges, water systems. Strong govt + private sector demand in India's infra push.",
+    dayInLife:
+      "Site supervision, blueprint review, vendor management, quality checks. Heavy field time on construction sites.",
+    qualifications: ["B.Tech / B.E. Civil Engineering"],
+    entranceExams: [
+      { name: "JEE Main", link: "https://jeemain.nta.nic.in", dates: "Jan & Apr" },
+    ],
+    salaryRanges: { entry: 500_000, mid: 1_200_000, senior: 3_000_000 },
+    topColleges: ["IIT Roorkee", "IIT Bombay", "NIT Surathkal"],
+    skillsRequired: ["AutoCAD", "Structural analysis", "Project management"],
+    interestTags: ["engineering", "math"],
+    growthProspects: "Project Engineer → Manager → Director. GATE + govt sector (PWD, CPWD) is a strong path.",
+  },
+  {
+    name: "Electrical Engineer",
+    emoji: "⚡",
+    category: "engineering",
+    description:
+      "Design power systems, circuits, motors, renewable energy infra. Rising demand with India's green energy + semiconductor push.",
+    dayInLife:
+      "Circuit design in EDA tools, PCB layout, prototyping, field commissioning of equipment.",
+    qualifications: ["B.Tech / B.E. Electrical Engineering"],
+    entranceExams: [{ name: "JEE Main", link: "https://jeemain.nta.nic.in", dates: "Jan & Apr" }],
+    salaryRanges: { entry: 600_000, mid: 1_400_000, senior: 3_500_000 },
+    topColleges: ["IIT Kanpur", "IIT Madras", "NIT Warangal"],
+    skillsRequired: ["MATLAB", "Power systems", "Embedded design", "Circuit analysis"],
+    interestTags: ["engineering", "tech", "math"],
+    growthProspects: "Strong in PSU (NTPC, Power Grid), semiconductors (Intel, AMD design centres India), and EVs.",
+  },
+  {
+    name: "Aerospace Engineer",
+    emoji: "🚀",
+    category: "engineering",
+    description:
+      "Design aircraft, satellites, rockets. ISRO, HAL, Boeing India, plus new private space (Skyroot, Agnikul).",
+    dayInLife:
+      "CFD simulations, materials testing, design reviews. Often deep specialization in propulsion / structures / avionics.",
+    qualifications: ["B.Tech Aerospace / Mechanical", "M.Tech / MS for R&D"],
+    entranceExams: [
+      { name: "JEE Main", link: "https://jeemain.nta.nic.in", dates: "Jan & Apr" },
+      { name: "ISRO Centralised Recruitment Test", link: "https://www.isro.gov.in", dates: "Varies" },
+    ],
+    salaryRanges: { entry: 700_000, mid: 1_800_000, senior: 4_500_000 },
+    topColleges: ["IIT Bombay", "IIT Madras", "IIST Trivandrum"],
+    skillsRequired: ["Fluid mechanics", "ANSYS / Abaqus", "Control systems"],
+    interestTags: ["engineering", "math", "tech", "research"],
+    growthProspects: "ISRO, DRDO, HAL for govt. Private space sector is booming — getting first-mover advantage matters.",
+  },
+
+  /* ─── MEDICAL ─── */
+  {
+    name: "Doctor (MBBS)",
+    emoji: "🩺",
+    category: "medical",
+    description:
+      "Diagnose and treat patients. Highest-prestige career in India, but 10+ years of grinding study to be a specialist.",
+    dayInLife:
+      "OPD consults, surgeries (for surgical specialties), rounds, paperwork. Long hours during residency.",
+    qualifications: ["MBBS (5.5 yr)", "MD/MS for specialization (+3 yr)"],
+    entranceExams: [
+      { name: "NEET UG", link: "https://neet.nta.nic.in", dates: "May" },
+      { name: "NEET PG", link: "https://nbe.edu.in", dates: "Mar" },
+      { name: "AIIMS PG", link: "https://www.aiimsexams.ac.in", dates: "Varies" },
+    ],
+    salaryRanges: { entry: 800_000, mid: 2_500_000, senior: 8_000_000 },
+    topColleges: ["AIIMS Delhi", "CMC Vellore", "AFMC Pune", "JIPMER Puducherry"],
+    skillsRequired: ["Clinical reasoning", "Empathy", "Stamina", "Anatomy"],
+    interestTags: ["biology", "medical", "social"],
+    growthProspects: "Junior resident → Senior resident → Consultant → Department head / private practice / hospital owner.",
+  },
+  {
+    name: "Dentist (BDS)",
+    emoji: "🦷",
+    category: "medical",
+    description:
+      "Diagnose and treat oral health. Shorter than MBBS, faster path to independent practice.",
+    dayInLife:
+      "Clinic-based — patient consults, procedures (fillings, root canals, extractions), some surgery for MDS.",
+    qualifications: ["BDS (5 yr)", "MDS for specialization (+3 yr)"],
+    entranceExams: [{ name: "NEET UG", link: "https://neet.nta.nic.in", dates: "May" }],
+    salaryRanges: { entry: 400_000, mid: 1_200_000, senior: 3_500_000 },
+    topColleges: ["Maulana Azad Institute of Dental Sciences", "GDC Mumbai", "KGMU Lucknow"],
+    skillsRequired: ["Manual dexterity", "Patient care", "Anatomy"],
+    interestTags: ["biology", "medical"],
+    growthProspects: "Private practice is the typical end state — high earning potential after 5-7 years setting up.",
+  },
+  {
+    name: "Pharmacist",
+    emoji: "💊",
+    category: "medical",
+    description:
+      "Drug development, dispensing, and clinical pharmacology. Strong career in pharma industry + clinical research.",
+    dayInLife:
+      "Lab research (in industry), dispensing + counseling (community), or clinical trial coordination.",
+    qualifications: ["B.Pharm (4 yr)", "Pharm.D for clinical", "M.Pharm for industry R&D"],
+    entranceExams: [
+      { name: "NEET UG (for Pharm.D)", link: "https://neet.nta.nic.in", dates: "May" },
+      { name: "GPAT", link: "https://gpat.nta.nic.in", dates: "Feb" },
+    ],
+    salaryRanges: { entry: 300_000, mid: 900_000, senior: 2_500_000 },
+    topColleges: ["NIPER Mohali", "Jamia Hamdard", "ICT Mumbai"],
+    skillsRequired: ["Chemistry", "Drug analysis", "Attention to detail"],
+    interestTags: ["biology", "medical", "research"],
+    growthProspects: "Quality control → Production manager → R&D head. Pharma is one of India's biggest export sectors.",
+  },
+  {
+    name: "Physiotherapist",
+    emoji: "🤸",
+    category: "medical",
+    description:
+      "Rehab and movement-related healthcare. Growing demand with sports medicine + aging population.",
+    dayInLife: "Patient assessment, exercise prescription, manual therapy. Mostly clinic or hospital-based.",
+    qualifications: ["BPT (4.5 yr)", "MPT for specialization"],
+    entranceExams: [{ name: "NEET UG (some states)", link: "https://neet.nta.nic.in", dates: "May" }],
+    salaryRanges: { entry: 250_000, mid: 700_000, senior: 2_000_000 },
+    topColleges: ["AIIMS Delhi (MPT)", "CMC Vellore", "Christian Physiotherapy College"],
+    skillsRequired: ["Anatomy", "Empathy", "Manual therapy", "Patient communication"],
+    interestTags: ["biology", "medical", "social"],
+    growthProspects: "Sports teams, rehab centers, private practice. Major growth segment.",
+  },
+
+  /* ─── COMMERCE & BUSINESS ─── */
+  {
+    name: "Chartered Accountant",
+    emoji: "📒",
+    category: "commerce",
+    description:
+      "Audit, tax, financial advisory. One of India's most respected commerce careers — and one of the toughest exams to clear.",
+    dayInLife:
+      "Audit fieldwork, tax filing season grind, advisory meetings. Long hours March-September; calmer otherwise.",
+    qualifications: ["CA Foundation → Intermediate → Final (avg 4-5 yr)"],
+    entranceExams: [{ name: "CA Foundation", link: "https://www.icai.org", dates: "Jun & Dec" }],
+    salaryRanges: { entry: 800_000, mid: 2_000_000, senior: 6_000_000 },
+    topColleges: ["ICAI is the certifying body — no college needed", "SRCC for B.Com (parallel)"],
+    skillsRequired: ["Tax law", "Accounting principles", "Excel", "Attention to detail"],
+    interestTags: ["finance", "commerce", "economics", "math"],
+    growthProspects: "Big 4 → Senior Manager → Partner. Or in-house at MNCs → CFO. ~30% pass rate for Final keeps the prestige high.",
+  },
+  {
+    name: "Investment Banker",
+    emoji: "💼",
+    category: "commerce",
+    description:
+      "Help companies raise capital, do M&A, IPOs. Highest-paying commerce/finance career but brutal hours.",
+    dayInLife:
+      "Financial modeling, client pitches, deal execution. 80-100 hour weeks during deals are standard.",
+    qualifications: ["B.Com / B.B.A. + MBA from top IIM/ISB", "CFA helps"],
+    entranceExams: [
+      { name: "CAT", link: "https://iimcat.ac.in", dates: "Nov" },
+      { name: "GMAT", link: "https://www.mba.com/gmat", dates: "Year-round" },
+    ],
+    salaryRanges: { entry: 2_500_000, mid: 7_000_000, senior: 25_000_000 },
+    topColleges: ["IIM Ahmedabad", "IIM Bangalore", "ISB Hyderabad"],
+    skillsRequired: ["Financial modeling", "Valuation", "Stamina", "Client management"],
+    interestTags: ["finance", "commerce", "management", "economics"],
+    growthProspects: "Analyst → Associate → VP → MD. Brutal pyramid — but base salaries put you in top 1% by 30.",
+  },
+  {
+    name: "Financial Analyst",
+    emoji: "📊",
+    category: "commerce",
+    description:
+      "Analyze stocks, mutual funds, sectors for asset management firms. Growing field with India's mutual fund boom.",
+    dayInLife: "Reading 10-Ks, building models, writing research notes, sector meetings.",
+    qualifications: ["B.Com / B.B.A. + CFA Level 1+", "MBA Finance preferred"],
+    entranceExams: [
+      { name: "CFA", link: "https://www.cfainstitute.org", dates: "Year-round" },
+      { name: "CAT (for MBA)", link: "https://iimcat.ac.in", dates: "Nov" },
+    ],
+    salaryRanges: { entry: 600_000, mid: 1_800_000, senior: 5_000_000 },
+    topColleges: ["SRCC Delhi", "Christ University", "Symbiosis"],
+    skillsRequired: ["Excel modeling", "Valuation", "Industry research"],
+    interestTags: ["finance", "commerce", "economics", "math"],
+    growthProspects: "Junior analyst → Senior → Portfolio Manager. Fintech is rapidly creating new roles.",
+  },
+  {
+    name: "Marketing Manager",
+    emoji: "📣",
+    category: "commerce",
+    description:
+      "Drive brand growth, campaigns, demand generation. Highly creative + analytical mix.",
+    dayInLife: "Campaign planning, ad reviews, analytics dashboards, agency calls.",
+    qualifications: ["B.B.A. / B.Com + MBA Marketing", "Or pivot from any UG with internships"],
+    entranceExams: [{ name: "CAT", link: "https://iimcat.ac.in", dates: "Nov" }],
+    salaryRanges: { entry: 500_000, mid: 1_500_000, senior: 4_500_000 },
+    topColleges: ["IIM-A/B/C", "MICA", "Symbiosis SIBM"],
+    skillsRequired: ["Brand strategy", "Analytics", "Creativity", "Storytelling"],
+    interestTags: ["commerce", "creative", "media", "management"],
+    growthProspects: "Brand Manager → Marketing Head → CMO. Digital marketing is the fastest-growing segment.",
+  },
+  {
+    name: "Entrepreneur",
+    emoji: "🚀",
+    category: "commerce",
+    description:
+      "Build your own business. No fixed path, no fixed pay — full responsibility, full upside.",
+    dayInLife:
+      "Customer calls, hiring, fundraising, putting out fires. The job rotates with your stage (idea → product → scale).",
+    qualifications: ["No formal qualification needed — strong execution is everything"],
+    entranceExams: [],
+    salaryRanges: { entry: 0, mid: 1_500_000, senior: 50_000_000 },
+    topColleges: ["No specific path — Y Combinator / Sequoia Surge / NSRCEL Bangalore can help"],
+    skillsRequired: ["Selling", "Hiring", "Resilience", "Capital efficiency"],
+    interestTags: ["entrepreneur", "commerce", "creative", "management"],
+    growthProspects: "Founder → CEO → Serial entrepreneur / investor. Or it crashes — survival rate is ~10%.",
+  },
+
+  /* ─── LAW & CIVIL SERVICES ─── */
+  {
+    name: "Lawyer",
+    emoji: "⚖️",
+    category: "law",
+    description:
+      "Practice law in corporate, litigation, criminal, IP, or constitutional. India's legal market is exploding with M&A and tech.",
+    dayInLife: "Drafting contracts, court appearances, client meetings, research. Court hours can be brutal in litigation.",
+    qualifications: ["BA LLB / BBA LLB (5 yr integrated)", "LLB (3 yr after UG)"],
+    entranceExams: [
+      { name: "CLAT", link: "https://consortiumofnlus.ac.in", dates: "Dec" },
+      { name: "AILET (NLU Delhi)", link: "https://nationallawuniversitydelhi.in", dates: "Dec" },
+      { name: "LSAT India", link: "https://www.discoverlaw.in", dates: "Jan/May" },
+    ],
+    salaryRanges: { entry: 1_000_000, mid: 3_500_000, senior: 12_000_000 },
+    topColleges: ["NLSIU Bangalore", "NALSAR Hyderabad", "NLU Delhi", "ILS Pune"],
+    skillsRequired: ["Legal reasoning", "Writing", "Public speaking", "Research"],
+    interestTags: ["law", "social", "humanities"],
+    growthProspects: "Associate → Senior Associate → Partner. Tier-1 corporate law firms (AZB, Khaitan, S&R) pay extremely well.",
+  },
+  {
+    name: "IAS / IPS Officer",
+    emoji: "🇮🇳",
+    category: "civil-services",
+    description:
+      "Run districts, ministries, departments. Most prestigious govt career in India — and the toughest exam.",
+    dayInLife:
+      "Public meetings, file work, district tours, crisis management. Variety is enormous depending on posting.",
+    qualifications: ["Any UG degree (3 attempts max for general)", "UPSC CSE prep takes 1-3 years"],
+    entranceExams: [
+      { name: "UPSC Civil Services Exam", link: "https://upsc.gov.in", dates: "Prelims: May/Jun" },
+    ],
+    salaryRanges: { entry: 720_000, mid: 1_500_000, senior: 3_200_000 },
+    topColleges: ["No specific UG needed — top candidates often from IITs, NLUs, DU"],
+    skillsRequired: ["Endurance", "General awareness", "Public administration", "Decision making"],
+    interestTags: ["social", "humanities", "law", "management"],
+    growthProspects: "From SDM/ASP at 24 to Chief Secretary / DGP at 55. Lifetime of impact + power.",
+  },
+  {
+    name: "Defense Officer (NDA → Indian Armed Forces)",
+    emoji: "🪖",
+    category: "defense",
+    description:
+      "Serve in Army / Navy / Air Force. Officer cadre with rank, benefits, and lifetime pension.",
+    dayInLife:
+      "Highly variable — training, command, operations. NDA cadets train at Pune for 3 years + 1 yr at service academy.",
+    qualifications: ["Class 12 (PCM for Air Force/Navy)", "NDA / CDS exam"],
+    entranceExams: [
+      { name: "NDA", link: "https://upsc.gov.in", dates: "Apr & Sep" },
+      { name: "CDS", link: "https://upsc.gov.in", dates: "Feb & Sep" },
+      { name: "AFCAT (IAF)", link: "https://afcat.cdac.in", dates: "Feb & Aug" },
+    ],
+    salaryRanges: { entry: 700_000, mid: 1_600_000, senior: 3_500_000 },
+    topColleges: ["NDA Khadakwasla", "IMA Dehradun", "INA Ezhimala", "AFA Hyderabad"],
+    skillsRequired: ["Physical fitness", "Leadership", "Discipline", "Mental toughness"],
+    interestTags: ["humanities", "social"],
+    growthProspects: "Lieutenant → Major → Lieutenant Colonel → Colonel → Brigadier → General. Plus opportunities post-retirement.",
+  },
+
+  /* ─── ARTS, DESIGN, MEDIA ─── */
+  {
+    name: "Graphic / UI Designer",
+    emoji: "🎨",
+    category: "design",
+    description:
+      "Design websites, apps, brand identity, illustrations. Tech companies pay especially well for product designers.",
+    dayInLife: "Figma all day, user research interviews, design reviews, prototyping.",
+    qualifications: ["B.Des (4 yr) or self-taught + portfolio"],
+    entranceExams: [
+      { name: "NID DAT", link: "https://www.nid.edu", dates: "Jan" },
+      { name: "UCEED (IITs)", link: "https://www.uceed.iitb.ac.in", dates: "Jan" },
+      { name: "NIFT", link: "https://www.nift.ac.in", dates: "Feb" },
+    ],
+    salaryRanges: { entry: 500_000, mid: 1_500_000, senior: 4_500_000 },
+    topColleges: ["NID Ahmedabad", "IIT Bombay IDC", "NIFT Delhi", "Srishti Bangalore"],
+    skillsRequired: ["Figma / Sketch", "Typography", "Visual hierarchy", "User research"],
+    interestTags: ["design", "creative", "tech", "media"],
+    growthProspects: "Junior → Senior → Design Lead → Head of Design. Strong product design = 7-figure base salary.",
+  },
+  {
+    name: "Fashion Designer",
+    emoji: "👗",
+    category: "design",
+    description:
+      "Design clothing, accessories, footwear. India's domestic + export market is huge; D2C is the modern path.",
+    dayInLife: "Sketches → patterns → samples → fittings. Lots of vendor + factory coordination.",
+    qualifications: ["B.Des in Fashion Design", "NIFT / Pearl / Polimoda preferred"],
+    entranceExams: [
+      { name: "NIFT", link: "https://www.nift.ac.in", dates: "Feb" },
+      { name: "Pearl Academy entrance", link: "https://www.pearlacademy.com", dates: "Varies" },
+    ],
+    salaryRanges: { entry: 300_000, mid: 800_000, senior: 3_000_000 },
+    topColleges: ["NIFT Delhi", "Pearl Academy", "NID Ahmedabad", "SNDT Mumbai"],
+    skillsRequired: ["Sketching", "Pattern-making", "Trend forecasting", "Business basics"],
+    interestTags: ["design", "creative", "commerce"],
+    growthProspects: "Design assistant → Designer → Own label. D2C brands changing the rules — small labels can scale fast.",
+  },
+  {
+    name: "Architect",
+    emoji: "🏛️",
+    category: "design",
+    description:
+      "Design buildings, urban spaces. 5-year degree + license required. Beautiful work, slow money to start.",
+    dayInLife: "Concept sketches, BIM modeling, client presentations, site visits.",
+    qualifications: ["B.Arch (5 yr)"],
+    entranceExams: [
+      { name: "NATA", link: "https://www.nata.in", dates: "Mar-Jul" },
+      { name: "JEE Main Paper 2", link: "https://jeemain.nta.nic.in", dates: "Jan & Apr" },
+    ],
+    salaryRanges: { entry: 350_000, mid: 1_000_000, senior: 3_500_000 },
+    topColleges: ["SPA Delhi", "CEPT Ahmedabad", "IIT Roorkee", "Sir JJ College Mumbai"],
+    skillsRequired: ["AutoCAD", "Revit", "Hand sketching", "Spatial reasoning"],
+    interestTags: ["design", "engineering", "creative"],
+    growthProspects: "Junior architect → Project architect → Principal / Own practice.",
+  },
+  {
+    name: "Journalist",
+    emoji: "📰",
+    category: "media",
+    description:
+      "Report news, investigate stories, write features. Digital journalism is the growth area; print is shrinking.",
+    dayInLife: "Source meetings, beat reporting, writing, editing. Newsrooms have intense daily deadlines.",
+    qualifications: ["B.A. Journalism / Mass Communication", "Any UG + portfolio works"],
+    entranceExams: [
+      { name: "IIMC entrance", link: "https://iimc.gov.in", dates: "May-Jun" },
+      { name: "ACJ entrance", link: "https://www.asianmedia.org", dates: "Mar-Apr" },
+    ],
+    salaryRanges: { entry: 300_000, mid: 800_000, senior: 2_500_000 },
+    topColleges: ["IIMC Delhi", "ACJ Chennai", "Symbiosis SIMC", "Xavier's Mumbai"],
+    skillsRequired: ["Writing", "Interviewing", "Fact-checking", "News sense"],
+    interestTags: ["media", "creative", "humanities", "social"],
+    growthProspects: "Reporter → Senior Correspondent → Editor. Independent newsletters / YouTube reshaping the path.",
+  },
+  {
+    name: "Filmmaker / Director",
+    emoji: "🎬",
+    category: "media",
+    description:
+      "Direct films, ads, web series, music videos. Hardest path to break into but biggest upside if you do.",
+    dayInLife: "Pre-prod (writing, casting), shoots (12-16 hr days), post (edit, sound, color).",
+    qualifications: ["BFA / Mass Comm", "Or just make stuff and post it"],
+    entranceExams: [
+      { name: "FTII entrance", link: "https://www.ftiindia.com", dates: "Mar" },
+      { name: "SRFTI", link: "https://srfti.ac.in", dates: "Mar" },
+    ],
+    salaryRanges: { entry: 0, mid: 1_000_000, senior: 20_000_000 },
+    topColleges: ["FTII Pune", "SRFTI Kolkata", "Whistling Woods Mumbai"],
+    skillsRequired: ["Storytelling", "Leadership", "Visual sense", "Persistence"],
+    interestTags: ["media", "creative"],
+    growthProspects: "AD → Director → Showrunner. Streaming platforms (Netflix, JioHotstar, Prime) opened huge new doors.",
+  },
+  {
+    name: "Content Creator / YouTuber",
+    emoji: "🎥",
+    category: "media",
+    description:
+      "Build an audience on YouTube/Instagram/X around what you love. Real career now — top creators earn ₹1-50Cr/year.",
+    dayInLife: "Ideation → script → shoot → edit → post → analyse. Reps matter more than gear.",
+    qualifications: ["None required — execution + consistency is the bar"],
+    entranceExams: [],
+    salaryRanges: { entry: 0, mid: 1_200_000, senior: 50_000_000 },
+    topColleges: ["No formal path — Whistling Woods, IIMC, MICA can help"],
+    skillsRequired: ["On-camera presence", "Editing", "Storytelling", "Marketing"],
+    interestTags: ["media", "creative", "entrepreneur"],
+    growthProspects: "Channel growth → brand deals → own products → media company. Power-law distribution; top 0.1% earn most.",
+  },
+
+  /* ─── RESEARCH / SCIENCE ─── */
+  {
+    name: "Data Scientist",
+    emoji: "🧮",
+    category: "tech",
+    description:
+      "Apply statistics + ML to business problems. Highest-paid analytics role; mix of code + math + storytelling.",
+    dayInLife: "Data cleaning, model building, dashboard creation, stakeholder meetings.",
+    qualifications: ["B.Tech CS / Stats / Math + ML coursework", "M.S. helps for top roles"],
+    entranceExams: [
+      { name: "JEE Main + ISI entrance", link: "https://www.isical.ac.in", dates: "May" },
+      { name: "CMI entrance", link: "https://www.cmi.ac.in", dates: "May" },
+    ],
+    salaryRanges: { entry: 1_000_000, mid: 2_500_000, senior: 7_000_000 },
+    topColleges: ["IIT Bombay", "IIT Madras", "ISI Kolkata", "CMI Chennai", "IIIT Hyderabad"],
+    skillsRequired: ["Python / R", "Statistics", "SQL", "Communication"],
+    interestTags: ["math", "tech", "cs", "research", "logic"],
+    growthProspects: "Senior DS → Staff DS → Director. AI/ML is the hottest sub-segment of 2025 tech.",
+  },
+  {
+    name: "Research Scientist",
+    emoji: "🔬",
+    category: "research",
+    description:
+      "Pure research in physics, chemistry, biology, math. Slow start, high prestige, world-changing work.",
+    dayInLife: "Lab experiments, paper reading, paper writing, conferences, grant proposals.",
+    qualifications: ["B.Sc → M.Sc → PhD (8-10 yr total)", "Or 5-yr integrated MS + PhD"],
+    entranceExams: [
+      { name: "IISER Aptitude Test", link: "https://www.iiseradmission.in", dates: "Jun" },
+      { name: "JEST (Physics)", link: "https://www.jest.org.in", dates: "Feb" },
+      { name: "NEST (NISER)", link: "https://www.nestexam.in", dates: "Jun" },
+    ],
+    salaryRanges: { entry: 500_000, mid: 1_200_000, senior: 3_000_000 },
+    topColleges: ["IISc Bangalore", "IISER Pune/Mohali/Kolkata", "TIFR Mumbai", "NISER Bhubaneswar"],
+    skillsRequired: ["Curiosity", "Patience", "Math", "Writing"],
+    interestTags: ["research", "math", "biology", "engineering"],
+    growthProspects: "Postdoc → Assistant Prof → Associate Prof → Full Prof / Group Leader.",
+  },
+  {
+    name: "Biotechnologist",
+    emoji: "🧬",
+    category: "research",
+    description:
+      "Genetic engineering, drug discovery, agri-biotech. India's biotech sector is the fastest-growing in Asia.",
+    dayInLife: "Lab work — PCR, cell culture, data analysis. Industry roles also include process engineering.",
+    qualifications: ["B.Tech / B.Sc Biotech", "M.Tech / MS / PhD for research roles"],
+    entranceExams: [
+      { name: "JEE Main", link: "https://jeemain.nta.nic.in", dates: "Jan & Apr" },
+      { name: "GAT-B (IISc + DBT)", link: "https://nta.ac.in", dates: "Apr" },
+    ],
+    salaryRanges: { entry: 400_000, mid: 1_000_000, senior: 3_000_000 },
+    topColleges: ["IIT Madras", "IIT Bombay", "Anna University", "VIT Vellore"],
+    skillsRequired: ["Molecular biology", "Lab techniques", "Data analysis"],
+    interestTags: ["biology", "research", "tech"],
+    growthProspects: "Bench scientist → R&D head → biotech startup founder.",
+  },
+  {
+    name: "Psychologist",
+    emoji: "🧠",
+    category: "research",
+    description:
+      "Clinical, organizational, sports, child psychology. Mental health is booming as a career path in India.",
+    dayInLife: "Patient sessions, assessments, report writing. Clinical psychologists need RCI license.",
+    qualifications: ["BA/B.Sc Psychology → MA Psych → M.Phil Clinical Psych for clinical practice"],
+    entranceExams: [
+      { name: "CUET PG", link: "https://cuet.nta.nic.in", dates: "Mar-Apr" },
+      { name: "AIIMS M.Sc Nursing/Psych", link: "https://www.aiimsexams.ac.in", dates: "Varies" },
+    ],
+    salaryRanges: { entry: 300_000, mid: 800_000, senior: 2_500_000 },
+    topColleges: ["NIMHANS Bangalore", "Tata Institute of Social Sciences (TISS)", "DU", "JMI Delhi"],
+    skillsRequired: ["Empathy", "Active listening", "Diagnostic skills"],
+    interestTags: ["psychology", "social", "biology", "humanities"],
+    growthProspects: "Clinic practice, hospital roles, corporate wellness, edtech / D2C mental health products.",
+  },
+
+  /* ─── EDUCATION ─── */
+  {
+    name: "Teacher / Professor",
+    emoji: "🎓",
+    category: "education",
+    description:
+      "Teach at school, college, or coaching institute. Lifetime career; good work-life balance; growing demand for online educators.",
+    dayInLife: "Classes, lesson planning, grading. Professors also do research + admin.",
+    qualifications: ["B.Ed (school) / M.A./M.Sc + PhD + NET (college)"],
+    entranceExams: [
+      { name: "CTET (govt schools)", link: "https://ctet.nic.in", dates: "Jul & Dec" },
+      { name: "UGC NET (college)", link: "https://ugcnet.nta.nic.in", dates: "Jun & Dec" },
+    ],
+    salaryRanges: { entry: 250_000, mid: 700_000, senior: 1_800_000 },
+    topColleges: ["DU", "DPS schools", "TISS for B.Ed", "Local B.Ed colleges"],
+    skillsRequired: ["Communication", "Patience", "Subject expertise"],
+    interestTags: ["social", "humanities"],
+    growthProspects: "School teacher → HOD → Principal. EdTech (BYJU, Vedantu) has changed teacher economics.",
+  },
+
+  /* ─── HUMANITIES ─── */
+  {
+    name: "Economist",
+    emoji: "📈",
+    category: "commerce",
+    description:
+      "Analyze economic policy, markets, sectors. Govt (RBI, NITI Aayog) and private (consultancies, banks) both hire.",
+    dayInLife: "Data analysis, policy notes, sector reports. RBI / Govt roles include research + advisory.",
+    qualifications: ["BA Economics + MA / MSc Economics", "PhD for academia / RBI roles"],
+    entranceExams: [
+      { name: "DSE entrance", link: "https://www.econdse.org", dates: "Jun" },
+      { name: "ISI MS Quantitative Economics", link: "https://www.isical.ac.in", dates: "May" },
+    ],
+    salaryRanges: { entry: 600_000, mid: 1_500_000, senior: 4_000_000 },
+    topColleges: ["DSE Delhi", "ISI Kolkata", "JNU CESS", "Madras School of Economics"],
+    skillsRequired: ["Econometrics", "Stats", "Writing", "Policy understanding"],
+    interestTags: ["economics", "humanities", "finance", "math"],
+    growthProspects: "Junior Economist → Senior → Chief Economist / RBI / IMF.",
+  },
+  {
+    name: "Historian / Archaeologist",
+    emoji: "🏺",
+    category: "arts",
+    description:
+      "Study past civilizations, work in museums, ASI, universities. Specialist career with deep cultural impact.",
+    dayInLife: "Archival research, field excavations (archaeology), teaching, writing.",
+    qualifications: ["BA / MA History / Archaeology / Anthropology", "PhD for research"],
+    entranceExams: [{ name: "CUET PG", link: "https://cuet.nta.nic.in", dates: "Mar-Apr" }],
+    salaryRanges: { entry: 250_000, mid: 700_000, senior: 1_800_000 },
+    topColleges: ["JNU Delhi", "BHU Varanasi", "Deccan College Pune"],
+    skillsRequired: ["Research", "Critical analysis", "Languages", "Curiosity"],
+    interestTags: ["humanities", "research", "social"],
+    growthProspects: "ASI, museums, UNESCO, academia. Niche but stable.",
+  },
+
+  /* ─── COMPUTER SCIENCE / TECH SPECIALIZATIONS ─── */
+  {
+    name: "Cybersecurity Specialist",
+    emoji: "🛡️",
+    category: "tech",
+    description:
+      "Defend systems from attacks. Highest-growth tech sub-segment with India's digital push + regulatory tightening.",
+    dayInLife: "Penetration testing, incident response, security architecture, threat hunting.",
+    qualifications: ["B.Tech CS / IT + certifications (CEH, OSCP)"],
+    entranceExams: [{ name: "JEE Main", link: "https://jeemain.nta.nic.in", dates: "Jan & Apr" }],
+    salaryRanges: { entry: 800_000, mid: 2_500_000, senior: 7_500_000 },
+    topColleges: ["IIT Madras", "IIIT Hyderabad", "Amity (M.Tech Cyber Security)"],
+    skillsRequired: ["Networking", "Linux", "Cryptography", "Scripting"],
+    interestTags: ["tech", "cs", "engineering", "logic"],
+    growthProspects: "Security Analyst → Senior → CISO. Specialized roles (cloud, app, OT) pay even more.",
+  },
+  {
+    name: "Game Developer",
+    emoji: "🎮",
+    category: "tech",
+    description:
+      "Build video games for PC, mobile, console. Mid-sized industry in India but rapidly growing with indie + mobile gaming.",
+    dayInLife: "Engine work (Unity / Unreal), gameplay scripting, art integration, testing.",
+    qualifications: ["B.Tech CS / IT + portfolio", "Specialized game-dev courses (BIG-DUE, ICAT)"],
+    entranceExams: [{ name: "JEE Main / Private institutes", link: "https://jeemain.nta.nic.in", dates: "Jan & Apr" }],
+    salaryRanges: { entry: 500_000, mid: 1_500_000, senior: 4_000_000 },
+    topColleges: ["IIIT Hyderabad", "ICAT Chennai", "Pearl Academy"],
+    skillsRequired: ["C++ / C#", "Unity / Unreal", "Game design", "Math (linear algebra)"],
+    interestTags: ["tech", "cs", "creative", "design"],
+    growthProspects: "Junior Dev → Senior → Lead → Indie Founder.",
+  },
+  {
+    name: "AI/ML Engineer",
+    emoji: "🤖",
+    category: "tech",
+    description:
+      "Build models, MLOps, LLM applications. Single hottest career of 2024-2026 in tech.",
+    dayInLife: "Training models, building data pipelines, fine-tuning LLMs, deploying to production.",
+    qualifications: ["B.Tech CS + ML coursework / projects", "M.S. for research roles"],
+    entranceExams: [{ name: "JEE Main / Advanced", link: "https://jeemain.nta.nic.in", dates: "Jan & Apr" }],
+    salaryRanges: { entry: 1_500_000, mid: 4_000_000, senior: 12_000_000 },
+    topColleges: ["IIT Bombay", "IIT Delhi", "IIIT Hyderabad", "BITS Pilani"],
+    skillsRequired: ["Python", "PyTorch / JAX", "Linear algebra", "Distributed systems"],
+    interestTags: ["math", "tech", "cs", "research", "logic"],
+    growthProspects: "ML Engineer → Senior → Staff. AI research labs (Google DeepMind, Anthropic) hire from top Indian schools.",
+  },
+
+  /* ─── AVIATION & TRAVEL ─── */
+  {
+    name: "Pilot",
+    emoji: "✈️",
+    category: "defense",
+    description:
+      "Commercial airline or air-force pilot. Massive aviation expansion in India = strong demand for next decade.",
+    dayInLife: "Pre-flight briefings, actual flights (8-12 hr long haul), debriefs. Significant time away from home.",
+    qualifications: ["Commercial Pilot License (CPL) — Class 12 + flight school", "Or NDA + Air Force"],
+    entranceExams: [
+      { name: "DGCA exams (commercial)", link: "https://www.dgca.gov.in", dates: "Year-round" },
+      { name: "NDA / AFCAT (defense)", link: "https://upsc.gov.in", dates: "Apr & Sep / Feb & Aug" },
+    ],
+    salaryRanges: { entry: 1_500_000, mid: 4_000_000, senior: 12_000_000 },
+    topColleges: ["IGRUA Rae Bareli", "BAA Mumbai", "Flying clubs across India"],
+    skillsRequired: ["Reflexes", "Math", "Calmness under pressure", "Health"],
+    interestTags: ["engineering", "tech"],
+    growthProspects: "First Officer → Captain → Senior Captain → Training Captain.",
+  },
+
+  /* ─── HOSPITALITY ─── */
+  {
+    name: "Hotel / Hospitality Manager",
+    emoji: "🏨",
+    category: "commerce",
+    description:
+      "Run hotels, restaurants, resorts. India's tourism boom + new luxury chains = strong demand.",
+    dayInLife: "Front office, F&B operations, guest service, staff management.",
+    qualifications: ["BHM / B.Sc Hospitality (4 yr)", "MBA Hospitality for senior roles"],
+    entranceExams: [
+      { name: "NCHMCT JEE", link: "https://nchmjee.nta.nic.in", dates: "Apr-May" },
+      { name: "IHM entrance", link: "https://www.ihmpusa.net", dates: "Varies" },
+    ],
+    salaryRanges: { entry: 300_000, mid: 900_000, senior: 3_000_000 },
+    topColleges: ["IHM Mumbai", "IHM Delhi", "WGSHA Manipal", "Christ University"],
+    skillsRequired: ["Service mindset", "Operations", "People management"],
+    interestTags: ["commerce", "social", "management"],
+    growthProspects: "Trainee → Supervisor → Manager → GM → Group GM.",
+  },
+
+  /* ─────────── EMERGING TECH ─────────── */
+  {
+    name: "Product Manager",
+    emoji: "📦",
+    category: "tech",
+    description:
+      "Decide WHAT a product should do and WHY. The bridge between engineering, design, and business. Single most cross-functional role in tech.",
+    dayInLife:
+      "Customer interviews, writing product specs, prioritizing the backlog, demos with engineers and design, metrics reviews. Lots of meetings.",
+    qualifications: ["B.Tech / MBA preferred but not required", "Strong portfolio of shipped projects"],
+    entranceExams: [{ name: "CAT (for MBA route)", link: "https://iimcat.ac.in", dates: "Nov" }],
+    salaryRanges: { entry: 1_500_000, mid: 4_000_000, senior: 12_000_000 },
+    topColleges: ["IIT Bombay", "IIM Bangalore", "ISB Hyderabad"],
+    skillsRequired: ["Strategy", "Communication", "Data analysis", "Empathy", "Writing"],
+    interestTags: ["tech", "commerce", "management", "logic", "creative"],
+    growthProspects:
+      "APM → PM → Senior PM → Group PM → Director → CPO/VP Product. One of the fastest paths to leadership.",
+  },
+  {
+    name: "DevOps / Cloud Engineer",
+    emoji: "☁️",
+    category: "tech",
+    description:
+      "Run the infrastructure that powers internet products. Make deploys safe, fast, and cheap. Touch every layer of the stack.",
+    dayInLife:
+      "AWS/GCP console, Kubernetes, CI/CD pipelines, incident response. On-call rotations come with the job.",
+    qualifications: ["B.Tech CS/IT + cloud certifications (AWS / GCP / Azure)"],
+    entranceExams: [{ name: "JEE Main", link: "https://jeemain.nta.nic.in", dates: "Jan & Apr" }],
+    salaryRanges: { entry: 900_000, mid: 2_800_000, senior: 8_000_000 },
+    topColleges: ["IIT Madras", "BITS Pilani", "VIT Vellore"],
+    skillsRequired: ["Linux", "Kubernetes", "Terraform", "Python", "Networking"],
+    interestTags: ["tech", "cs", "engineering", "logic"],
+    growthProspects: "Junior DevOps → SRE → Staff/Principal SRE → Infra lead at scale.",
+  },
+  {
+    name: "Robotics Engineer",
+    emoji: "🦾",
+    category: "engineering",
+    description:
+      "Build physical robots — from warehouse autonomous mobile robots to surgical assistants. India's manufacturing + healthcare push makes this a 10-yr boom.",
+    dayInLife:
+      "Mechanical design, ROS coding, sensor integration, real-world testing. Cross-disciplinary: ME + EE + CS.",
+    qualifications: ["B.Tech Mechanical / ECE / CSE + robotics specialisation", "M.Tech for advanced roles"],
+    entranceExams: [{ name: "JEE Main + Advanced", link: "https://jeeadv.ac.in", dates: "May" }],
+    salaryRanges: { entry: 800_000, mid: 2_200_000, senior: 6_000_000 },
+    topColleges: ["IIT Bombay", "IIT Kanpur", "IIIT Hyderabad"],
+    skillsRequired: ["ROS", "C++ / Python", "Control theory", "Computer vision"],
+    interestTags: ["engineering", "tech", "math", "research"],
+    growthProspects:
+      "Strong startup ecosystem (Addverb, GreyOrange, Ottonomy). Pioneers humanity's transition from manual to autonomous work.",
+  },
+  {
+    name: "Quantum Computing Researcher",
+    emoji: "⚛️",
+    category: "research",
+    description:
+      "Build the next generation of computers using quantum mechanics. Will reshape cryptography, drug discovery, and AI in the next 10-20 years.",
+    dayInLife:
+      "Theoretical proofs, qubit simulations, paper writing, lab work (if hardware). Heavy math + physics overlap.",
+    qualifications: ["B.Sc Physics / B.Tech + MS + PhD", "Strong linear algebra + quantum mechanics"],
+    entranceExams: [
+      { name: "IISER Aptitude Test", link: "https://www.iiseradmission.in", dates: "Jun" },
+      { name: "JEST Physics", link: "https://www.jest.org.in", dates: "Feb" },
+    ],
+    salaryRanges: { entry: 600_000, mid: 1_500_000, senior: 4_500_000 },
+    topColleges: ["IISc Bangalore", "TIFR Mumbai", "IIT Madras"],
+    skillsRequired: ["Quantum mechanics", "Linear algebra", "Python / Qiskit", "Research writing"],
+    interestTags: ["research", "math", "tech", "logic"],
+    growthProspects:
+      "India's National Quantum Mission ($1B) is creating roles. IBM, Google, IIT/IISc labs all hiring.",
+  },
+  {
+    name: "Blockchain / Web3 Engineer",
+    emoji: "🔗",
+    category: "tech",
+    description:
+      "Build decentralised apps and smart contracts. Volatile field but high-skill, global remote work, strong earning ceiling.",
+    dayInLife: "Solidity / Rust coding, smart contract audits, DeFi protocol design, security reviews.",
+    qualifications: ["B.Tech CS + self-taught Web3 stack", "GitHub portfolio of contracts matters more than degree"],
+    entranceExams: [{ name: "JEE Main", link: "https://jeemain.nta.nic.in", dates: "Jan & Apr" }],
+    salaryRanges: { entry: 1_500_000, mid: 4_000_000, senior: 15_000_000 },
+    topColleges: ["IIT Bombay", "BITS Pilani", "Any with strong CS"],
+    skillsRequired: ["Solidity / Rust", "Cryptography", "Game theory", "Security"],
+    interestTags: ["tech", "cs", "logic", "math"],
+    growthProspects:
+      "Globally remote-first industry. Indians work for Polygon, ConsenSys, Coinbase from anywhere.",
+  },
+  {
+    name: "Cloud Solutions Architect",
+    emoji: "🏛️",
+    category: "tech",
+    description:
+      "Design large-scale cloud systems for enterprises. Senior role — combine business needs with deep technical knowledge.",
+    dayInLife: "Architecture diagrams, client meetings, vendor selection, cost optimisation.",
+    qualifications: ["B.Tech + 5+ yrs experience + AWS/GCP Pro certifications"],
+    entranceExams: [],
+    salaryRanges: { entry: 1_500_000, mid: 3_500_000, senior: 10_000_000 },
+    topColleges: ["Any with CS background"],
+    skillsRequired: ["Cloud architecture", "Security", "Cost optimisation", "Consulting"],
+    interestTags: ["tech", "cs", "engineering", "commerce"],
+    growthProspects: "Most companies are still mid-cloud migration. 5-10 yrs of growth ahead.",
+  },
+
+  /* ─────────── HEALTHCARE SPECIALTIES ─────────── */
+  {
+    name: "Veterinarian",
+    emoji: "🐾",
+    category: "medical",
+    description:
+      "Treat animals — pets, livestock, wildlife. Growing field as urban pet ownership explodes in India.",
+    dayInLife: "Clinic consults, surgeries, vaccinations, large-animal field visits (rural).",
+    qualifications: ["B.V.Sc & AH (5.5 yr)", "MVSc for specialisation"],
+    entranceExams: [{ name: "AIPVT (now via NEET)", link: "https://neet.nta.nic.in", dates: "May" }],
+    salaryRanges: { entry: 300_000, mid: 700_000, senior: 2_500_000 },
+    topColleges: ["IVRI Bareilly", "Madras Veterinary College", "GADVASU Ludhiana"],
+    skillsRequired: ["Animal anatomy", "Surgical skills", "Compassion", "Communication"],
+    interestTags: ["biology", "medical", "social"],
+    growthProspects: "Private practice, govt service (wildlife / dairy), pet care chains booming.",
+  },
+  {
+    name: "Optometrist",
+    emoji: "👓",
+    category: "medical",
+    description:
+      "Diagnose vision problems and prescribe corrective lenses. Faster path to independent practice than MBBS.",
+    dayInLife: "Eye exams, prescription writing, fitting contacts/lenses, basic eye-disease screening.",
+    qualifications: ["B.Optom (4 yr)", "M.Optom for advanced practice"],
+    entranceExams: [{ name: "NEET UG (some states)", link: "https://neet.nta.nic.in", dates: "May" }],
+    salaryRanges: { entry: 250_000, mid: 600_000, senior: 2_000_000 },
+    topColleges: ["AIIMS Delhi", "LV Prasad Eye Inst Hyderabad", "Bharati Vidyapeeth Pune"],
+    skillsRequired: ["Diagnostic", "Patient communication", "Manual precision"],
+    interestTags: ["biology", "medical"],
+    growthProspects: "Optical chains (Lenskark, Titan EyePlus) + private clinics growing fast.",
+  },
+  {
+    name: "Speech Language Pathologist",
+    emoji: "🗣️",
+    category: "medical",
+    description:
+      "Help kids and adults with speech, swallowing, and communication disorders. High emotional reward, growing demand with autism awareness.",
+    dayInLife: "1:1 therapy sessions, school visits, parent counseling, progress documentation.",
+    qualifications: ["BASLP (4 yr) — Bachelor in Audiology and Speech-Language Pathology"],
+    entranceExams: [{ name: "AIISH entrance", link: "https://www.aiishmysore.in", dates: "Jul" }],
+    salaryRanges: { entry: 250_000, mid: 700_000, senior: 2_000_000 },
+    topColleges: ["AIISH Mysore", "AYJNIHH Mumbai", "Manipal"],
+    skillsRequired: ["Linguistic analysis", "Patience", "Empathy", "Child psychology"],
+    interestTags: ["biology", "medical", "social", "psychology"],
+    growthProspects: "School systems, hospitals, autism centers, and private practice are all hungry for SLPs.",
+  },
+  {
+    name: "Public Health Specialist",
+    emoji: "🌍",
+    category: "medical",
+    description:
+      "Tackle disease at population scale — not 1-on-1 patients. COVID showed the world how critical this field is. WHO, govt, NGOs all hire.",
+    dayInLife: "Epidemiological data analysis, policy briefs, community programs, field surveys.",
+    qualifications: ["MBBS + MPH OR B.Sc/B.A. + MPH", "PhD for research/academic"],
+    entranceExams: [{ name: "AIIMS MPH entrance", link: "https://www.aiimsexams.ac.in", dates: "Varies" }],
+    salaryRanges: { entry: 500_000, mid: 1_500_000, senior: 4_500_000 },
+    topColleges: ["AIIMS Delhi (MPH)", "PHFI", "TISS", "St John's Bangalore"],
+    skillsRequired: ["Epidemiology", "Biostatistics", "Policy writing", "Field research"],
+    interestTags: ["medical", "biology", "social", "research", "humanities"],
+    growthProspects: "WHO, UNICEF, govt ministries, large NGOs (BMGF, GHIT). Global remote work possible.",
+  },
+  {
+    name: "Nurse Practitioner",
+    emoji: "💉",
+    category: "medical",
+    description:
+      "Advanced practice nurse with autonomy to diagnose and prescribe (in some settings). Shortest path to clinical patient impact.",
+    dayInLife: "Patient assessment, basic procedures, care plans, often more hands-on than doctors.",
+    qualifications: ["B.Sc Nursing (4 yr) + M.Sc Nursing"],
+    entranceExams: [{ name: "AIIMS B.Sc Nursing", link: "https://www.aiimsexams.ac.in", dates: "Varies" }],
+    salaryRanges: { entry: 300_000, mid: 800_000, senior: 2_500_000 },
+    topColleges: ["AIIMS Delhi", "CMC Vellore", "PGIMER Chandigarh"],
+    skillsRequired: ["Clinical skills", "Patient empathy", "Stamina"],
+    interestTags: ["biology", "medical", "social"],
+    growthProspects: "Huge international demand — UK NHS, US, Gulf, Australia all hiring Indian nurses.",
+  },
+
+  /* ─────────── CREATIVE / MEDIA EXPANSIONS ─────────── */
+  {
+    name: "3D Animator / VFX Artist",
+    emoji: "🎞️",
+    category: "design",
+    description:
+      "Bring characters and worlds to life for films, ads, games. India's outsourcing hub status means jobs at Industrial Light & Magic, DNEG, MPC.",
+    dayInLife: "Rigging, animation, lighting, rendering. Long hours on big projects close to release.",
+    qualifications: ["B.A./B.Sc Animation", "Or self-taught with strong showreel"],
+    entranceExams: [{ name: "Most institutes have internal tests", link: "https://www.maacindia.com", dates: "Varies" }],
+    salaryRanges: { entry: 300_000, mid: 1_000_000, senior: 3_500_000 },
+    topColleges: ["MAAC", "Arena Animation", "Whistling Woods", "NID"],
+    skillsRequired: ["Maya/Blender", "Anatomy", "Visual storytelling", "Patience"],
+    interestTags: ["design", "creative", "media", "tech"],
+    growthProspects: "Indian VFX studios won Oscars (RRR). Streaming platforms expanding demand.",
+  },
+  {
+    name: "Sound Engineer",
+    emoji: "🎚️",
+    category: "media",
+    description:
+      "Mix and master audio for music, films, ads, podcasts. Behind every great song or film soundscape.",
+    dayInLife: "Studio sessions, mixing tracks, location recording, mastering for Spotify/cinema.",
+    qualifications: ["Diploma in Sound Engineering", "B.Tech ECE + audio specialisation"],
+    entranceExams: [],
+    salaryRanges: { entry: 250_000, mid: 800_000, senior: 3_500_000 },
+    topColleges: ["SAE Institute Mumbai", "FTII Pune", "True School of Music"],
+    skillsRequired: ["Pro Tools / Logic", "Acoustics", "Musical ear", "Patience"],
+    interestTags: ["media", "creative", "tech"],
+    growthProspects: "Podcasts + indie music exploding. Strong path to indie producer/composer.",
+  },
+  {
+    name: "Photographer",
+    emoji: "📸",
+    category: "media",
+    description:
+      "Shoot weddings, products, journalism, fine art, wildlife. India's wedding industry alone is $50B/yr.",
+    dayInLife: "Shoots, editing in Lightroom/Photoshop, client meetings, marketing on Instagram.",
+    qualifications: ["No formal qualification — portfolio is everything"],
+    entranceExams: [],
+    salaryRanges: { entry: 200_000, mid: 1_000_000, senior: 5_000_000 },
+    topColleges: ["Light & Life Academy Ooty", "NID Photography"],
+    skillsRequired: ["Composition", "Lighting", "Lightroom", "Business sense"],
+    interestTags: ["creative", "media", "design"],
+    growthProspects: "Wedding pros earn ₹3-15L per wedding. Editorial/wildlife is lower-paying but prestigious.",
+  },
+
+  /* ─────────── SCIENCES — Earth, Marine, Space ─────────── */
+  {
+    name: "Marine Biologist",
+    emoji: "🐠",
+    category: "research",
+    description:
+      "Study ocean life — coral reefs, fish stocks, marine mammals. India's 7,500 km coastline + climate change make this critical.",
+    dayInLife: "Boat surveys, scuba diving, lab analysis, paper writing. Lots of fieldwork.",
+    qualifications: ["B.Sc / M.Sc Marine Biology", "PhD for research"],
+    entranceExams: [{ name: "IIT JAM / CUET PG", link: "https://jam.iitb.ac.in", dates: "Feb" }],
+    salaryRanges: { entry: 400_000, mid: 1_000_000, senior: 2_500_000 },
+    topColleges: ["CUSAT Kochi", "Annamalai University", "Pondicherry University"],
+    skillsRequired: ["Scuba certification", "Taxonomy", "GIS", "Field stamina"],
+    interestTags: ["biology", "research"],
+    growthProspects: "WWF, MoEF, NIO Goa, international research stations. Niche but deeply meaningful.",
+  },
+  {
+    name: "Climate Scientist",
+    emoji: "🌡️",
+    category: "research",
+    description:
+      "Study how Earth's climate is changing and what to do about it. Single most important scientific question of our generation.",
+    dayInLife: "Climate model simulations, satellite data analysis, IPCC report contributions.",
+    qualifications: ["B.Sc/B.Tech + M.Sc Atmospheric Science + PhD"],
+    entranceExams: [{ name: "IIT JAM", link: "https://jam.iitb.ac.in", dates: "Feb" }],
+    salaryRanges: { entry: 500_000, mid: 1_200_000, senior: 3_000_000 },
+    topColleges: ["IISc Bangalore", "IIT Bombay", "IITM Pune"],
+    skillsRequired: ["Atmospheric physics", "Python", "Data science", "Modeling"],
+    interestTags: ["research", "math", "biology", "tech"],
+    growthProspects:
+      "Global demand exploding. ISRO, WMO, IPCC, climate-tech startups all hiring. Direct planetary impact.",
+  },
+  {
+    name: "Astrophysicist / Astronomer",
+    emoji: "🔭",
+    category: "research",
+    description:
+      "Study stars, galaxies, black holes. Pure curiosity-driven work, but India's space program means real jobs at ISRO and observatories.",
+    dayInLife: "Telescope observation runs, simulation code, data analysis, paper writing.",
+    qualifications: ["B.Sc Physics → M.Sc → PhD"],
+    entranceExams: [
+      { name: "JEST Physics", link: "https://www.jest.org.in", dates: "Feb" },
+      { name: "NET Physics", link: "https://csirnet.nta.nic.in", dates: "Jun & Dec" },
+    ],
+    salaryRanges: { entry: 500_000, mid: 1_200_000, senior: 2_800_000 },
+    topColleges: ["IUCAA Pune", "IIA Bangalore", "TIFR Mumbai", "RRI Bangalore"],
+    skillsRequired: ["Astrophysics", "Python", "Observation techniques", "Patience"],
+    interestTags: ["research", "math", "tech"],
+    growthProspects: "ISRO, IUCAA, international observatories. India is co-investing in major telescopes.",
+  },
+  {
+    name: "Forensic Scientist",
+    emoji: "🔬",
+    category: "research",
+    description:
+      "Analyse crime-scene evidence — DNA, fingerprints, ballistics, digital forensics. Backbone of modern criminal justice.",
+    dayInLife: "Lab work, court testimony, evidence chain documentation. Detail-obsessed.",
+    qualifications: ["B.Sc Forensic Science / Biotech / Chem + M.Sc Forensics"],
+    entranceExams: [{ name: "AIIMS / NFSU entrance", link: "https://www.nfsu.ac.in", dates: "May" }],
+    salaryRanges: { entry: 400_000, mid: 900_000, senior: 2_500_000 },
+    topColleges: ["NFSU Gandhinagar", "LNJN NICFS Delhi", "Amity Forensics"],
+    skillsRequired: ["Lab techniques", "DNA analysis", "Court communication", "Integrity"],
+    interestTags: ["biology", "research", "tech", "law"],
+    growthProspects: "CBI, state forensic labs, private cyber-forensics firms (booming with fraud rise).",
+  },
+
+  /* ─────────── PUBLIC SERVICE / SOCIAL IMPACT ─────────── */
+  {
+    name: "Diplomat (IFS Officer)",
+    emoji: "🌐",
+    category: "civil-services",
+    description:
+      "Represent India abroad — embassies, UN, trade talks. One of the most prestigious civil services postings.",
+    dayInLife: "Embassy work, bilateral meetings, cultural events, policy cables. Postings change every 3-4 years.",
+    qualifications: ["UG degree + UPSC CSE with IFS preference"],
+    entranceExams: [{ name: "UPSC Civil Services", link: "https://upsc.gov.in", dates: "May/Jun" }],
+    salaryRanges: { entry: 750_000, mid: 1_800_000, senior: 3_500_000 },
+    topColleges: ["No specific UG — top candidates from any background"],
+    skillsRequired: ["Languages", "Diplomacy", "Cultural intelligence", "Writing"],
+    interestTags: ["humanities", "law", "social", "management"],
+    growthProspects:
+      "Foreign postings, eventual Ambassador / Foreign Secretary. Front-row seat to history.",
+  },
+  {
+    name: "Social Entrepreneur",
+    emoji: "🌱",
+    category: "commerce",
+    description:
+      "Build businesses that solve social problems — education, health, sanitation, climate. Profit + impact.",
+    dayInLife: "Fundraising, hiring, field visits to beneficiaries, balancing impact with sustainability.",
+    qualifications: ["No formal — execution + storytelling matters most"],
+    entranceExams: [],
+    salaryRanges: { entry: 300_000, mid: 1_500_000, senior: 10_000_000 },
+    topColleges: ["TISS", "IRMA Anand", "ISDM Delhi"],
+    skillsRequired: ["Fundraising", "Operations", "Empathy", "Resilience"],
+    interestTags: ["entrepreneur", "social", "commerce", "humanities"],
+    growthProspects:
+      "Acumen Fund, Omidyar Network, ECCE incubators. Founders go on to advise govt and lead policy.",
+  },
+  {
+    name: "NGO Worker / Development Professional",
+    emoji: "🤝",
+    category: "civil-services",
+    description:
+      "Direct impact work — education programs, women's empowerment, rural health, disaster relief. Modest pay, deep meaning.",
+    dayInLife: "Field visits, beneficiary interviews, program monitoring, donor reports.",
+    qualifications: ["MA Social Work / Development Studies / Public Policy"],
+    entranceExams: [{ name: "TISS / IRMA entrance", link: "https://www.tiss.edu", dates: "Mar-Apr" }],
+    salaryRanges: { entry: 350_000, mid: 900_000, senior: 2_500_000 },
+    topColleges: ["TISS Mumbai", "IRMA Anand", "Azim Premji University"],
+    skillsRequired: ["Field empathy", "Program management", "Evaluation methods"],
+    interestTags: ["social", "humanities", "psychology"],
+    growthProspects: "BMGF, Tata Trusts, World Bank, govt advisory. Hybrid roles into govt policy common.",
+  },
+
+  /* ─────────── SPORTS / PERFORMANCE ─────────── */
+  {
+    name: "Sports Coach / Sports Scientist",
+    emoji: "🏃",
+    category: "education",
+    description:
+      "Train athletes for performance — from school teams to Olympic squads. India's sports ecosystem (cricket, Olympics, Pro Kabaddi) is professionalising.",
+    dayInLife: "Training sessions, performance analytics, nutrition planning, injury management.",
+    qualifications: ["B.PEd / B.Sc Sports Science", "M.Sc for high-performance"],
+    entranceExams: [{ name: "LNIPE entrance", link: "https://www.lnipe.edu.in", dates: "Apr-May" }],
+    salaryRanges: { entry: 300_000, mid: 1_000_000, senior: 4_000_000 },
+    topColleges: ["LNIPE Gwalior", "SAI institutes", "Manav Rachna Sports Sciences"],
+    skillsRequired: ["Sport-specific expertise", "Sports science", "Mental coaching"],
+    interestTags: ["biology", "social", "psychology"],
+    growthProspects: "IPL teams, national federations, sports tech startups (Yuvaa, Mission Sports).",
+  },
+  {
+    name: "eSports Athlete / Streamer",
+    emoji: "🎮",
+    category: "media",
+    description:
+      "Compete in games like BGMI, Valorant, Dota 2 — or stream them. India's gaming audience crossed 600M; pro circuit is real.",
+    dayInLife: "10+ hours practice/streaming daily, tournaments, content creation, sponsor calls.",
+    qualifications: ["None — talent + grind + audience"],
+    entranceExams: [],
+    salaryRanges: { entry: 200_000, mid: 1_500_000, senior: 30_000_000 },
+    topColleges: ["No formal — Vox Esports, Skyesports academies emerging"],
+    skillsRequired: ["Mechanical skill", "Game theory", "On-camera presence", "Mental endurance"],
+    interestTags: ["tech", "media", "creative", "entrepreneur"],
+    growthProspects: "Pro orgs (S8UL, Velocity, Global Esports). Streaming income + brand deals + tournament prizes.",
+  },
+
+  /* ─────────── SPECIALIZED PRO PATHS ─────────── */
+  {
+    name: "Chef / Culinary Professional",
+    emoji: "👨‍🍳",
+    category: "commerce",
+    description:
+      "Run kitchens — fine dining, ghost kitchens, cloud brands. India's F&B sector is booming with disposable income.",
+    dayInLife: "Menu design, sourcing, cooking, kitchen team management. Long evenings, weekend work.",
+    qualifications: ["Culinary diploma from IHM / IICA / Cordon Bleu"],
+    entranceExams: [{ name: "NCHMCT JEE", link: "https://nchmjee.nta.nic.in", dates: "Apr-May" }],
+    salaryRanges: { entry: 250_000, mid: 800_000, senior: 4_000_000 },
+    topColleges: ["IHM Mumbai/Delhi", "IICA Manipal", "Le Cordon Bleu (abroad)"],
+    skillsRequired: ["Cooking skill", "Palate", "Leadership", "Cost control"],
+    interestTags: ["creative", "commerce", "social"],
+    growthProspects: "Hotel chains, own restaurant, MasterChef contestant, cloud-kitchen entrepreneurship.",
+  },
+  {
+    name: "Real Estate Developer",
+    emoji: "🏘️",
+    category: "commerce",
+    description:
+      "Buy land, build, sell or rent. High-capital business, but India's urbanisation push (Smart Cities) creates huge opportunity.",
+    dayInLife: "Land scouting, regulatory approvals, vendor coordination, sales/marketing.",
+    qualifications: ["B.Com / B.B.A. + family business or RICS MBA real estate"],
+    entranceExams: [{ name: "CAT (for MBA)", link: "https://iimcat.ac.in", dates: "Nov" }],
+    salaryRanges: { entry: 600_000, mid: 2_500_000, senior: 30_000_000 },
+    topColleges: ["RICS School Mumbai", "NICMAR Pune", "IIM-A real estate program"],
+    skillsRequired: ["Finance", "Regulatory navigation", "Negotiation", "Project management"],
+    interestTags: ["commerce", "engineering", "entrepreneur"],
+    growthProspects: "Family business, REIT analyst, urban-development consultancies.",
+  },
+  {
+    name: "Data Engineer",
+    emoji: "🛠️",
+    category: "tech",
+    description:
+      "Build the data pipelines that power analytics and ML. The plumbing nobody sees but everything runs on.",
+    dayInLife: "Spark/Airflow pipelines, schema design, data quality monitoring, infra cost optimisation.",
+    qualifications: ["B.Tech CS / IT + strong systems background"],
+    entranceExams: [{ name: "JEE Main", link: "https://jeemain.nta.nic.in", dates: "Jan & Apr" }],
+    salaryRanges: { entry: 900_000, mid: 2_500_000, senior: 7_500_000 },
+    topColleges: ["IIT Bombay", "IIIT Hyderabad", "BITS Pilani"],
+    skillsRequired: ["SQL", "Python", "Spark / Kafka / Airflow", "Cloud (AWS / GCP)"],
+    interestTags: ["tech", "cs", "math", "engineering"],
+    growthProspects: "Every data team needs DEs. Senior roles pay equal to or more than data scientists.",
+  },
+];
