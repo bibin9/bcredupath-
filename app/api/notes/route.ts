@@ -79,10 +79,11 @@ export async function GET(req: Request) {
       .map((c) => (c as { text: string }).text)
       .join("");
 
-    const parsedJson = safeParseJson(text);
-    if (!parsedJson?.body) {
+    const parsed = parseDelimited(text);
+    if (!parsed?.body) {
+      console.error("[api/notes] parse failed for", subject, chapter, "— first 300 chars:", text.slice(0, 300));
       return NextResponse.json(
-        { error: "Could not generate note. Try again." },
+        { error: "Could not generate note. Try again — the AI returned an unexpected format." },
         { status: 502 }
       );
     }
@@ -91,9 +92,9 @@ export async function GET(req: Request) {
       subject,
       chapter,
       class: classNum,
-      body: parsedJson.body,
-      formulaSheet: parsedJson.formulaSheet ?? "",
-      keyTakeaways: parsedJson.keyTakeaways ?? [],
+      body: parsed.body,
+      formulaSheet: parsed.formulaSheet ?? "",
+      keyTakeaways: parsed.keyTakeaways ?? [],
       aiGenerated: true,
     });
 
@@ -113,40 +114,60 @@ function buildPrompt(args: { subject: string; chapter: string; classNum: 10 | 12
 
 CHAPTER: ${chapter}
 
-Output a JSON object with these exact keys:
-- "body" (string, markdown): The main revision notes. Cover all sub-topics in this chapter, but be concise — student should read in 10 minutes. Use:
-   * ## sub-headings for each major sub-topic
-   * **bold** for key terms
-   * LaTeX in $...$ for inline math, $$...$$ for block formulas
-   * Bullet points for definitions, properties, types
-   * Examples where they aid intuition
-- "formulaSheet" (string, markdown): One compact section with ALL key formulas + their use. Each on its own line.
-- "keyTakeaways" (array of strings): 3-5 one-line bullet points a student should leave the chapter knowing.
+Output in EXACTLY this delimited format. Use the literal lines "===BODY===", "===FORMULAS===", "===TAKEAWAYS===", and "===END===" as section markers:
+
+===BODY===
+(The main revision notes. Use:
+- ## sub-headings for each sub-topic
+- **bold** for key terms
+- LaTeX in $...$ for inline math, $$...$$ for block formulas
+- Bullet points for definitions/properties
+- Examples where they aid intuition
+Target 600-900 words.)
+
+===FORMULAS===
+(One compact section with ALL key formulas + their use. Each on its own line. LaTeX freely. Under 200 words.)
+
+===TAKEAWAYS===
+- One-line bullet a student should leave knowing
+- Another one
+- 3-5 bullets total
+
+===END===
 
 CONSTRAINTS:
 - Match the NCERT Class ${classNum} CBSE syllabus exactly.
 - Plain English, ~15-17 year old reading level.
-- DO NOT make up facts. If unsure, omit.
-- Body should be 600-900 words. Formula sheet under 200 words.
-- Output ONLY the JSON object, no markdown fences, no prose.`;
+- DO NOT invent facts. If unsure, omit.
+- The four delimiter lines must appear EXACTLY as shown, each on its own line.
+- Output nothing before "===BODY===" and nothing after "===END===".`;
 }
 
-function safeParseJson(text: string): {
+/**
+ * Delimited-section parser. Robust to LaTeX backslashes (which JSON.parse hates).
+ */
+function parseDelimited(text: string): {
   body?: string;
   formulaSheet?: string;
   keyTakeaways?: string[];
 } | null {
-  let s = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
-  try {
-    return JSON.parse(s);
-  } catch {
-    const start = s.indexOf("{");
-    const end = s.lastIndexOf("}");
-    if (start !== -1 && end > start) {
-      try {
-        return JSON.parse(s.slice(start, end + 1));
-      } catch {}
-    }
-  }
-  return null;
+  const bodyMatch = text.match(/===BODY===\s*([\s\S]*?)===FORMULAS===/);
+  const formulasMatch = text.match(/===FORMULAS===\s*([\s\S]*?)===TAKEAWAYS===/);
+  const takeawaysMatch = text.match(/===TAKEAWAYS===\s*([\s\S]*?)===END===/);
+  const takeawaysFallback = !takeawaysMatch
+    ? text.match(/===TAKEAWAYS===\s*([\s\S]*)$/)
+    : null;
+
+  if (!bodyMatch) return null;
+  const body = bodyMatch[1].trim();
+  const formulaSheet = formulasMatch?.[1].trim() ?? "";
+  const takeawaysRaw = (takeawaysMatch ?? takeawaysFallback)?.[1].trim() ?? "";
+
+  const keyTakeaways = takeawaysRaw
+    .split("\n")
+    .map((l) => l.replace(/^[-*•]\s*/, "").trim())
+    .filter((l) => l.length > 3 && !l.startsWith("==="));
+
+  if (body.length < 50) return null;
+  return { body, formulaSheet, keyTakeaways };
 }
