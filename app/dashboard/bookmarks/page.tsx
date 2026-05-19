@@ -69,6 +69,7 @@ export default async function BookmarksPage() {
     predictedProbability: q.predictedProbability,
     xpReward: q.xpReward,
     expectedTime: q.expectedTime,
+    verified: q.verified ?? false,
   }));
 
   // Group by subject for the stats strip

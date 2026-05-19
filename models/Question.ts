@@ -38,6 +38,11 @@ export interface IQuestion extends Document {
   xpReward: number;
   tags: string[];
   imageUrl: string | null;
+  aiGenerated?: boolean;
+  /** True when reviewed/approved by a teacher. Shown with a ✓ badge in the UI. */
+  verified?: boolean;
+  verifiedBy?: string;
+  verifiedAt?: Date;
   createdAt: Date;
 }
 
@@ -82,6 +87,10 @@ const questionSchema = new Schema<IQuestion>(
     xpReward: { type: Number, default: 10 },
     tags: { type: [String], default: [] },
     imageUrl: { type: String, default: null },
+    aiGenerated: { type: Boolean, default: false, index: true },
+    verified: { type: Boolean, default: false, index: true },
+    verifiedBy: String,
+    verifiedAt: Date,
   },
   { timestamps: { createdAt: true, updatedAt: false } }
 );

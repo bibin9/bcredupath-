@@ -111,6 +111,8 @@ export default async function PracticeModePage({ params }: { params: { mode: str
           name: config.name,
           emoji: config.emoji,
           perQuestionSeconds: config.perQuestionSeconds ?? null,
+          sessionSeconds: "sessionSeconds" in config ? config.sessionSeconds : null,
+          locked: "locked" in config ? config.locked : false,
         }}
         questions={questions}
       />

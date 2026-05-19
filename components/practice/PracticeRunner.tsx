@@ -37,6 +37,10 @@ export type PracticeMode = {
   name: string;
   emoji: string;
   perQuestionSeconds: number | null;
+  /** Total session-wide countdown in seconds (mock test mode). */
+  sessionSeconds?: number | null;
+  /** If true, hide solutions until session ends (mock test mode). */
+  locked?: boolean;
 };
 
 type Attempt = {
@@ -62,6 +66,8 @@ export function PracticeRunner({
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<SubmitResult | null>(null);
   const [secondsLeft, setSecondsLeft] = useState(mode.perQuestionSeconds ?? 0);
+  // Session-wide timer for mock test mode
+  const [sessionLeft, setSessionLeft] = useState(mode.sessionSeconds ?? 0);
   const startedAt = useRef(Date.now());
 
   const q = questions[idx];
@@ -76,7 +82,7 @@ export function PracticeRunner({
     startedAt.current = Date.now();
   }, [idx, mode.perQuestionSeconds]);
 
-  // Countdown timer (auto-submit when zero)
+  // Per-question countdown timer (auto-submit when zero)
   useEffect(() => {
     if (!mode.perQuestionSeconds || revealed || result) return;
     if (secondsLeft <= 0) {
@@ -87,6 +93,18 @@ export function PracticeRunner({
     return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [secondsLeft, revealed, result]);
+
+  // Session-wide countdown for mock test (auto-finish when zero)
+  useEffect(() => {
+    if (!mode.sessionSeconds || result) return;
+    if (sessionLeft <= 0) {
+      finishSession();
+      return;
+    }
+    const t = setTimeout(() => setSessionLeft((s) => s - 1), 1000);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionLeft, result]);
 
   function handleSubmitAnswer(timedOut = false) {
     if (revealed) return;
@@ -104,6 +122,14 @@ export function PracticeRunner({
         firstTry: true,
       },
     ]);
+
+    // Locked mode (mock test): no reveal, no confetti, just move to next question
+    if (mode.locked) {
+      if (isLast) finishSession();
+      else setIdx((i) => i + 1);
+      return;
+    }
+
     setRevealed(true);
     if (isCorrect) {
       setConfetti((n) => n + 1);
@@ -221,9 +247,11 @@ export function PracticeRunner({
             <span className="ml-2">{mode.emoji} {mode.name}</span>
           </span>
           <span className="flex items-center gap-3">
-            <span className="pill-neon-green !px-2 !py-0">
-              ✓ {correctSoFar}
-            </span>
+            {!mode.locked && (
+              <span className="pill-neon-green !px-2 !py-0">
+                ✓ {correctSoFar}
+              </span>
+            )}
             {mode.perQuestionSeconds && !revealed && (
               <span
                 className={cn(
@@ -235,6 +263,26 @@ export function PracticeRunner({
               >
                 <Timer className="h-3 w-3" />
                 <span className="stat-num">{secondsLeft}s</span>
+              </span>
+            )}
+            {mode.sessionSeconds && (
+              <span
+                className={cn(
+                  "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold tabular-nums",
+                  sessionLeft <= 60
+                    ? "bg-neon-pink/20 text-neon-pink animate-pulse"
+                    : sessionLeft <= 300
+                    ? "bg-neon-yellow/15 text-neon-yellow"
+                    : "bg-white/[0.05] text-white/75"
+                )}
+                title="Session time remaining"
+              >
+                <Timer className="h-3 w-3" />
+                <span className="stat-num">
+                  {Math.floor(sessionLeft / 3600)}:
+                  {String(Math.floor((sessionLeft % 3600) / 60)).padStart(2, "0")}:
+                  {String(sessionLeft % 60).padStart(2, "0")}
+                </span>
               </span>
             )}
           </span>
@@ -380,7 +428,13 @@ export function PracticeRunner({
               disabled={!!(isMCQ && selected === null)}
               className="btn-neon flex-1"
             >
-              {isMCQ ? "Submit answer" : "Reveal solution"}
+              {mode.locked
+                ? isLast
+                  ? <>Submit & finish <ArrowRight className="h-4 w-4" /></>
+                  : <>Submit & next <ArrowRight className="h-4 w-4" /></>
+                : isMCQ
+                ? "Submit answer"
+                : "Reveal solution"}
             </button>
           </>
         ) : (

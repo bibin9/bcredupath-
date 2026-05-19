@@ -61,13 +61,17 @@ export const PRACTICE_MODES = {
   },
   "predicted-paper": {
     id: "predicted-paper",
-    name: "Predicted Paper",
+    name: "Mock Board Paper",
     emoji: "📄",
-    tagline: "Full 3-hour board simulation",
-    description: "A mock paper modelled on the actual board pattern.",
+    tagline: "3-hour timed simulation · solutions locked until end",
+    description: "A mock paper modelled on the actual board pattern. Strict timer, no peeking — real exam experience.",
     questionCount: 25,
     perQuestionSeconds: null,
     color: "pink",
+    /** Total session time in seconds. When set, the runner shows a single big countdown. */
+    sessionSeconds: 3 * 60 * 60, // 3 hours
+    /** Hide solutions until the session ends. */
+    locked: true,
   },
 } as const;
 

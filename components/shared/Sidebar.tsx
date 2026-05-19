@@ -16,6 +16,10 @@ import {
   UserCircle2,
   Wand2,
   Bookmark,
+  Brain,
+  FileText,
+  BarChart3,
+  Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -33,7 +37,10 @@ const NAV: NavItem[] = [
   { href: "/dashboard/bookmarks", label: "Bookmarks", icon: Bookmark, emoji: "🔖" },
   { href: "/dashboard/predictor", label: "Predictor", icon: Sparkles, emoji: "🔮", hot: true },
   { href: "/dashboard/practice", label: "Practice", icon: Target, emoji: "🎯" },
-  { href: "/dashboard/generate", label: "Generate Qs", icon: Wand2, emoji: "🪄", hot: true },
+  { href: "/dashboard/doubt", label: "Ask AI", icon: Brain, emoji: "🤔", hot: true },
+  { href: "/dashboard/notes", label: "Revision Notes", icon: FileText, emoji: "📓" },
+  { href: "/dashboard/analytics", label: "My Progress", icon: BarChart3, emoji: "📊" },
+  { href: "/dashboard/generate", label: "Generate Qs", icon: Wand2, emoji: "🪄" },
   { href: "/dashboard/leaderboard", label: "Leaderboard", icon: Trophy, emoji: "🏆" },
   { href: "/dashboard/careers", label: "Careers", icon: GraduationCap, emoji: "💼" },
   { href: "/dashboard/colleges", label: "Colleges", icon: Building2, emoji: "🏛️" },
@@ -44,8 +51,11 @@ const NAV: NavItem[] = [
   { href: "/dashboard/profile", label: "Profile", icon: UserCircle2, emoji: "👤" },
 ];
 
-export function Sidebar() {
+export function Sidebar({ showAdmin = false }: { showAdmin?: boolean }) {
   const pathname = usePathname();
+  const items = showAdmin
+    ? [...NAV, { href: "/dashboard/admin", label: "Admin", icon: Shield, emoji: "🛡️" }]
+    : NAV;
 
   return (
     <aside className="hidden lg:flex sticky top-0 h-screen w-64 shrink-0 flex-col gap-2 border-r border-white/[0.06] bg-bg/60 backdrop-blur-xl px-4 py-6">
@@ -64,7 +74,7 @@ export function Sidebar() {
       </Link>
 
       <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto no-scrollbar">
-        {NAV.map((item) => {
+        {items.map((item) => {
           const active = pathname === item.href ||
             (item.href !== "/dashboard" && pathname.startsWith(item.href));
           return (

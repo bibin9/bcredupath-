@@ -7,6 +7,7 @@ import { Sidebar } from "@/components/shared/Sidebar";
 import { BottomNav } from "@/components/shared/BottomNav";
 import { TopBar } from "@/components/shared/TopBar";
 import { GradientBlobs } from "@/components/shared/GradientBlobs";
+import { isAdmin } from "@/lib/admin";
 
 export const dynamic = "force-dynamic";
 
@@ -23,10 +24,12 @@ export default async function DashboardLayout({
   if (!user) redirect("/login");
   if (!user.onboarded) redirect("/onboarding");
 
+  const admin = await isAdmin();
+
   return (
     <div className="relative flex min-h-screen">
       <GradientBlobs />
-      <Sidebar />
+      <Sidebar showAdmin={admin} />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar
           name={user.name}

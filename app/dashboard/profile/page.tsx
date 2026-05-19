@@ -9,7 +9,8 @@ import { StreakCounter } from "@/components/game/StreakCounter";
 import { BadgeChip } from "@/components/game/BadgeChip";
 import { rankFromXP, RANK_EMOJI, BADGES, type BadgeId } from "@/lib/gamification";
 import { LocaleToggle } from "@/components/shared/LocaleToggle";
-import { LogOut, Settings, Languages } from "lucide-react";
+import { ParentShareSettings } from "@/components/shared/ParentShareSettings";
+import { LogOut, Settings, Languages, Users } from "lucide-react";
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
@@ -90,6 +91,14 @@ export default async function ProfilePage() {
               <p className="text-xs text-white/55">Hindi + English support for key surfaces</p>
             </div>
             <LocaleToggle />
+          </div>
+
+          <div className="border-t border-white/[0.06] pt-4">
+            <div className="mb-2 flex items-center gap-2">
+              <Users className="h-4 w-4 text-neon-purple" />
+              <span className="font-semibold">Parent / guardian access</span>
+            </div>
+            <ParentShareSettings initialToken={user.parentShareToken} />
           </div>
 
           <div className="text-xs text-white/45">

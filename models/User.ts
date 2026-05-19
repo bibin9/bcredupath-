@@ -22,6 +22,9 @@ export interface IUser extends Document {
   interests: string[];
   careerPreferences: string[];
   onboarded: boolean;
+  parentShareToken?: string;
+  parentEmail?: string;
+  role?: "student" | "admin" | "teacher";
   practiceHistory: Array<{
     mode: string;
     score: number;
@@ -59,6 +62,9 @@ const userSchema = new Schema<IUser>(
     interests: { type: [String], default: [] },
     careerPreferences: { type: [String], default: [] },
     onboarded: { type: Boolean, default: false },
+    parentShareToken: { type: String, index: true, sparse: true },
+    parentEmail: { type: String },
+    role: { type: String, enum: ["student", "admin", "teacher"], default: "student" },
     practiceHistory: [
       {
         mode: String,

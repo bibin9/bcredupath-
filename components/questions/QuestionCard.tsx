@@ -30,6 +30,7 @@ export type QuestionDoc = {
   predictedProbability: number;
   xpReward: number;
   expectedTime: number;
+  verified?: boolean;
 };
 
 const diffColor: Record<QuestionDoc["difficulty"], string> = {
@@ -59,6 +60,14 @@ export function QuestionCard({
           Q{index + 1}
         </span>
         <PredictionBadge probability={q.predictedProbability} size="sm" />
+        {q.verified && (
+          <span
+            title="Teacher-verified question"
+            className="pill !px-2 !py-0 text-[10px] text-neon-green border-neon-green/40 bg-neon-green/10"
+          >
+            ✓ Verified
+          </span>
+        )}
         <span className="pill text-[10px]">{q.type}</span>
         <span className="pill text-[10px]">
           {q.marks} {q.marks === 1 ? "mark" : "marks"}
