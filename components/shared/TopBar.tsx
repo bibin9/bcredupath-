@@ -7,17 +7,20 @@ import { StreakCounter } from "@/components/game/StreakCounter";
 import { rankFromXP, RANK_EMOJI } from "@/lib/gamification";
 import { NotificationBell } from "./NotificationBell";
 import { SearchBar } from "./SearchBar";
+import { MobileMenu } from "./MobileMenu";
 
 export function TopBar({
   name,
   avatar,
   xp,
   streak,
+  showAdmin,
 }: {
   name: string;
   avatar: string;
   xp: number;
   streak: number;
+  showAdmin?: boolean;
 }) {
   const rank = rankFromXP(xp);
 
@@ -40,9 +43,10 @@ export function TopBar({
             {RANK_EMOJI[rank]} {rank}
           </span>
           <NotificationBell />
-          <Link href="/dashboard/profile" className="shrink-0">
+          <Link href="/dashboard/profile" className="hidden shrink-0 lg:block">
             <EmojiAvatar emoji={avatar} size="md" />
           </Link>
+          <MobileMenu showAdmin={showAdmin} />
         </div>
       </div>
 

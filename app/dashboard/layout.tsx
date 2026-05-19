@@ -36,6 +36,7 @@ export default async function DashboardLayout({
           avatar={user.avatar}
           xp={user.xp}
           streak={user.streak}
+          showAdmin={admin}
         />
         <main
           className="mx-auto w-full max-w-7xl flex-1 px-4 pt-4 lg:px-8 lg:pb-8"
