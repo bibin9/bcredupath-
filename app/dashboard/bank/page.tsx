@@ -5,6 +5,7 @@ import { connectDB } from "@/lib/db";
 import { User } from "@/models/User";
 import { Question } from "@/models/Question";
 import { SUBJECTS_BY_CLASS } from "@/lib/constants";
+import { resolveSubjectFilter } from "@/lib/chapter-mapping";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AiDisclaimer } from "@/components/shared/AiDisclaimer";
@@ -30,21 +31,29 @@ export default async function BankIndex() {
       ? SUBJECTS_BY_CLASS[10].all ?? []
       : (user.stream && SUBJECTS_BY_CLASS[12][user.stream]) ?? [];
 
-  const counts = await Question.aggregate([
-    { $match: { class: user.class } },
-    {
-      $group: {
-        _id: "$subject",
-        total: { $sum: 1 },
-        topProb: { $max: "$predictedProbability" },
-        hot: {
-          $sum: { $cond: [{ $gte: ["$predictedProbability", 0.7] }, 1, 0] },
+  // For each subject (including virtual sub-subjects like physics/biology
+  // that map to chapters of the combined science paper), count questions.
+  const statsPairs = await Promise.all(
+    subjects.map(async (s) => {
+      const filter = resolveSubjectFilter(s.id, (user.class ?? 10) as 10 | 12);
+      const match: Record<string, unknown> = { class: user.class, ...filter };
+      const docs = await Question.aggregate([
+        { $match: match },
+        {
+          $group: {
+            _id: null,
+            total: { $sum: 1 },
+            topProb: { $max: "$predictedProbability" },
+            hot: { $sum: { $cond: [{ $gte: ["$predictedProbability", 0.7] }, 1, 0] } },
+          },
         },
-      },
-    },
-  ]);
+      ]);
+      const d = docs[0];
+      return [s.id, d ? { total: d.total, topProb: d.topProb ?? 0, hot: d.hot ?? 0 } : null] as const;
+    })
+  );
   const byId = new Map<string, { total: number; topProb: number; hot: number }>();
-  counts.forEach((c) => byId.set(c._id, { total: c.total, topProb: c.topProb, hot: c.hot }));
+  for (const [id, stats] of statsPairs) if (stats) byId.set(id, stats);
 
   return (
     <div className="space-y-6">
@@ -62,7 +71,7 @@ export default async function BankIndex() {
         </div>
         <div className="card-glass !p-3 text-right text-xs text-white/65">
           <div className="font-display text-2xl font-bold text-neon-cyan">
-            {counts.reduce((sum, c) => sum + c.total, 0)}
+            {await Question.countDocuments({ class: user.class })}
           </div>
           <div>questions indexed</div>
         </div>
@@ -111,7 +120,7 @@ export default async function BankIndex() {
         })}
       </div>
 
-      {counts.length === 0 && (
+      {byId.size === 0 && (
         <div className="card-glass text-center text-sm text-white/65">
           No questions seeded yet. Run{" "}
           <code className="rounded bg-white/10 px-1.5 py-0.5 text-neon-cyan">npm run seed</code>{" "}

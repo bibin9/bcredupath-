@@ -5,6 +5,7 @@ import { connectDB } from "@/lib/db";
 import { User } from "@/models/User";
 import { Question } from "@/models/Question";
 import { PRACTICE_MODES, isPracticeMode } from "@/lib/practice-modes";
+import { resolveSubjectFilter } from "@/lib/chapter-mapping";
 
 export const dynamic = "force-dynamic";
 
@@ -30,10 +31,14 @@ export async function GET(req: Request) {
 
   const user = await User.findOne({ email: session.user.email.toLowerCase() }).lean();
   if (!user) return NextResponse.json({ error: "User not found" }, { status: 404 });
-  const cls = user.class ?? 10;
+  const cls = (user.class ?? 10) as 10 | 12;
 
   const base: Record<string, unknown> = { class: cls };
-  if (subjectFilter) base.subject = subjectFilter;
+  if (subjectFilter) {
+    const resolved = resolveSubjectFilter(subjectFilter, cls);
+    base.subject = resolved.subject;
+    if (resolved.chapter) base.chapter = resolved.chapter;
+  }
 
   const config = PRACTICE_MODES[mode];
   let questions;

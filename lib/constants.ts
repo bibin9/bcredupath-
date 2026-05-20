@@ -32,8 +32,15 @@ export const SUBJECTS_BY_CLASS: Record<
   10: {
     all: [
       { id: "math", name: "Mathematics", emoji: "📐", color: "neon-cyan" },
-      { id: "science", name: "Science", emoji: "🔬", color: "neon-green" },
-      { id: "sst", name: "Social Science", emoji: "🌍", color: "neon-yellow" },
+      // Science strand split — chapter-driven, queries science questions
+      { id: "physics", name: "Physics", emoji: "⚛️", color: "neon-cyan" },
+      { id: "chemistry", name: "Chemistry", emoji: "🧪", color: "neon-green" },
+      { id: "biology", name: "Biology", emoji: "🧬", color: "neon-pink" },
+      // Social Science strand split
+      { id: "history", name: "History", emoji: "🏛️", color: "neon-yellow" },
+      { id: "geography", name: "Geography", emoji: "🗺️", color: "neon-cyan" },
+      { id: "civics", name: "Civics", emoji: "🗳️", color: "neon-purple" },
+      { id: "economics", name: "Economics", emoji: "📈", color: "neon-green" },
       { id: "english", name: "English", emoji: "📖", color: "neon-pink" },
       { id: "hindi", name: "Hindi", emoji: "📜", color: "neon-purple" },
     ],

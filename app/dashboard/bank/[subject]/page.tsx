@@ -6,6 +6,7 @@ import { connectDB } from "@/lib/db";
 import { User } from "@/models/User";
 import { Question } from "@/models/Question";
 import { SUBJECTS_BY_CLASS } from "@/lib/constants";
+import { resolveSubjectFilter } from "@/lib/chapter-mapping";
 import { Filters } from "@/components/questions/Filters";
 import { QuestionCard, type QuestionDoc } from "@/components/questions/QuestionCard";
 import { AiDisclaimer } from "@/components/shared/AiDisclaimer";
@@ -44,21 +45,29 @@ export default async function SubjectBankPage({
   const subject = allSubjects.find((s) => s.id === params.subject);
   if (!subject) notFound();
 
-  const cls = user.class ?? 10;
-  const filter: Record<string, unknown> = { subject: params.subject, class: cls };
-  if (searchParams.chapter) filter.chapter = searchParams.chapter;
+  const cls = (user.class ?? 10) as 10 | 12;
+  const resolved = resolveSubjectFilter(params.subject, cls);
+  const filter: Record<string, unknown> = { class: cls, subject: resolved.subject };
+  if (searchParams.chapter) {
+    filter.chapter = searchParams.chapter; // explicit chapter from filter UI wins
+  } else if (resolved.chapter) {
+    filter.chapter = resolved.chapter; // strand-restricted (Physics → physics chapters)
+  }
   if (searchParams.type) filter.type = searchParams.type;
   if (searchParams.difficulty) filter.difficulty = searchParams.difficulty;
   if (searchParams.marks) filter.marks = Number(searchParams.marks);
   if (searchParams.year) filter.yearsAsked = Number(searchParams.year);
 
+  // Chapters listing — restrict to the strand if user opened a sub-subject
+  const chapterMatch: Record<string, unknown> = { class: cls, subject: resolved.subject };
+  if (resolved.chapter) chapterMatch.chapter = resolved.chapter;
   const [questionsRaw, chaptersRaw, total] = await Promise.all([
     Question.find(filter)
       .sort({ predictedProbability: -1, createdAt: -1 })
       .limit(50)
       .lean(),
     Question.aggregate([
-      { $match: { subject: params.subject, class: cls } },
+      { $match: chapterMatch },
       {
         $group: {
           _id: "$chapter",
