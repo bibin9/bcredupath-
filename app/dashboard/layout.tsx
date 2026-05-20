@@ -7,6 +7,7 @@ import { Sidebar } from "@/components/shared/Sidebar";
 import { BottomNav } from "@/components/shared/BottomNav";
 import { TopBar } from "@/components/shared/TopBar";
 import { GradientBlobs } from "@/components/shared/GradientBlobs";
+import { BetaBanner } from "@/components/shared/BetaBanner";
 import { isAdmin } from "@/lib/admin";
 
 export const dynamic = "force-dynamic";
@@ -42,6 +43,7 @@ export default async function DashboardLayout({
           className="mx-auto w-full max-w-7xl flex-1 px-4 pt-4 lg:px-8 lg:pb-8"
           style={{ paddingBottom: "calc(6rem + env(safe-area-inset-bottom))" }}
         >
+          <BetaBanner />
           {children}
         </main>
       </div>
