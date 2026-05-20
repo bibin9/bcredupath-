@@ -135,14 +135,18 @@ export function MobileMenu({ showAdmin = false }: { showAdmin?: boolean }) {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 280 }}
-              className="fixed right-0 top-0 z-[61] flex h-full w-[min(85vw,360px)] flex-col border-l border-white/[0.10] bg-bg-2/98 backdrop-blur-2xl lg:hidden"
+              className="fixed right-0 top-0 z-[61] flex w-[min(85vw,360px)] flex-col border-l border-white/[0.10] bg-bg-2/98 backdrop-blur-2xl lg:hidden"
               style={{
+                // 100dvh = dynamic viewport height (handles iOS Safari address bar resize).
+                // Falls back to 100vh on older browsers.
+                height: "100dvh",
+                maxHeight: "100vh",
                 paddingTop: "env(safe-area-inset-top)",
                 paddingBottom: "env(safe-area-inset-bottom)",
               }}
             >
               {/* Header */}
-              <div className="flex items-center justify-between border-b border-white/[0.06] px-4 py-3">
+              <div className="flex shrink-0 items-center justify-between border-b border-white/[0.06] px-4 py-3">
                 <div className="flex items-center gap-2">
                   <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-grad-pink-purple text-lg shadow-glow-pink">
                     🎯
@@ -165,8 +169,11 @@ export function MobileMenu({ showAdmin = false }: { showAdmin?: boolean }) {
                 </button>
               </div>
 
-              {/* Grouped nav */}
-              <nav className="flex-1 overflow-y-auto p-3">
+              {/* Grouped nav — min-h-0 is critical for flex-1 + overflow-y-auto on iOS Safari */}
+              <nav
+                className="min-h-0 flex-1 overflow-y-auto overscroll-contain p-3"
+                style={{ WebkitOverflowScrolling: "touch" }}
+              >
                 {Array.from(groups.entries()).map(([group, items]) => (
                   <div key={group} className="mb-4">
                     <div className="mb-1.5 px-2 text-[10px] font-bold uppercase tracking-widest text-white/45">
@@ -207,17 +214,17 @@ export function MobileMenu({ showAdmin = false }: { showAdmin?: boolean }) {
                 ))}
               </nav>
 
-              {/* Footer — install CTA */}
-              <div className="border-t border-white/[0.06] p-3">
+              {/* Footer — install CTA (compact so the nav has room to scroll) */}
+              <div className="shrink-0 border-t border-white/[0.06] p-2">
                 <Link
                   href="/dashboard/install"
-                  className="flex items-center gap-3 rounded-2xl border border-neon-pink/25 bg-neon-pink/8 p-3 transition-all hover:bg-neon-pink/15"
+                  className="flex items-center gap-2 rounded-2xl border border-neon-pink/25 bg-neon-pink/8 px-3 py-2 transition-all hover:bg-neon-pink/15"
                 >
-                  <span className="text-2xl">📲</span>
+                  <span className="text-lg">📲</span>
                   <div className="flex-1">
-                    <div className="text-sm font-semibold">Install as app</div>
-                    <div className="text-[10px] text-white/55">
-                      Daily reminders, work offline
+                    <div className="text-xs font-semibold">Install as app</div>
+                    <div className="text-[9px] text-white/55">
+                      Work offline · never miss a streak
                     </div>
                   </div>
                 </Link>
