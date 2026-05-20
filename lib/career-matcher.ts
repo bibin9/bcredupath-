@@ -14,14 +14,36 @@ export type MatchResult = {
 /**
  * Compute a fit score for a career given user interest tags + preferred subjects.
  *
- *   interest_score (70% weight) = overlap of interest tags / career.interestTags.length
- *   subject_score  (30% weight) = overlap of subjects   / career.preferredSubjects.length
+ * Uses F1-style harmonic mean of precision (career-fit) and recall (user-fit)
+ * for the interest component, so:
+ *   • broad careers with many tags aren't unfairly penalised by 1/N
+ *   • a user with many interests still gets a sharp differentiation between
+ *     careers that match them tightly vs. loosely
  *
- * If user picked subjects AND career has preferredSubjects defined, both are
- * blended. Otherwise we fall back to whichever signal we have.
+ *   precision = matched / career.interestTags.length     (how much of the role fits user)
+ *   recall    = matched / user.interestTags.size         (how well user is served)
+ *   interest_F1 = 2·P·R / (P+R)
+ *
+ *   subject_F1 = same recipe on preferredSubjects ∩ user.subjects
+ *
+ * Final blend:
+ *   • both signals present  → 0.6 · interest_F1 + 0.4 · subject_F1
+ *   • only interests        → interest_F1
+ *   • only subjects         → subject_F1
+ *
+ * Plus a small bonus (+0.05 capped at 1.0) if the career has ≥ 3 matched
+ * interest tags — rewards careers that hit multiple distinct facets of the
+ * student's profile.
  *
  * Tags beginning with `q:` are quiz-question IDs from onboarding — ignored.
  */
+function f1(matched: number, careerLen: number, userLen: number): number {
+  if (matched === 0 || careerLen === 0 || userLen === 0) return 0;
+  const precision = matched / careerLen;
+  const recall = matched / userLen;
+  return (2 * precision * recall) / (precision + recall);
+}
+
 export function scoreCareer(
   career: Pick<ICareer, "interestTags" | "preferredSubjects">,
   userInterests: string[],
@@ -31,25 +53,32 @@ export function scoreCareer(
   if (userTags.size === 0 && userSubjects.length === 0) return 0;
 
   // Interest component
-  const interestOverlap = career.interestTags.filter((t) => userTags.has(t)).length;
-  const interestScore =
-    career.interestTags.length > 0
-      ? interestOverlap / career.interestTags.length
-      : 0;
+  const interestMatched = career.interestTags.filter((t) => userTags.has(t)).length;
+  const interestF1 = f1(interestMatched, career.interestTags.length, userTags.size);
 
   // Subject component
   const careerSubjects = career.preferredSubjects ?? [];
   const subjectsLC = new Set(userSubjects.map((s) => s.toLowerCase()));
-  const subjectOverlap = careerSubjects.filter((s) => subjectsLC.has(s.toLowerCase())).length;
-  const subjectScore =
-    careerSubjects.length > 0 ? subjectOverlap / careerSubjects.length : 0;
+  const subjectMatched = careerSubjects.filter((s) => subjectsLC.has(s.toLowerCase())).length;
+  const subjectF1 = f1(subjectMatched, careerSubjects.length, userSubjects.length);
 
   const haveSubjects = userSubjects.length > 0 && careerSubjects.length > 0;
-  if (haveSubjects && userTags.size > 0) {
-    return 0.7 * interestScore + 0.3 * subjectScore;
+  const haveInterests = userTags.size > 0 && career.interestTags.length > 0;
+
+  let blended = 0;
+  if (haveSubjects && haveInterests) {
+    blended = 0.6 * interestF1 + 0.4 * subjectF1;
+  } else if (haveSubjects) {
+    blended = subjectF1;
+  } else {
+    blended = interestF1;
   }
-  if (haveSubjects) return subjectScore;
-  return interestScore;
+
+  // Reward careers that hit ≥3 distinct interest facets
+  if (interestMatched >= 3) blended = Math.min(1, blended + 0.05);
+  if (interestMatched >= 5) blended = Math.min(1, blended + 0.05);
+
+  return blended;
 }
 
 export function matchedTagsFor(
@@ -118,4 +147,16 @@ export const CAREER_QUIZ = [
   { id: "cq18", text: "Travel, hospitality, or running a hotel sounds exciting", emoji: "🏨", tags: ["commerce", "social", "management"] },
   { id: "cq19", text: "I'd teach for the joy of seeing someone learn", emoji: "🎓", tags: ["social", "humanities"] },
   { id: "cq20", text: "I want to build AI/ML systems or work in research labs", emoji: "🤖", tags: ["math", "tech", "cs", "research", "logic"] },
+
+  /* ─── Specialty differentiators (10 extra Qs) ─── */
+  { id: "cq21", text: "Hearts, lungs, surgery — the body's inner workings amaze me", emoji: "🫀", tags: ["surgery", "medical", "biology", "anatomy"] },
+  { id: "cq22", text: "I'd specialise in mental health and brains over physical injury", emoji: "🧠", tags: ["mental-health", "psychology", "neuro", "medical"] },
+  { id: "cq23", text: "Working with kids matters more to me than working with adults", emoji: "👶", tags: ["children", "pediatric", "education", "social"] },
+  { id: "cq24", text: "I'd love to work in agriculture, food systems, or rural India", emoji: "🌾", tags: ["agriculture", "rural", "biology", "social"] },
+  { id: "cq25", text: "Flying planes, ships, or operating big machines sounds incredible", emoji: "✈️", tags: ["aviation", "defense", "engineering", "operations"] },
+  { id: "cq26", text: "I want a stable govt job — banking, PSU, civil services", emoji: "🏦", tags: ["govt", "banking", "stable", "commerce"] },
+  { id: "cq27", text: "Sustainability and climate change is THE problem of our time", emoji: "🌱", tags: ["climate", "sustainability", "research", "social"] },
+  { id: "cq28", text: "I'd happily work in a hospital lab over a patient-facing role", emoji: "🧫", tags: ["lab", "diagnostics", "research", "medical"] },
+  { id: "cq29", text: "Numbers and statistics excite me more than abstract math", emoji: "📊", tags: ["stats", "data", "math", "analytics"] },
+  { id: "cq30", text: "Fitness, sports, or human performance is my obsession", emoji: "💪", tags: ["fitness", "sports", "health", "biology"] },
 ] as const;

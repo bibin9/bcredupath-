@@ -391,6 +391,141 @@ export const ROADMAP_OVERRIDES: Record<string, CareerRoadmap> = {
     postgrad: [{ degree: "MBA Real Estate (RICS / NICMAR) — optional but useful", duration: "2 years", entranceExams: ["CAT", "RICS entrance"] }],
     finalRole: "Real Estate Developer — family business / REIT / urban planning consultancy.",
   },
+
+  /* ── New careers (govt, agri, allied health, niche tech, defense, education) ── */
+  "Bank PO / Banking Officer": {
+    class12: { stream: "Any", coreSubjects: ["Math", "English"] },
+    undergrad: [{ degree: "Any UG (B.Com / BBA / B.A. common)", duration: "3 years" }],
+    postgrad: [{ degree: "IBPS PO / SBI PO preparation", duration: "6-12 months", entranceExams: ["IBPS PO", "SBI PO"] }],
+    finalRole: "PO → Manager → Chief Manager → AGM → DGM → GM at PSU bank.",
+  },
+  "RBI Grade B Officer": {
+    class12: { stream: "Commerce / Humanities", coreSubjects: ["Economics", "Math", "English"], minScore: "70%+" },
+    undergrad: [{ degree: "BA Economics / B.Com / B.Stat", duration: "3 years", entranceExams: ["CUET UG", "DU / SRCC / ISI entrance"] }],
+    postgrad: [{ degree: "RBI Grade B prep (Phase I + II + III)", duration: "1-2 years", entranceExams: ["RBI Grade B"] }],
+    finalRole: "RBI Grade B Officer — Mumbai HQ / Regional Office → CGM → ED → Deputy Governor.",
+  },
+  "SSC CGL Officer (Income Tax / Customs / Audit)": {
+    class12: { stream: "Any", coreSubjects: ["Math", "English", "GS"] },
+    undergrad: [{ degree: "Any UG degree", duration: "3 years" }],
+    postgrad: [{ degree: "SSC CGL prep (Tier I-IV)", duration: "1-2 years", entranceExams: ["SSC CGL"] }],
+    finalRole: "Inspector / Examiner → AC → DC → Joint Commissioner in IT / Customs / CAG.",
+  },
+  "Agricultural Scientist": {
+    class10: { focus: "Strong Bio + Chem fundamentals + interest in plants/soil", minScore: "70%+" },
+    class12: { stream: "PCB / PCMB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+    undergrad: [{ degree: "B.Sc Agriculture (4 yr)", duration: "4 years", entranceExams: ["ICAR AIEEA", "State CET"] }],
+    postgrad: [{ degree: "M.Sc Agronomy / Soil Science / Genetics → PhD", duration: "2 + 4 years", entranceExams: ["ICAR AIEEA PG", "ICAR ARS"] }],
+    finalRole: "Agricultural Scientist — ICAR institutes, agri-tech startup, FAO / state agri dept.",
+  },
+  "Horticulturist / Floriculturist": {
+    class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+    undergrad: [{ degree: "B.Sc Horticulture (4 yr)", duration: "4 years", entranceExams: ["ICAR AIEEA"] }],
+    postgrad: [{ degree: "M.Sc Horticulture / specialisation", duration: "2 years" }],
+    finalRole: "Horticulturist — polyhouse / export farm / govt horticulture mission.",
+  },
+  "Dairy Technologist / Food Technologist": {
+    class12: { stream: "PCM / PCMB", coreSubjects: ["Math", "Physics", "Chemistry", "Biology (helpful)"] },
+    undergrad: [{ degree: "B.Tech Dairy Tech / Food Tech", duration: "4 years", entranceExams: ["ICAR AIEEA", "JEE Main"] }],
+    postgrad: [{ degree: "M.Tech Food Process Eng / Dairy Sci", duration: "2 years" }],
+    finalRole: "Food / Dairy Technologist — Amul, ITC, Nestle, Britannia, CFTRI.",
+  },
+  "Oncologist (Cancer Specialist)": {
+    class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"], minScore: "85%+ NEET cutoff" },
+    undergrad: [{ degree: "MBBS", duration: "5.5 years", entranceExams: ["NEET UG"] }],
+    postgrad: [
+      { degree: "MD Medicine / MS Surgery / MD Radiotherapy", duration: "3 years", entranceExams: ["NEET PG"] },
+      { degree: "DM Medical Oncology / MCh Surgical Oncology / DMRT", duration: "3 years", entranceExams: ["NEET SS"] },
+    ],
+    finalRole: "Oncologist — Tata Memorial / Apollo Onco / HCG / govt cancer institute.",
+  },
+  "ENT Specialist (Otorhinolaryngologist)": {
+    class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+    undergrad: [{ degree: "MBBS", duration: "5.5 years", entranceExams: ["NEET UG"] }],
+    postgrad: [{ degree: "MS Otorhinolaryngology", duration: "3 years", entranceExams: ["NEET PG"] }],
+    finalRole: "ENT Surgeon — hospital + private practice.",
+  },
+  "Ophthalmologist (Eye Surgeon)": {
+    class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+    undergrad: [{ degree: "MBBS", duration: "5.5 years", entranceExams: ["NEET UG"] }],
+    postgrad: [{ degree: "MS Ophthalmology / DOMS", duration: "3 years", entranceExams: ["NEET PG"] }],
+    finalRole: "Eye Surgeon — Aravind / LV Prasad / Sankara / private practice.",
+  },
+  Urologist: {
+    class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+    undergrad: [{ degree: "MBBS", duration: "5.5 years", entranceExams: ["NEET UG"] }],
+    postgrad: [
+      { degree: "MS General Surgery", duration: "3 years", entranceExams: ["NEET PG"] },
+      { degree: "MCh Urology", duration: "3 years", entranceExams: ["NEET SS"] },
+    ],
+    finalRole: "Urologist — robotic surgery + transplant + private hospital chains.",
+  },
+  "Counseling Psychologist": {
+    class12: { stream: "Any (Humanities common)", coreSubjects: ["Psychology", "English"] },
+    undergrad: [{ degree: "BA Psychology", duration: "3 years", entranceExams: ["CUET UG"] }],
+    postgrad: [{ degree: "MA Counseling Psychology + supervised internship", duration: "2 years + 1000 hrs", entranceExams: ["CUET PG"] }],
+    finalRole: "Counseling Psychologist — schools / corporate wellness / D2C therapy apps / private practice.",
+  },
+  "Medical Lab Technologist (MLT)": {
+    class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+    undergrad: [{ degree: "B.Sc MLT (3 yr) / DMLT diploma (2 yr)", duration: "2-3 years", entranceExams: ["AIIMS BSc", "CUET UG"] }],
+    postgrad: [{ degree: "M.Sc MLT / specialisation (optional)", duration: "2 years" }],
+    finalRole: "Lab Tech → Senior MLT → Lab Manager → Lab Director.",
+  },
+  "Radiographer / X-Ray Tech": {
+    class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+    undergrad: [{ degree: "B.Sc Radiography / BMRIT", duration: "3-4 years", entranceExams: ["AIIMS BSc", "CUET UG"] }],
+    postgrad: [{ degree: "M.Sc Medical Imaging Tech (optional)", duration: "2 years" }],
+    finalRole: "Radiographer — hospital imaging dept / Gulf or UK NHS abroad.",
+  },
+  "Yoga / Wellness Instructor": {
+    class12: { stream: "Any", coreSubjects: ["Any"] },
+    undergrad: [{ degree: "RYT-200 / B.Sc Yoga / SVYASA BA Yoga", duration: "6 months - 3 years" }],
+    postgrad: [{ degree: "RYT-500 / M.Sc Yoga / Therapy specialisation", duration: "1-2 years" }],
+    finalRole: "Yoga Instructor — studio / online coach / retreat owner / corporate wellness.",
+  },
+  "Personal / Fitness Trainer": {
+    class12: { stream: "Any", coreSubjects: ["Biology (helpful)", "Physical Education"] },
+    undergrad: [{ degree: "ACE / NASM / ISSA certification (3-12 months) — parallel to UG", duration: "3-12 months" }, { degree: "B.Sc Sports Science (optional)", duration: "3 years" }],
+    finalRole: "Trainer — Cult / Fittr / online coach / sports team strength coach.",
+  },
+  "Hardware / VLSI Engineer": {
+    class12: { stream: "PCM", coreSubjects: ["Math", "Physics", "Chemistry"], minScore: "85%+ for top colleges" },
+    undergrad: [{ degree: "B.Tech ECE / Electrical Engineering", duration: "4 years", entranceExams: ["JEE Main", "JEE Advanced"] }],
+    postgrad: [{ degree: "M.Tech VLSI / Embedded Systems", duration: "2 years", entranceExams: ["GATE", "GRE"] }],
+    finalRole: "Chip Designer — Nvidia / Intel / AMD / Qualcomm / ISRO.",
+  },
+  "Mathematician / Statistician": {
+    class10: { focus: "Master your math fundamentals — Olympiad-style problem solving helps" },
+    class12: { stream: "PCM", coreSubjects: ["Math", "Physics", "Chemistry"], minScore: "Strong math culture" },
+    undergrad: [{ degree: "B.Stat (ISI) / B.Sc Math (IISER, CMI, ISI)", duration: "3-4 years", entranceExams: ["ISI Admission", "CMI entrance", "IISER Aptitude"] }],
+    postgrad: [{ degree: "M.Stat / M.Sc Math + PhD", duration: "2 + 4-5 years", entranceExams: ["IIT JAM", "TIFR GS", "GRE"] }],
+    finalRole: "Mathematician / Statistician — academia (IISc, ISI) / ISS / quant finance / FAANG.",
+  },
+  Actuary: {
+    class12: { stream: "PCM / Commerce-with-Math", coreSubjects: ["Math", "Economics (helpful)"] },
+    undergrad: [{ degree: "B.Sc Math / B.Com / B.A. Economics", duration: "3 years", entranceExams: ["CUET UG"] }],
+    postgrad: [{ degree: "Actuarial fellowship (13 IAI papers)", duration: "5-10 years", entranceExams: ["ACET", "IAI papers"] }],
+    finalRole: "Qualified Actuary — LIC, GIC, big-4 actuarial consulting, insurance pricing.",
+  },
+  "Merchant Navy Officer": {
+    class12: { stream: "PCM", coreSubjects: ["Math", "Physics", "Chemistry", "English"], minScore: "50%+ + DG Shipping medical fitness" },
+    undergrad: [{ degree: "B.Sc Nautical Science / B.Tech Marine Engineering", duration: "3-4 years", entranceExams: ["IMU CET", "JEE Main"] }],
+    postgrad: [{ degree: "DG Shipping certificate of competency (post sea-time)", duration: "Progressive certifications" }],
+    finalRole: "3rd Officer → 2nd Officer → Chief Officer → Captain.",
+  },
+  "Air Traffic Controller": {
+    class12: { stream: "PCM", coreSubjects: ["Math", "Physics", "English"] },
+    undergrad: [{ degree: "B.E./B.Tech (any engineering)", duration: "4 years", entranceExams: ["JEE Main"] }],
+    postgrad: [{ degree: "AAI ATC Junior Executive recruitment + CATC Allahabad training", duration: "1 year training", entranceExams: ["AAI ATC exam"] }],
+    finalRole: "ATC Officer — Mumbai / Delhi / Bangalore ATC → Senior Controller → APD.",
+  },
+  "Special Educator (Learning Disabilities)": {
+    class12: { stream: "Any (Humanities + Psychology helpful)", coreSubjects: ["Psychology", "English"] },
+    undergrad: [{ degree: "BA Psychology / BA Special Ed", duration: "3 years" }],
+    postgrad: [{ degree: "B.Ed Special Education (2 yr) — RCI registered", duration: "2 years" }],
+    finalRole: "Special Educator — inclusive school / autism centre / early intervention clinic.",
+  },
 };
 
 /**
