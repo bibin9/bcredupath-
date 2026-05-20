@@ -22,6 +22,7 @@ import {
   Shield,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useIsStandalone } from "@/lib/hooks/useIsStandalone";
 
 type NavItem = {
   href: string;
@@ -53,6 +54,7 @@ const NAV: NavItem[] = [
 
 export function Sidebar({ showAdmin = false }: { showAdmin?: boolean }) {
   const pathname = usePathname();
+  const standalone = useIsStandalone();
   const items = showAdmin
     ? [...NAV, { href: "/dashboard/admin", label: "Admin", icon: Shield, emoji: "🛡️" }]
     : NAV;
@@ -103,21 +105,23 @@ export function Sidebar({ showAdmin = false }: { showAdmin?: boolean }) {
         })}
       </nav>
 
-      <Link
-        href="/dashboard/install"
-        className="card-glass card-glass-hover mt-2 block p-4"
-      >
-        <div className="mb-2 flex items-center gap-2 text-sm">
-          <span className="text-xl">📲</span>
-          <span className="font-semibold">Install the app</span>
-        </div>
-        <p className="text-xs text-white/55">
-          Get daily reminders, work offline, never miss a streak.
-        </p>
-        <div className="mt-2 text-xs font-semibold text-neon-cyan">
-          See how →
-        </div>
-      </Link>
+      {!standalone && (
+        <Link
+          href="/dashboard/install"
+          className="card-glass card-glass-hover mt-2 block p-4"
+        >
+          <div className="mb-2 flex items-center gap-2 text-sm">
+            <span className="text-xl">📲</span>
+            <span className="font-semibold">Install the app</span>
+          </div>
+          <p className="text-xs text-white/55">
+            Get daily reminders, work offline, never miss a streak.
+          </p>
+          <div className="mt-2 text-xs font-semibold text-neon-cyan">
+            See how →
+          </div>
+        </Link>
+      )}
     </aside>
   );
 }

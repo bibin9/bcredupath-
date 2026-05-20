@@ -10,7 +10,8 @@ import { BadgeChip } from "@/components/game/BadgeChip";
 import { rankFromXP, RANK_EMOJI, BADGES, type BadgeId } from "@/lib/gamification";
 import { LocaleToggle } from "@/components/shared/LocaleToggle";
 import { ParentShareSettings } from "@/components/shared/ParentShareSettings";
-import { LogOut, Settings, Languages, Users, Smartphone, ChevronRight } from "lucide-react";
+import { InstallSettingsRow } from "@/components/shared/InstallSettingsRow";
+import { LogOut, Settings, Languages, Users } from "lucide-react";
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
@@ -93,19 +94,7 @@ export default async function ProfilePage() {
             <LocaleToggle />
           </div>
 
-          <Link
-            href="/dashboard/install"
-            className="flex items-center gap-3 rounded-2xl border border-white/[0.06] bg-white/[0.03] p-3 transition-all hover:border-neon-pink/30 hover:bg-neon-pink/8"
-          >
-            <Smartphone className="h-4 w-4 text-neon-pink" />
-            <div className="flex-1">
-              <div className="text-sm font-semibold">Install as app 📲</div>
-              <div className="text-xs text-white/55">
-                Add to home screen — works offline, opens like a real app.
-              </div>
-            </div>
-            <ChevronRight className="h-4 w-4 text-white/45" />
-          </Link>
+          <InstallSettingsRow />
 
           <div className="border-t border-white/[0.06] pt-4">
             <div className="mb-2 flex items-center gap-2">

@@ -27,6 +27,7 @@ import {
   UserCircle2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useIsStandalone } from "@/lib/hooks/useIsStandalone";
 
 type Item = {
   href: string;
@@ -68,6 +69,7 @@ const NAV: Item[] = [
 export function MobileMenu({ showAdmin = false }: { showAdmin?: boolean }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const standalone = useIsStandalone();
 
   // Close on route change
   useEffect(() => {
@@ -93,9 +95,13 @@ export function MobileMenu({ showAdmin = false }: { showAdmin?: boolean }) {
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
-  const items = showAdmin
+  const allItems = showAdmin
     ? [...NAV, { href: "/dashboard/admin", label: "Admin", icon: Shield, emoji: "🛡️", group: "App" as const }]
     : NAV;
+  // Hide "Install App" entry when already running as installed PWA
+  const items = standalone
+    ? allItems.filter((i) => i.href !== "/dashboard/install")
+    : allItems;
 
   // Group items
   const groups = new Map<string, Item[]>();
@@ -214,7 +220,8 @@ export function MobileMenu({ showAdmin = false }: { showAdmin?: boolean }) {
                 ))}
               </nav>
 
-              {/* Footer — install CTA (compact so the nav has room to scroll) */}
+              {/* Footer — install CTA (hidden when running as installed PWA) */}
+              {!standalone && (
               <div className="shrink-0 border-t border-white/[0.06] p-2">
                 <Link
                   href="/dashboard/install"
@@ -229,6 +236,7 @@ export function MobileMenu({ showAdmin = false }: { showAdmin?: boolean }) {
                   </div>
                 </Link>
               </div>
+              )}
             </motion.aside>
           </>
         )}
