@@ -219,21 +219,54 @@ type, marks, difficulty, question, options, answer, solution { steps, commonMist
 function safeParseJson(text) {
   let s = text.trim();
   s = s.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "").trim();
+  // Direct parse
   try {
     const parsed = JSON.parse(s);
     if (Array.isArray(parsed)) return parsed;
     if (Array.isArray(parsed?.questions)) return parsed.questions;
-    return null;
-  } catch {
-    const start = s.indexOf("[");
-    const end = s.lastIndexOf("]");
-    if (start !== -1 && end > start) {
-      try {
-        return JSON.parse(s.slice(start, end + 1));
-      } catch {}
-    }
-    return null;
+  } catch {}
+  // Try slicing between first [ and last ]
+  const start = s.indexOf("[");
+  const end = s.lastIndexOf("]");
+  if (start !== -1 && end > start) {
+    try {
+      return JSON.parse(s.slice(start, end + 1));
+    } catch {}
   }
+  // Truncated response — try to salvage complete top-level objects.
+  // Walk from start, track brace depth, collect every closed object at depth=0 (inside the array).
+  if (start !== -1) {
+    const inner = s.slice(start + 1);
+    const out = [];
+    let depth = 0;
+    let inStr = false;
+    let escape = false;
+    let objStart = -1;
+    for (let i = 0; i < inner.length; i++) {
+      const ch = inner[i];
+      if (escape) { escape = false; continue; }
+      if (inStr) {
+        if (ch === "\\") escape = true;
+        else if (ch === '"') inStr = false;
+        continue;
+      }
+      if (ch === '"') { inStr = true; continue; }
+      if (ch === "{") {
+        if (depth === 0) objStart = i;
+        depth++;
+      } else if (ch === "}") {
+        depth--;
+        if (depth === 0 && objStart !== -1) {
+          try {
+            out.push(JSON.parse(inner.slice(objStart, i + 1)));
+          } catch {}
+          objStart = -1;
+        }
+      }
+    }
+    if (out.length > 0) return out;
+  }
+  return null;
 }
 
 function validate(q) {
@@ -274,7 +307,7 @@ async function generateChapter(chapter) {
     () =>
       anthropic.messages.create({
         model: MODEL,
-        max_tokens: 8000,
+        max_tokens: 16000,
         messages: [{ role: "user", content: prompt }],
       }),
     `${chapter.subject}/${chapter.chapter}`
@@ -286,7 +319,8 @@ async function generateChapter(chapter) {
     .join("");
   const parsed = safeParseJson(text);
   if (!parsed) {
-    console.error(`  ❌ ${chapter.subject}/${chapter.chapter} — could not parse JSON`);
+    console.error(`  ❌ ${chapter.subject}/${chapter.chapter} — could not parse JSON. Tail of response (last 250 chars):`);
+    console.error(`    ...${text.slice(-250)}`);
     return { questions: [], usage: resp.usage };
   }
 

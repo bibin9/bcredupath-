@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Send, Loader2, Sparkles, ThumbsUp, ThumbsDown, Trash2 } from "lucide-react";
+import { Send, Loader2, Sparkles, ThumbsUp, ThumbsDown, Trash2, History } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { Latex } from "@/components/questions/Latex";
@@ -15,6 +15,8 @@ type Doubt = {
   answer: string;
   helpful?: boolean | null;
   createdAt?: Date | string;
+  /** True if this came from server history rather than the current session */
+  _past?: boolean;
 };
 
 type Subject = { id: string; name: string; emoji: string };
@@ -30,18 +32,38 @@ export function DoubtForm({ subjects }: { subjects: Subject[] }) {
   const [question, setQuestion] = useState("");
   const [subject, setSubject] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  // Current session only — fresh page = empty canvas. Past doubts are still
+  // in DB and can be loaded on demand via "View previous" below.
   const [history, setHistory] = useState<Doubt[]>([]);
-  const [loadingHistory, setLoadingHistory] = useState(true);
+  const [showingPast, setShowingPast] = useState(false);
+  const [loadingPast, setLoadingPast] = useState(false);
   const answerRef = useRef<HTMLDivElement>(null);
 
-  // Load recent doubts on mount
-  useEffect(() => {
-    fetch("/api/ai/doubt")
-      .then((r) => r.json())
-      .then((d) => setHistory(d.items ?? []))
-      .catch(() => {})
-      .finally(() => setLoadingHistory(false));
-  }, []);
+  async function loadPastDoubts() {
+    if (showingPast) {
+      // Toggle off — hide past doubts (keep only current session)
+      setHistory((h) => h.filter((d) => !d.id.startsWith("past:") && !d._past));
+      setShowingPast(false);
+      return;
+    }
+    setLoadingPast(true);
+    try {
+      const r = await fetch("/api/ai/doubt");
+      const d = await r.json();
+      const past = (d.items ?? []).map((x: Doubt) => ({ ...x, _past: true }));
+      // Show past underneath current-session items
+      setHistory((current) => [...current, ...past]);
+      setShowingPast(true);
+    } catch {
+      toast.error("Couldn't load past doubts");
+    } finally {
+      setLoadingPast(false);
+    }
+  }
+
+  function clearSession() {
+    setHistory((h) => h.filter((d) => d._past)); // keep past if shown, drop current session
+  }
 
   async function ask(e?: React.FormEvent) {
     if (e) e.preventDefault();
@@ -162,13 +184,34 @@ export function DoubtForm({ subjects }: { subjects: Subject[] }) {
 
       {/* HISTORY */}
       <div ref={answerRef} className="space-y-3">
-        {!loading && loadingHistory && (
-          <div className="card-glass text-center text-xs text-white/55">Loading your doubt history…</div>
-        )}
         {history.map((d, i) => (
-          <DoubtCard key={d.id} doubt={d} isLatest={i === 0 && !loading} />
+          <DoubtCard key={d.id} doubt={d} isLatest={i === 0 && !loading && !d._past} />
         ))}
       </div>
+
+      {/* SESSION CONTROLS */}
+      {(history.some((d) => !d._past) || !showingPast) && (
+        <div className="flex flex-wrap items-center justify-center gap-3 pt-2 text-xs">
+          {history.some((d) => !d._past) && (
+            <button
+              type="button"
+              onClick={clearSession}
+              className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-white/65 transition-all hover:border-white/[0.18] hover:text-white"
+            >
+              <Trash2 className="h-3 w-3" /> Clear this session
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={loadPastDoubts}
+            disabled={loadingPast}
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.08] bg-white/[0.03] px-3 py-1.5 text-white/65 transition-all hover:border-white/[0.18] hover:text-white"
+          >
+            {loadingPast ? <Loader2 className="h-3 w-3 animate-spin" /> : <History className="h-3 w-3" />}
+            {showingPast ? "Hide previous doubts" : "View previous doubts"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -194,9 +237,15 @@ function DoubtCard({ doubt, isLatest }: { doubt: Doubt; isLatest: boolean }) {
         animate={{ opacity: 1, y: 0 }}
         className={cn(
           "card-glass",
-          isLatest && "border-neon-cyan/30 shadow-glow-cyan"
+          isLatest && "border-neon-cyan/30 shadow-glow-cyan",
+          doubt._past && "opacity-75"
         )}
       >
+        {doubt._past && (
+          <div className="mb-2 inline-flex items-center gap-1 rounded-full bg-white/[0.05] px-2 py-0.5 text-[9px] font-bold uppercase tracking-widest text-white/45">
+            <History className="h-2.5 w-2.5" /> Previous
+          </div>
+        )}
         {/* Question */}
         <div className="mb-3 flex items-start gap-2">
           <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/[0.06] text-sm font-bold">
