@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { Question } from "@/models/Question";
+import { resolveSubjectFilter } from "@/lib/chapter-mapping";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,11 @@ export async function GET(req: Request) {
   const limit = Math.min(Number(searchParams.get("limit") ?? 20), 100);
 
   const baseFilter: Record<string, unknown> = { class: cls };
-  if (subject) baseFilter.subject = subject;
+  if (subject) {
+    const resolved = resolveSubjectFilter(subject, cls as 10 | 12);
+    baseFilter.subject = resolved.subject;
+    if (resolved.chapter) baseFilter.chapter = resolved.chapter;
+  }
 
   if (view === "heatmap") {
     const data = await Question.aggregate([

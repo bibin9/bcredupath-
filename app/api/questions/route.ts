@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { Question } from "@/models/Question";
+import { resolveSubjectFilter } from "@/lib/chapter-mapping";
 
 export const dynamic = "force-dynamic";
 
@@ -17,7 +18,11 @@ export async function GET(req: Request) {
   const year = searchParams.get("year");
   const marks = searchParams.get("marks");
 
-  if (subject) filter.subject = subject;
+  if (subject) {
+    const resolved = resolveSubjectFilter(subject, (cls ? Number(cls) : 10) as 10 | 12);
+    filter.subject = resolved.subject;
+    if (resolved.chapter && !chapter) filter.chapter = resolved.chapter;
+  }
   if (chapter) filter.chapter = chapter;
   if (type) filter.type = type;
   if (difficulty) filter.difficulty = difficulty;
@@ -43,19 +48,25 @@ export async function GET(req: Request) {
     Question.countDocuments(filter),
   ]);
 
-  // Group chapters with counts (for the sidebar)
+  // Group chapters with counts (for the sidebar) — honours split sub-subjects
   const chapters = subject
-    ? await Question.aggregate([
-        { $match: { subject, ...(cls ? { class: Number(cls) } : {}) } },
-        {
-          $group: {
-            _id: "$chapter",
-            count: { $sum: 1 },
-            avgProb: { $avg: "$predictedProbability" },
+    ? await (async () => {
+        const r = resolveSubjectFilter(subject, (cls ? Number(cls) : 10) as 10 | 12);
+        const m: Record<string, unknown> = { subject: r.subject };
+        if (cls) m.class = Number(cls);
+        if (r.chapter) m.chapter = r.chapter;
+        return Question.aggregate([
+          { $match: m },
+          {
+            $group: {
+              _id: "$chapter",
+              count: { $sum: 1 },
+              avgProb: { $avg: "$predictedProbability" },
+            },
           },
-        },
-        { $sort: { avgProb: -1 } },
-      ])
+          { $sort: { avgProb: -1 } },
+        ]);
+      })()
     : [];
 
   return NextResponse.json({ items, total, chapters });
