@@ -132,7 +132,7 @@ export function MobileMenu({ showAdmin = false }: { showAdmin?: boolean }) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               onClick={() => setOpen(false)}
-              className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-[60] bg-black/75 backdrop-blur-sm lg:hidden"
             />
 
             {/* Drawer */}
@@ -141,7 +141,7 @@ export function MobileMenu({ showAdmin = false }: { showAdmin?: boolean }) {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 280 }}
-              className="fixed right-0 top-0 z-[61] flex w-[min(85vw,360px)] flex-col border-l border-white/[0.10] bg-bg-2/98 backdrop-blur-2xl lg:hidden"
+              className="fixed right-0 top-0 z-[61] flex w-[min(85vw,360px)] flex-col border-l border-white/[0.10] bg-bg-2 shadow-2xl lg:hidden"
               style={{
                 // 100dvh = dynamic viewport height (handles iOS Safari address bar resize).
                 // Falls back to 100vh on older browsers.
