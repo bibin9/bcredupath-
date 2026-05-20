@@ -98,6 +98,7 @@ export default async function SubjectBankPage({
     xpReward: q.xpReward,
     expectedTime: q.expectedTime,
     verified: q.verified ?? false,
+    verifiedBy: q.verifiedBy,
   }));
 
   const bookmarks = new Set(user.bookmarks.map((id) => String(id)));

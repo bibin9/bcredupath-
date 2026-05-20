@@ -31,6 +31,7 @@ export type QuestionDoc = {
   xpReward: number;
   expectedTime: number;
   verified?: boolean;
+  verifiedBy?: string;
 };
 
 const diffColor: Record<QuestionDoc["difficulty"], string> = {
@@ -61,12 +62,21 @@ export function QuestionCard({
         </span>
         <PredictionBadge probability={q.predictedProbability} size="sm" />
         {q.verified && (
-          <span
-            title="Teacher-verified question"
-            className="pill !px-2 !py-0 text-[10px] text-neon-green border-neon-green/40 bg-neon-green/10"
-          >
-            ✓ Verified
-          </span>
+          q.verifiedBy?.includes("CBSE") ? (
+            <span
+              title={`Official CBSE Sample Paper question — sourced from ${q.verifiedBy}`}
+              className="pill !px-2 !py-0 text-[10px] text-neon-green border-neon-green/50 bg-neon-green/15 font-bold"
+            >
+              🇮🇳 CBSE Official
+            </span>
+          ) : (
+            <span
+              title="Teacher-verified question"
+              className="pill !px-2 !py-0 text-[10px] text-neon-green border-neon-green/40 bg-neon-green/10"
+            >
+              ✓ Verified
+            </span>
+          )
         )}
         <span className="pill text-[10px]">{q.type}</span>
         <span className="pill text-[10px]">
