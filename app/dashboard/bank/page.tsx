@@ -6,6 +6,7 @@ import { User } from "@/models/User";
 import { Question } from "@/models/Question";
 import { SUBJECTS_BY_CLASS } from "@/lib/constants";
 import { resolveSubjectFilter } from "@/lib/chapter-mapping";
+import { BOARD_YEAR, ACADEMIC_YEAR_LABEL } from "@/lib/academic-year";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AiDisclaimer } from "@/components/shared/AiDisclaimer";
@@ -59,14 +60,21 @@ export default async function BankIndex() {
     <div className="space-y-6">
       <header className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div>
-          <span className="pill-neon-yellow">
-            <Sparkles className="h-3 w-3" /> Class {user.class} · CBSE
-          </span>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="pill-neon-yellow">
+              <Sparkles className="h-3 w-3" /> Class {user.class} · CBSE
+            </span>
+            <span className="pill-neon-pink">
+              Session {ACADEMIC_YEAR_LABEL} · Boards {BOARD_YEAR}
+            </span>
+          </div>
           <h1 className="mt-3 font-display text-3xl font-bold md:text-4xl">
             Question Bank 📚
           </h1>
           <p className="mt-1 text-sm text-white/65">
-            PYQs, sample papers and NCERT exercises. Sorted by predicted probability.
+            PYQs from past 5 boards ({BOARD_YEAR - 5}–{BOARD_YEAR - 1}), sample
+            papers and NCERT exercises. Sorted by predicted probability for{" "}
+            <b className="text-white">Boards {BOARD_YEAR}</b>.
           </p>
         </div>
         <div className="card-glass !p-3 text-right text-xs text-white/65">

@@ -54,7 +54,7 @@ export async function GET(req: Request) {
   }
 
   if (view === "sleepers") {
-    const CURRENT_YEAR = 2026;
+    const { CURRENT_YEAR } = await import("@/lib/academic-year");
     // Pull candidate set, then filter in JS for sleeper criteria
     const raw = await Question.find({
       ...baseFilter,

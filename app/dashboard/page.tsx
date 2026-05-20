@@ -13,6 +13,7 @@ import { DailyChallengeCard } from "@/components/game/DailyChallengeCard";
 import { SubjectCard } from "@/components/game/SubjectCard";
 import { BadgeChip } from "@/components/game/BadgeChip";
 import { ArrowRight, Sparkles } from "lucide-react";
+import { BOARD_YEAR, ACADEMIC_YEAR_LABEL } from "@/lib/academic-year";
 
 export default async function DashboardHome() {
   const session = await getServerSession(authOptions);
@@ -70,16 +71,22 @@ export default async function DashboardHome() {
 
         <div className="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="min-w-0">
-            <span className="pill-neon-cyan">
-              <Sparkles className="h-3 w-3" /> Class {user.class}
-              {user.stream ? ` · ${user.stream.toUpperCase()}` : ""}
-            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="pill-neon-cyan">
+                <Sparkles className="h-3 w-3" /> Class {user.class}
+                {user.stream ? ` · ${user.stream.toUpperCase()}` : ""}
+              </span>
+              <span className="pill-neon-pink">
+                Session {ACADEMIC_YEAR_LABEL}
+              </span>
+            </div>
             <h1 className="mt-3 font-display text-3xl font-bold leading-tight md:text-5xl">
               {greet},{" "}
               <span className="grad-text">{user.name.split(" ")[0]}</span> 👋
             </h1>
             <p className="mt-2 text-sm text-white/65 md:text-base">
-              Boards in <span className="stat-num text-neon-yellow">{days}</span> days.
+              CBSE {BOARD_YEAR} Boards in{" "}
+              <span className="stat-num text-neon-yellow">{days}</span> days.
               Every question counts.
             </p>
           </div>

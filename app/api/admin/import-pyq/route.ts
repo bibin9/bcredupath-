@@ -4,10 +4,9 @@ import { requireAdmin } from "@/lib/admin";
 import { connectDB } from "@/lib/db";
 import { Question } from "@/models/Question";
 import { TOPIC_WEIGHTS_CLASS_10 } from "@/lib/seed/topic-weights";
+import { CURRENT_YEAR } from "@/lib/academic-year";
 
 export const dynamic = "force-dynamic";
-
-const CURRENT_YEAR = 2026;
 const XP_BY_MARKS: Record<number, number> = { 1: 10, 2: 20, 3: 30, 4: 40, 5: 50 };
 
 function computeProbability(

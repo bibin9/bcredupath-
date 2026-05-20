@@ -16,11 +16,12 @@ export function daysBetween(a: Date, b: Date): number {
   return Math.round((b.getTime() - a.getTime()) / ms);
 }
 
-/** CBSE Class 10 boards typically begin mid-Feb. Hard-coded target: 2026-02-15. */
-export const BOARDS_2026_DATE = new Date("2026-02-15T00:00:00Z");
+/** CBSE Class 10 boards typically begin mid-Feb. Target: Feb 15 of BOARD_YEAR. */
+import { BOARD_YEAR } from "./academic-year";
+export const BOARDS_DATE = new Date(`${BOARD_YEAR}-02-15T00:00:00Z`);
 
 export function daysToBoards(now = new Date()): number {
-  return Math.max(0, daysBetween(now, BOARDS_2026_DATE));
+  return Math.max(0, daysBetween(now, BOARDS_DATE));
 }
 
 export function sleep(ms: number) {

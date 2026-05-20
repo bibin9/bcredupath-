@@ -60,7 +60,7 @@ const { SCIENCE_10 } = await importTS("lib/seed/questions-science-10.ts");
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const MODEL = "claude-sonnet-4-6";
-const CURRENT_YEAR = 2026;
+const CURRENT_YEAR = 2027;
 const XP_BY_MARKS = { 1: 10, 2: 20, 3: 30, 4: 40, 5: 50 };
 
 function computeProbability(q, topicWeight) {

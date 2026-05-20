@@ -26,7 +26,7 @@ const DRY = !!args["dry-run"];
 const SCALE = args.scale ? Number(args.scale) : 2;
 const TARGET_CLASS = args.class ? Number(args.class) : 10;
 const SUBJECTS_FILTER = args.subjects ? String(args.subjects).split(",") : null;
-const AUGMENTATION_TAG = `augment-v${args.tag ?? "1"}`;
+const AUGMENTATION_TAG = `augment-v${args.tag ?? "2"}`;
 
 const MODEL = "claude-sonnet-4-6";
 const PRICE_IN_PER_M = 3.0;
@@ -153,7 +153,10 @@ const questionSchema = new mongoose.Schema(
 );
 const Question = mongoose.models.Question || mongoose.model("Question", questionSchema);
 
-const CURRENT_YEAR = 2026;
+// Bump these at the start of each new CBSE session (April).
+// Today (2026-27 session) → upcoming board is 2027 → CURRENT_YEAR = 2027.
+const CURRENT_YEAR = 2027;
+const PYQ_YEARS = [2022, 2023, 2024, 2025, 2026];
 const XP_BY_MARKS = { 1: 10, 2: 20, 3: 30, 4: 40, 5: 50 };
 
 function computeProbability(q, topicWeight) {
@@ -197,7 +200,7 @@ QUESTION TYPE REQUIREMENTS:
 
 GENERAL:
 - Use LaTeX in $...$ for inline math, $$...$$ for block math.
-- "yearsAsked": pick 1-3 from [2021, 2022, 2023, 2024, 2025] reflecting realistic frequency.
+- "yearsAsked": pick 1-3 years from ${JSON.stringify(PYQ_YEARS)} reflecting realistic CBSE frequency (most recent boards most likely).
 - "frequencyScore" 1-10 (7+ for high-yield).
 - "difficulty": Easy / Medium / Hard / VeryHard.
 - "marks": MCQ=1, AssertionReason=1, SA=2 or 3, LA=4 or 5, CaseStudy=4.

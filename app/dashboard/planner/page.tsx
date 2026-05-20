@@ -4,7 +4,7 @@ import { connectDB } from "@/lib/db";
 import { User } from "@/models/User";
 import { Question } from "@/models/Question";
 import { SUBJECTS_BY_CLASS } from "@/lib/constants";
-import { daysToBoards, BOARDS_2026_DATE } from "@/lib/utils";
+import { daysToBoards, BOARDS_DATE } from "@/lib/utils";
 import { Pomodoro } from "@/components/planner/Pomodoro";
 import { Sparkles, CalendarDays, Target, BookOpen } from "lucide-react";
 import Link from "next/link";
@@ -47,7 +47,7 @@ export default async function PlannerPage() {
     Math.min(30, Math.round((totalQs * 0.3) / Math.max(days, 1)))
   );
 
-  const boardsLabel = BOARDS_2026_DATE.toLocaleDateString("en-IN", {
+  const boardsLabel = BOARDS_DATE.toLocaleDateString("en-IN", {
     day: "numeric", month: "long", year: "numeric",
   });
 

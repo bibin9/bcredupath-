@@ -117,7 +117,8 @@ const questionSchema = new mongoose.Schema(
 );
 const Question = mongoose.models.Question || mongoose.model("Question", questionSchema);
 
-const CURRENT_YEAR = 2026;
+// Current CBSE session (2026-27) → upcoming board year = 2027
+const CURRENT_YEAR = 2027;
 const XP_BY_MARKS = { 1: 10, 2: 20, 3: 30, 4: 40, 5: 50 };
 
 function computeProbability(q, topicWeight) {
@@ -175,7 +176,7 @@ REQUIREMENTS:
 - Use LaTeX in $...$ for inline math, $$...$$ for block math.
 - For MCQs, give exactly 4 options. The "answer" field must be the index (0-3) of the correct option.
 - For SA/LA, "answer" is a short string with the final answer; "solution.steps" has the working.
-- Tag each question with "yearsAsked": pick 1-3 years from [2021, 2022, 2023, 2024, 2025] reflecting realistic exam patterns (rarer for newer chapters).
+- Tag each question with "yearsAsked": pick 1-3 years from [2022, 2023, 2024, 2025, 2026] reflecting realistic CBSE frequency (most recent boards most likely).
 - "frequencyScore" 1-10 based on how often this topic appears in boards (use 7+ for high-yield topics).
 - "difficulty" must be Easy / Medium / Hard / VeryHard.
 - "marks": MCQ=1, AssertionReason=1, SA=2 or 3, LA=4 or 5, CaseStudy=4.

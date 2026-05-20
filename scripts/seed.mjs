@@ -79,7 +79,7 @@ const questionSchema = new mongoose.Schema(
 
 const Question = mongoose.model("Question", questionSchema);
 
-const CURRENT_YEAR = 2026;
+const CURRENT_YEAR = 2027;
 const XP_BY_MARKS = { 1: 10, 2: 20, 3: 30, 4: 40, 5: 50 };
 
 function computeProbability(q, topicWeight) {

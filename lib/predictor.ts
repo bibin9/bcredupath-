@@ -4,8 +4,8 @@
  */
 
 import type { IQuestion } from "@/models/Question";
-
-const CURRENT_YEAR = 2026;
+import { CURRENT_YEAR } from "@/lib/academic-year";
+export { CURRENT_YEAR };
 
 export type ProbabilityBreakdown = {
   frequency: number;
