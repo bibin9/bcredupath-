@@ -15,8 +15,11 @@ export const dynamic = "force-dynamic";
  */
 const Body = z
   .object({
-    class: z.union([z.literal(10), z.literal(12)]),
+    class: z.union([z.literal(10), z.literal(12)]).optional(),
     stream: z.enum(["pcm", "pcb", "commerce", "humanities"]).nullable().optional(),
+    country: z.string().min(2).max(60).optional(),
+    state: z.string().nullable().optional(),
+    city: z.string().nullable().optional(),
   })
   .refine(
     (d) => (d.class === 12 ? !!d.stream : true),
@@ -38,18 +41,31 @@ export async function PATCH(req: Request) {
     );
   }
 
+  const set: Record<string, unknown> = {};
+  if (parsed.data.class !== undefined) {
+    set.class = parsed.data.class;
+    set.stream = parsed.data.class === 10 ? null : parsed.data.stream ?? null;
+  }
+  if (parsed.data.country !== undefined) set.country = parsed.data.country;
+  if (parsed.data.state !== undefined) set.state = parsed.data.state ?? null;
+  if (parsed.data.city !== undefined) set.city = parsed.data.city ?? null;
+
+  if (Object.keys(set).length === 0) {
+    return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
+  }
+
   await connectDB();
   const updated = await User.findOneAndUpdate(
     { email: session.user.email.toLowerCase() },
-    {
-      $set: {
-        class: parsed.data.class,
-        stream: parsed.data.class === 10 ? null : parsed.data.stream ?? null,
-      },
-    },
+    { $set: set },
     { new: true }
   ).lean();
 
   if (!updated) return NextResponse.json({ error: "User not found" }, { status: 404 });
-  return NextResponse.json({ ok: true, class: updated.class, stream: updated.stream });
+  return NextResponse.json({
+    ok: true,
+    class: updated.class,
+    stream: updated.stream,
+    country: updated.country,
+  });
 }

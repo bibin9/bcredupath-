@@ -15,6 +15,45 @@ export const INDIAN_STATES = [
   "Andaman & Nicobar", "Lakshadweep", "Dadra & Nagar Haveli",
 ] as const;
 
+/**
+ * Countries with significant CBSE school presence. These students sit
+ * the same boards as Indian students but qualify for NRI quotas + need
+ * different scholarship/college info.
+ */
+export const NRI_COUNTRIES = [
+  { code: "AE", name: "United Arab Emirates", flag: "🇦🇪" },
+  { code: "SA", name: "Saudi Arabia", flag: "🇸🇦" },
+  { code: "QA", name: "Qatar", flag: "🇶🇦" },
+  { code: "OM", name: "Oman", flag: "🇴🇲" },
+  { code: "KW", name: "Kuwait", flag: "🇰🇼" },
+  { code: "BH", name: "Bahrain", flag: "🇧🇭" },
+  { code: "SG", name: "Singapore", flag: "🇸🇬" },
+  { code: "MY", name: "Malaysia", flag: "🇲🇾" },
+  { code: "TH", name: "Thailand", flag: "🇹🇭" },
+  { code: "ID", name: "Indonesia", flag: "🇮🇩" },
+  { code: "NP", name: "Nepal", flag: "🇳🇵" },
+  { code: "BT", name: "Bhutan", flag: "🇧🇹" },
+  { code: "LK", name: "Sri Lanka", flag: "🇱🇰" },
+  { code: "MV", name: "Maldives", flag: "🇲🇻" },
+  { code: "US", name: "United States", flag: "🇺🇸" },
+  { code: "CA", name: "Canada", flag: "🇨🇦" },
+  { code: "GB", name: "United Kingdom", flag: "🇬🇧" },
+  { code: "AU", name: "Australia", flag: "🇦🇺" },
+  { code: "NZ", name: "New Zealand", flag: "🇳🇿" },
+  { code: "KE", name: "Kenya", flag: "🇰🇪" },
+  { code: "TZ", name: "Tanzania", flag: "🇹🇿" },
+  { code: "NG", name: "Nigeria", flag: "🇳🇬" },
+  { code: "ZA", name: "South Africa", flag: "🇿🇦" },
+  { code: "DE", name: "Germany", flag: "🇩🇪" },
+  { code: "FR", name: "France", flag: "🇫🇷" },
+  { code: "JP", name: "Japan", flag: "🇯🇵" },
+  { code: "HK", name: "Hong Kong", flag: "🇭🇰" },
+  { code: "OTHER", name: "Other", flag: "🌍" },
+] as const;
+
+export const isNRI = (country?: string | null) =>
+  !!country && country !== "India";
+
 export type ClassNum = 10 | 12;
 export type Stream = "pcm" | "pcb" | "commerce" | "humanities";
 

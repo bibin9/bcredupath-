@@ -12,8 +12,9 @@ import { LocaleToggle } from "@/components/shared/LocaleToggle";
 import { ParentShareSettings } from "@/components/shared/ParentShareSettings";
 import { InstallSettingsRow } from "@/components/shared/InstallSettingsRow";
 import { AcademicEditor } from "@/components/shared/AcademicEditor";
-import type { Stream } from "@/lib/constants";
-import { LogOut, Settings, Languages, Users, GraduationCap } from "lucide-react";
+import { LocationEditor } from "@/components/shared/LocationEditor";
+import { isNRI, type Stream } from "@/lib/constants";
+import { LogOut, Settings, Languages, Users, GraduationCap, MapPin } from "lucide-react";
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
@@ -37,7 +38,13 @@ export default async function ProfilePage() {
               {user.stream && (
                 <span className="pill-neon-purple">{user.stream.toUpperCase()}</span>
               )}
-              {user.state && <span className="pill">📍 {user.state}</span>}
+              {isNRI(user.country) ? (
+                <span className="pill-neon-purple" title="NRI student — same CBSE board, NRI quota seats available">
+                  🌍 NRI · {user.country}
+                </span>
+              ) : user.state ? (
+                <span className="pill">📍 {user.state}</span>
+              ) : null}
               <span className="pill-neon-yellow">
                 {RANK_EMOJI[rank]} {rank}
               </span>
@@ -106,6 +113,18 @@ export default async function ProfilePage() {
             <AcademicEditor
               initialClass={(user.class as 10 | 12 | null) ?? null}
               initialStream={(user.stream as Stream | null) ?? null}
+            />
+          </div>
+
+          <div className="border-t border-white/[0.06] pt-4">
+            <div className="mb-3 flex items-center gap-2">
+              <MapPin className="h-4 w-4 text-neon-pink" />
+              <span className="font-semibold">Location · India or NRI</span>
+            </div>
+            <LocationEditor
+              initialCountry={user.country ?? "India"}
+              initialState={user.state ?? null}
+              initialCity={user.city ?? null}
             />
           </div>
 

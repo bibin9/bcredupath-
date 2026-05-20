@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import {
   AVATAR_EMOJIS,
   INDIAN_STATES,
+  NRI_COUNTRIES,
   STREAMS,
   INTEREST_QUIZ,
   type Stream,
@@ -21,6 +22,7 @@ type State = {
   avatar: string;
   cls: ClassNum | null;
   stream: Stream | null;
+  country: string; // "India" by default; or an NRI country name
   state: string;
   city: string;
   school: string;
@@ -45,6 +47,7 @@ export function OnboardingFlow({
     avatar: defaultAvatar ?? "🦊",
     cls: null,
     stream: null,
+    country: "India",
     state: "",
     city: "",
     school: "",
@@ -58,7 +61,8 @@ export function OnboardingFlow({
     if (step === 0) return data.name.trim().length >= 2;
     if (step === 1) return data.cls === 10 || data.cls === 12;
     if (step === 2) return data.cls === 10 || !!data.stream;
-    if (step === 3) return !!data.state;
+    if (step === 3)
+      return data.country === "India" ? !!data.state : !!data.country;
     if (step === 4) return data.interests.length >= 3;
     return true;
   }, [step, data]);
@@ -91,7 +95,8 @@ export function OnboardingFlow({
           avatar: data.avatar,
           class: data.cls,
           stream: data.cls === 12 ? data.stream : null,
-          state: data.state,
+          country: data.country,
+          state: data.country === "India" ? data.state : undefined,
           city: data.city || undefined,
           school: data.school || undefined,
           interests: data.interests,
@@ -309,40 +314,102 @@ function StepLocation({
   data: State;
   update: <K extends keyof State>(k: K, v: State[K]) => void;
 }) {
+  const isIndia = data.country === "India";
   return (
     <div>
       <h2 className="font-display text-3xl font-bold">Where do you live? 📍</h2>
       <p className="mt-1 text-sm text-white/55">
-        Unlocks state leaderboards & local scholarships.
+        Unlocks the right leaderboards, scholarships & college info.
       </p>
 
-      <div className="mt-5 space-y-3">
-        <select
-          value={data.state}
-          onChange={(e) => update("state", e.target.value)}
-          className="h-12 w-full rounded-2xl border border-white/[0.08] bg-bg-2 px-4 text-sm outline-none focus:border-neon-purple/50 focus:ring-2 focus:ring-neon-purple/20"
+      {/* India / Outside India toggle */}
+      <div className="mt-5 grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            update("country", "India");
+          }}
+          className={cn(
+            "rounded-2xl border p-3 text-left transition-all",
+            isIndia
+              ? "border-neon-cyan/60 bg-neon-cyan/15 shadow-glow-cyan"
+              : "border-white/[0.08] bg-white/[0.03] hover:border-white/[0.18]"
+          )}
         >
-          <option value="">Select your state</option>
-          {INDIAN_STATES.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
+          <div className="text-2xl">🇮🇳</div>
+          <div className="mt-1 text-sm font-semibold">India</div>
+          <div className="text-[10px] text-white/55">CBSE domestic</div>
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            // Pre-select UAE as the most common NRI country
+            if (data.country === "India") update("country", "United Arab Emirates");
+            update("state", "");
+          }}
+          className={cn(
+            "rounded-2xl border p-3 text-left transition-all",
+            !isIndia
+              ? "border-neon-purple/60 bg-neon-purple/15 shadow-glow-purple"
+              : "border-white/[0.08] bg-white/[0.03] hover:border-white/[0.18]"
+          )}
+        >
+          <div className="text-2xl">🌍</div>
+          <div className="mt-1 text-sm font-semibold">Outside India</div>
+          <div className="text-[10px] text-white/55">NRI · same CBSE board</div>
+        </button>
+      </div>
+
+      <div className="mt-3 space-y-3">
+        {isIndia ? (
+          <select
+            value={data.state}
+            onChange={(e) => update("state", e.target.value)}
+            className="h-12 w-full rounded-2xl border border-white/[0.08] bg-bg-2 px-4 text-sm outline-none focus:border-neon-purple/50 focus:ring-2 focus:ring-neon-purple/20"
+          >
+            <option value="">Select your state</option>
+            {INDIAN_STATES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        ) : (
+          <select
+            value={data.country}
+            onChange={(e) => update("country", e.target.value)}
+            className="h-12 w-full rounded-2xl border border-white/[0.08] bg-bg-2 px-4 text-sm outline-none focus:border-neon-purple/50 focus:ring-2 focus:ring-neon-purple/20"
+          >
+            {NRI_COUNTRIES.map((c) => (
+              <option key={c.code} value={c.name}>
+                {c.flag}  {c.name}
+              </option>
+            ))}
+          </select>
+        )}
 
         <input
           value={data.city}
           onChange={(e) => update("city", e.target.value)}
-          placeholder="City (optional)"
+          placeholder={isIndia ? "City (optional)" : "City — e.g. Dubai, Riyadh (optional)"}
           className="h-12 w-full rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 text-sm outline-none focus:border-neon-purple/50 focus:ring-2 focus:ring-neon-purple/20"
         />
 
         <input
           value={data.school}
           onChange={(e) => update("school", e.target.value)}
-          placeholder="School name (optional)"
+          placeholder={isIndia ? "School name (optional)" : "School — e.g. DPS Dubai, Indian School Muscat (optional)"}
           className="h-12 w-full rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 text-sm outline-none focus:border-neon-purple/50 focus:ring-2 focus:ring-neon-purple/20"
         />
+
+        {!isIndia && (
+          <div className="rounded-2xl border border-neon-purple/25 bg-neon-purple/8 p-3 text-[11px] text-white/75">
+            <b className="text-white">🌍 NRI student tip:</b> You sit the same
+            CBSE boards as Indian students. You also qualify for 15% NRI
+            quota seats at AIIMS, IITs, NITs (and most private medical/engg
+            colleges). We&apos;ll surface those in your career roadmap.
+          </div>
+        )}
       </div>
     </div>
   );

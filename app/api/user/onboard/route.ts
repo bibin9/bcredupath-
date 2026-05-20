@@ -10,6 +10,7 @@ const Body = z.object({
   avatar: z.string().min(1).max(8).optional(),
   class: z.union([z.literal(10), z.literal(12)]),
   stream: z.enum(["pcm", "pcb", "commerce", "humanities"]).optional().nullable(),
+  country: z.string().min(2).max(60).optional().default("India"),
   state: z.string().optional(),
   city: z.string().optional(),
   school: z.string().optional(),
