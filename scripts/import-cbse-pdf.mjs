@@ -26,6 +26,7 @@ const DRY = !!args["dry-run"];
 const SKIP_MATH = !!args["skip-math"];
 const TARGET_CLASS = args.class ? Number(args.class) : null;
 const SUBJECTS_FILTER = args.subjects ? String(args.subjects).split(",") : null;
+const YEAR_FILTER = args.year ? Number(args.year) : null;
 
 const tempDir = mkdtempSync(join(tmpdir(), "bcr-cbse-"));
 async function importTS(tsPath) {
@@ -40,6 +41,7 @@ const { BOARD_YEAR } = await importTS("lib/academic-year.ts");
 let papers = CBSE_PAPERS_2024_25;
 if (TARGET_CLASS) papers = papers.filter((p) => p.class === TARGET_CLASS);
 if (SUBJECTS_FILTER) papers = papers.filter((p) => SUBJECTS_FILTER.includes(p.subject));
+if (YEAR_FILTER) papers = papers.filter((p) => p.year === YEAR_FILTER);
 if (SKIP_MATH) papers = papers.filter((p) => !p.mathHeavy);
 
 console.log("\n────────────────────────────────────────");
@@ -89,14 +91,25 @@ const Question =
 
 const XP_BY_MARKS = { 1: 10, 2: 20, 3: 30, 4: 40, 5: 50, 6: 60 };
 
-async function fetchPdfText(url) {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`HTTP ${r.status} on ${url}`);
-  const buf = Buffer.from(await r.arrayBuffer());
-  const parser = new PDFParse({ data: buf });
-  const out = await parser.getText();
-  return out.text ?? "";
+async function fetchPdfText(url, attempt = 1) {
+  try {
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(`HTTP ${r.status} on ${url}`);
+    const buf = Buffer.from(await r.arrayBuffer());
+    const parser = new PDFParse({ data: buf });
+    const out = await parser.getText();
+    return out.text ?? "";
+  } catch (err) {
+    if (attempt < 4 && /fetch failed|terminated|ECONNRESET|ETIMEDOUT|socket hang up/i.test(err?.message ?? "")) {
+      const waitMs = 2000 * attempt;
+      await new Promise((r) => setTimeout(r, waitMs));
+      return fetchPdfText(url, attempt + 1);
+    }
+    throw err;
+  }
 }
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 /**
  * Strip page-number footers like "-- 1 of 8 --" and excessive blank lines.
@@ -357,6 +370,8 @@ async function main() {
   let total = 0;
   for (const paper of papers) {
     total += await importPaper(paper);
+    // Friendly pause between papers to avoid bursty load on cbseacademic.nic.in
+    await sleep(500);
   }
 
   console.log("\n────────────────────────────────────────");
