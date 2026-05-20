@@ -5,6 +5,26 @@
  * Salaries are approximate INR/year ranges seen in 2024-2025 in India.
  */
 
+export type RoadmapStage = {
+  degree: string;
+  duration?: string;
+  entranceExams?: string[];
+  notes?: string;
+};
+
+export type CareerRoadmap = {
+  class10?: { focus: string; minScore?: string };
+  class12: {
+    stream: "PCM" | "PCB" | "PCMB" | "Commerce" | "Humanities" | "Any" | string;
+    coreSubjects: string[];
+    minScore?: string;
+    notes?: string;
+  };
+  undergrad: RoadmapStage[];
+  postgrad?: RoadmapStage[];
+  finalRole?: string;
+};
+
 export type SeedCareer = {
   name: string;
   emoji: string;
@@ -30,7 +50,11 @@ export type SeedCareer = {
   skillsRequired: string[];
   /** Tags must overlap with onboarding interest tags */
   interestTags: string[];
+  /** Subjects best aligned with this career (math, biology, etc) */
+  preferredSubjects?: string[];
   growthProspects: string;
+  /** Educational journey 10 → 12 → UG → PG → Career */
+  roadmap?: CareerRoadmap;
 };
 
 export const CAREERS: SeedCareer[] = [
@@ -1091,5 +1115,591 @@ export const CAREERS: SeedCareer[] = [
     skillsRequired: ["SQL", "Python", "Spark / Kafka / Airflow", "Cloud (AWS / GCP)"],
     interestTags: ["tech", "cs", "math", "engineering"],
     growthProspects: "Every data team needs DEs. Senior roles pay equal to or more than data scientists.",
+  },
+
+  /* ═══════════════════════════════════════════════════════════════
+     MEDICAL & BIOLOGICAL SPECIALIZATIONS
+     ═══════════════════════════════════════════════════════════════ */
+
+  {
+    name: "Cardiologist",
+    emoji: "❤️",
+    category: "medical",
+    description:
+      "Heart specialist. Diagnose and treat cardiovascular disease — India's #1 killer. Among the most prestigious and well-paid medical specialisations.",
+    dayInLife:
+      "ECG/ECHO interpretation, OPD consults, angioplasties and stenting (interventional), bedside rounds in CCU. Surgical cardiologists do bypass and valve surgeries.",
+    qualifications: ["MBBS → MD (Medicine) → DM (Cardiology)", "Or MBBS → DNB Cardiology"],
+    entranceExams: [
+      { name: "NEET UG", link: "https://neet.nta.nic.in", dates: "May" },
+      { name: "NEET PG", link: "https://nbe.edu.in", dates: "Mar" },
+      { name: "NEET SS (Super-speciality)", link: "https://nbe.edu.in", dates: "Sep" },
+    ],
+    salaryRanges: { entry: 1_500_000, mid: 5_000_000, senior: 25_000_000 },
+    topColleges: ["AIIMS Delhi", "CMC Vellore", "PGIMER Chandigarh", "JIPMER Puducherry"],
+    skillsRequired: ["Clinical reasoning", "Manual dexterity", "Stamina", "Ethics"],
+    interestTags: ["medical", "biology", "social"],
+    preferredSubjects: ["biology", "chemistry", "physics"],
+    growthProspects:
+      "12+ years of training but ceiling is exceptional. Private practice + cath-lab ownership routinely ₹2-5 Cr/yr.",
+    roadmap: {
+      class10: { focus: "Strong Math + Science fundamentals", minScore: "85%+" },
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"], minScore: "85%+ for top medical colleges" },
+      undergrad: [
+        { degree: "MBBS", duration: "5.5 years (4.5 + internship)", entranceExams: ["NEET UG"], notes: "First step. ~1L govt seats nationally." },
+      ],
+      postgrad: [
+        { degree: "MD (Medicine)", duration: "3 years", entranceExams: ["NEET PG"], notes: "General internal medicine specialisation." },
+        { degree: "DM (Cardiology)", duration: "3 years", entranceExams: ["NEET SS"], notes: "Super-speciality after MD Medicine. Highly competitive." },
+      ],
+      finalRole: "Consultant Cardiologist — hospital, private practice, or cath lab.",
+    },
+  },
+  {
+    name: "Neurologist",
+    emoji: "🧠",
+    category: "medical",
+    description:
+      "Brain and nervous system specialist. Diagnose conditions like stroke, epilepsy, Parkinson's, multiple sclerosis. Heavy on imaging interpretation (MRI, EEG).",
+    dayInLife:
+      "Neuro examinations, MRI/CT reading, prescribing nervous system medications, managing stroke and epilepsy patients.",
+    qualifications: ["MBBS → MD Medicine → DM Neurology"],
+    entranceExams: [
+      { name: "NEET UG", link: "https://neet.nta.nic.in", dates: "May" },
+      { name: "NEET PG", link: "https://nbe.edu.in", dates: "Mar" },
+    ],
+    salaryRanges: { entry: 1_500_000, mid: 4_500_000, senior: 20_000_000 },
+    topColleges: ["AIIMS Delhi", "NIMHANS Bangalore", "CMC Vellore", "PGIMER Chandigarh"],
+    skillsRequired: ["Neurology pattern recognition", "Imaging interpretation", "Patience"],
+    interestTags: ["medical", "biology", "research"],
+    preferredSubjects: ["biology", "chemistry", "physics"],
+    growthProspects: "Aging population = soaring demand. NIMHANS is the global gold standard.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"], minScore: "85%+" },
+      undergrad: [{ degree: "MBBS", duration: "5.5 years", entranceExams: ["NEET UG"] }],
+      postgrad: [
+        { degree: "MD (Medicine)", duration: "3 years", entranceExams: ["NEET PG"] },
+        { degree: "DM (Neurology)", duration: "3 years", entranceExams: ["NEET SS"] },
+      ],
+      finalRole: "Consultant Neurologist — hospitals, NIMHANS, private practice.",
+    },
+  },
+  {
+    name: "Pediatrician",
+    emoji: "👶",
+    category: "medical",
+    description:
+      "Doctor for children (birth to ~18). One of the most rewarding medical specialisations — emotionally demanding but full of meaning.",
+    dayInLife:
+      "OPD consults with anxious parents, neonatal ICU rounds, vaccinations, developmental milestones, treating common childhood illnesses.",
+    qualifications: ["MBBS → MD Pediatrics", "Or DNB Pediatrics"],
+    entranceExams: [
+      { name: "NEET UG", link: "https://neet.nta.nic.in", dates: "May" },
+      { name: "NEET PG", link: "https://nbe.edu.in", dates: "Mar" },
+    ],
+    salaryRanges: { entry: 1_000_000, mid: 2_500_000, senior: 12_000_000 },
+    topColleges: ["AIIMS Delhi", "CMC Vellore", "Maulana Azad Medical College", "Lady Hardinge Medical College"],
+    skillsRequired: ["Patience with children", "Parent communication", "Quick judgment", "Empathy"],
+    interestTags: ["medical", "biology", "social", "psychology"],
+    preferredSubjects: ["biology", "chemistry"],
+    growthProspects: "Private practice is bread-and-butter income. Sub-specialise (neonatology, peds-cardio) for higher ceiling.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [{ degree: "MBBS", duration: "5.5 years", entranceExams: ["NEET UG"] }],
+      postgrad: [{ degree: "MD (Pediatrics)", duration: "3 years", entranceExams: ["NEET PG"] }],
+      finalRole: "Pediatrician — hospital, private clinic, NICU consultant.",
+    },
+  },
+  {
+    name: "Gynecologist / Obstetrician",
+    emoji: "🤱",
+    category: "medical",
+    description:
+      "Women's reproductive health specialist. Pregnancy, childbirth, surgery, fertility. High demand in India.",
+    dayInLife:
+      "Antenatal consults, labour deliveries (call duty), ultrasounds, gynec surgeries (laparoscopy, hysterectomy), IVF cycles in specialist clinics.",
+    qualifications: ["MBBS → MD/MS OB-GYN"],
+    entranceExams: [
+      { name: "NEET UG", link: "https://neet.nta.nic.in", dates: "May" },
+      { name: "NEET PG", link: "https://nbe.edu.in", dates: "Mar" },
+    ],
+    salaryRanges: { entry: 1_000_000, mid: 3_000_000, senior: 15_000_000 },
+    topColleges: ["AIIMS Delhi", "Lady Hardinge Medical College", "Seth GS Medical College Mumbai"],
+    skillsRequired: ["Surgical skills", "Calm under pressure", "Empathy", "On-call stamina"],
+    interestTags: ["medical", "biology", "social"],
+    preferredSubjects: ["biology", "chemistry"],
+    growthProspects: "Among India's most profitable specialisations. Reproductive medicine / IVF is rapidly growing.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [{ degree: "MBBS", duration: "5.5 years", entranceExams: ["NEET UG"] }],
+      postgrad: [{ degree: "MD/MS (OBG)", duration: "3 years", entranceExams: ["NEET PG"] }],
+      finalRole: "OB-GYN — hospital + private practice / fertility specialist.",
+    },
+  },
+  {
+    name: "Orthopedic Surgeon",
+    emoji: "🦴",
+    category: "medical",
+    description:
+      "Bone, joint, spine, and sports injury specialist. Heavy on hands-on surgery — arthroscopy, joint replacements, trauma care.",
+    dayInLife:
+      "OPD examinations + X-ray reading in morning, OT surgeries in afternoon, emergency trauma calls. Physical work — lots of standing.",
+    qualifications: ["MBBS → MS Orthopedics", "Or DNB Orthopedics"],
+    entranceExams: [
+      { name: "NEET UG", link: "https://neet.nta.nic.in", dates: "May" },
+      { name: "NEET PG", link: "https://nbe.edu.in", dates: "Mar" },
+    ],
+    salaryRanges: { entry: 1_200_000, mid: 3_500_000, senior: 18_000_000 },
+    topColleges: ["AIIMS Delhi", "CMC Vellore", "Sancheti Pune", "Sushrut Hospital Mumbai"],
+    skillsRequired: ["Hand-eye coordination", "Physical strength", "Imaging interpretation"],
+    interestTags: ["medical", "biology", "engineering"],
+    preferredSubjects: ["biology", "physics", "chemistry"],
+    growthProspects: "Sports medicine + joint replacement are major growth areas. Fellowship abroad common.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [{ degree: "MBBS", duration: "5.5 years", entranceExams: ["NEET UG"] }],
+      postgrad: [{ degree: "MS (Orthopedics)", duration: "3 years", entranceExams: ["NEET PG"] }],
+      finalRole: "Orthopedic Surgeon — hospital, sports clinic, joint replacement specialist.",
+    },
+  },
+  {
+    name: "Radiologist",
+    emoji: "📷",
+    category: "medical",
+    description:
+      "Diagnoses disease from imaging — X-ray, CT, MRI, ultrasound. AI-augmented field with great work-life balance and high pay.",
+    dayInLife:
+      "Mostly desk-based reading scans, dictating reports. Interventional radiologists do biopsies and image-guided procedures.",
+    qualifications: ["MBBS → MD Radiodiagnosis", "Or DNB Radiology"],
+    entranceExams: [
+      { name: "NEET UG", link: "https://neet.nta.nic.in", dates: "May" },
+      { name: "NEET PG", link: "https://nbe.edu.in", dates: "Mar" },
+    ],
+    salaryRanges: { entry: 1_500_000, mid: 4_000_000, senior: 20_000_000 },
+    topColleges: ["AIIMS Delhi", "PGIMER Chandigarh", "JIPMER Puducherry", "CMC Vellore"],
+    skillsRequired: ["Pattern recognition", "Anatomy mastery", "Tech savvy (AI tools)"],
+    interestTags: ["medical", "biology", "tech"],
+    preferredSubjects: ["biology", "physics"],
+    growthProspects: "Highest-paid non-surgical specialisation. Teleradiology + AI tools opening flexible work-from-anywhere paths.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [{ degree: "MBBS", duration: "5.5 years", entranceExams: ["NEET UG"] }],
+      postgrad: [{ degree: "MD (Radiodiagnosis)", duration: "3 years", entranceExams: ["NEET PG"] }],
+      finalRole: "Radiologist — hospital, teleradiology, imaging centre.",
+    },
+  },
+  {
+    name: "Anesthesiologist",
+    emoji: "💉",
+    category: "medical",
+    description:
+      "Pain and consciousness specialist for surgery. Manages anaesthesia, ICU patients, chronic pain. Critical role behind every surgery.",
+    dayInLife:
+      "Pre-op assessments, monitoring during surgery (anaesthesia depth, vitals), ICU rounds, pain clinic consults.",
+    qualifications: ["MBBS → MD Anaesthesia"],
+    entranceExams: [
+      { name: "NEET UG", link: "https://neet.nta.nic.in", dates: "May" },
+      { name: "NEET PG", link: "https://nbe.edu.in", dates: "Mar" },
+    ],
+    salaryRanges: { entry: 1_200_000, mid: 3_000_000, senior: 12_000_000 },
+    topColleges: ["AIIMS Delhi", "Maulana Azad MC", "CMC Vellore"],
+    skillsRequired: ["Decision-making under pressure", "Pharmacology", "Technical procedures (intubation, central lines)"],
+    interestTags: ["medical", "biology"],
+    preferredSubjects: ["biology", "chemistry", "physics"],
+    growthProspects: "ICU + pain management = strong demand. Locum (per-day fee) work very lucrative in metros.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [{ degree: "MBBS", duration: "5.5 years", entranceExams: ["NEET UG"] }],
+      postgrad: [{ degree: "MD (Anaesthesia)", duration: "3 years", entranceExams: ["NEET PG"] }],
+      finalRole: "Anesthesiologist — OT, ICU, pain clinic.",
+    },
+  },
+  {
+    name: "Dermatologist",
+    emoji: "🧴",
+    category: "medical",
+    description:
+      "Skin, hair, nail specialist. Booming with India's cosmetic industry — fastest path to high private income post-PG.",
+    dayInLife:
+      "OPD consults (acne, eczema, hair loss), minor procedures (biopsy, mole removal), cosmetic (botox, laser, fillers) in private practice.",
+    qualifications: ["MBBS → MD Dermatology / DDVL"],
+    entranceExams: [
+      { name: "NEET UG", link: "https://neet.nta.nic.in", dates: "May" },
+      { name: "NEET PG", link: "https://nbe.edu.in", dates: "Mar" },
+    ],
+    salaryRanges: { entry: 1_200_000, mid: 4_000_000, senior: 20_000_000 },
+    topColleges: ["AIIMS Delhi", "CMC Vellore", "Madras Medical College"],
+    skillsRequired: ["Diagnostic eye", "Aesthetic sense", "Communication", "Cosmetic procedures"],
+    interestTags: ["medical", "biology", "design"],
+    preferredSubjects: ["biology", "chemistry"],
+    growthProspects: "Cosmetic dermatology grossly underserved in India. Top of NEET PG choice list for reason.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [{ degree: "MBBS", duration: "5.5 years", entranceExams: ["NEET UG"] }],
+      postgrad: [{ degree: "MD (Dermatology, Venereology & Leprosy)", duration: "3 years", entranceExams: ["NEET PG"] }],
+      finalRole: "Dermatologist — own practice / cosmetic clinic / chain (Kaya, Oliva).",
+    },
+  },
+  {
+    name: "Psychiatrist",
+    emoji: "🧠",
+    category: "medical",
+    description:
+      "Mental health doctor — depression, anxiety, schizophrenia, addiction. Critical role given India's mental health crisis.",
+    dayInLife:
+      "30-60 min patient sessions, medication management, therapy planning, family counselling. Calmer than surgical specialities — no night call typically.",
+    qualifications: ["MBBS → MD Psychiatry"],
+    entranceExams: [
+      { name: "NEET UG", link: "https://neet.nta.nic.in", dates: "May" },
+      { name: "NEET PG", link: "https://nbe.edu.in", dates: "Mar" },
+    ],
+    salaryRanges: { entry: 1_000_000, mid: 2_500_000, senior: 8_000_000 },
+    topColleges: ["NIMHANS Bangalore", "AIIMS Delhi", "CIP Ranchi"],
+    skillsRequired: ["Active listening", "Diagnostic acumen", "Empathy without burnout"],
+    interestTags: ["medical", "biology", "psychology", "social"],
+    preferredSubjects: ["biology", "chemistry"],
+    growthProspects: "Hugely undersupplied — India has ~9000 psychiatrists for 1.4B people. Massive demand growth ahead.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [{ degree: "MBBS", duration: "5.5 years", entranceExams: ["NEET UG"] }],
+      postgrad: [{ degree: "MD (Psychiatry)", duration: "3 years", entranceExams: ["NEET PG"] }],
+      finalRole: "Psychiatrist — hospital + private practice + telehealth.",
+    },
+  },
+  {
+    name: "Surgeon (General)",
+    emoji: "⚕️",
+    category: "medical",
+    description:
+      "General surgeon for abdomen, breast, thyroid, hernia, trauma. Foundation for any further surgical sub-speciality.",
+    dayInLife:
+      "Morning OPD + ward rounds, OT in afternoons (3-5 surgeries / day), emergency calls. Surgical lifestyle is intense but high-reward.",
+    qualifications: ["MBBS → MS General Surgery → optional super-speciality (MCh)"],
+    entranceExams: [
+      { name: "NEET UG", link: "https://neet.nta.nic.in", dates: "May" },
+      { name: "NEET PG", link: "https://nbe.edu.in", dates: "Mar" },
+    ],
+    salaryRanges: { entry: 1_200_000, mid: 3_500_000, senior: 15_000_000 },
+    topColleges: ["AIIMS Delhi", "CMC Vellore", "PGIMER Chandigarh"],
+    skillsRequired: ["Manual dexterity", "Stamina", "Decision-making under pressure"],
+    interestTags: ["medical", "biology", "engineering"],
+    preferredSubjects: ["biology", "physics", "chemistry"],
+    growthProspects: "Stepping stone for super-speciality (cardio-thoracic, neuro, plastic, urology, GI). MCh adds 3 more years.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [{ degree: "MBBS", duration: "5.5 years", entranceExams: ["NEET UG"] }],
+      postgrad: [
+        { degree: "MS (General Surgery)", duration: "3 years", entranceExams: ["NEET PG"] },
+        { degree: "MCh (super-speciality)", duration: "3 years", entranceExams: ["NEET SS"], notes: "Optional: cardio-thoracic, neuro, plastic, urology, etc." },
+      ],
+      finalRole: "Consultant Surgeon — hospital + private OT.",
+    },
+  },
+  {
+    name: "Pathologist",
+    emoji: "🔬",
+    category: "medical",
+    description:
+      "Diagnose disease from lab tests — blood, tissue biopsies, body fluids. Behind every diagnosis in a hospital.",
+    dayInLife:
+      "Microscope work, lab management, reporting samples, occasional fine-needle aspiration. Predictable hours — rare for medicine.",
+    qualifications: ["MBBS → MD Pathology"],
+    entranceExams: [
+      { name: "NEET UG", link: "https://neet.nta.nic.in", dates: "May" },
+      { name: "NEET PG", link: "https://nbe.edu.in", dates: "Mar" },
+    ],
+    salaryRanges: { entry: 800_000, mid: 2_000_000, senior: 8_000_000 },
+    topColleges: ["AIIMS Delhi", "PGIMER Chandigarh", "CMC Vellore"],
+    skillsRequired: ["Microscope mastery", "Attention to detail", "Lab management"],
+    interestTags: ["medical", "biology", "research"],
+    preferredSubjects: ["biology", "chemistry"],
+    growthProspects: "Diagnostic chains (SRL, Metropolis, Thyrocare) hire heavily. Predictable lifestyle = popular for women in medicine.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [{ degree: "MBBS", duration: "5.5 years", entranceExams: ["NEET UG"] }],
+      postgrad: [{ degree: "MD (Pathology)", duration: "3 years", entranceExams: ["NEET PG"] }],
+      finalRole: "Pathologist — hospital lab / diagnostic chain.",
+    },
+  },
+  {
+    name: "Microbiologist",
+    emoji: "🦠",
+    category: "research",
+    description:
+      "Study microorganisms — bacteria, viruses, fungi, parasites. Roles in healthcare diagnostics, pharma R&D, food safety, environmental.",
+    dayInLife:
+      "Lab work (culture, PCR, antimicrobial susceptibility), infection surveillance in hospitals, research, teaching.",
+    qualifications: ["B.Sc Microbiology / Biotech → M.Sc → PhD (for research)", "Or MBBS → MD Microbiology for clinical roles"],
+    entranceExams: [
+      { name: "CUET UG", link: "https://cuet.nta.nic.in", dates: "May" },
+      { name: "GAT-B", link: "https://nta.ac.in", dates: "Apr" },
+    ],
+    salaryRanges: { entry: 350_000, mid: 900_000, senior: 2_500_000 },
+    topColleges: ["AIIMS Delhi", "Madras University", "BHU Varanasi", "DU North Campus"],
+    skillsRequired: ["Sterile technique", "PCR + molecular biology", "Data analysis"],
+    interestTags: ["biology", "research", "medical"],
+    preferredSubjects: ["biology", "chemistry"],
+    growthProspects: "Post-COVID boom in infection control + diagnostic startups. Clinical Microbiology (post-MBBS) is highest paid path.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [
+        { degree: "B.Sc Microbiology / Biotech", duration: "3 years", entranceExams: ["CUET UG"] },
+      ],
+      postgrad: [
+        { degree: "M.Sc Microbiology", duration: "2 years", entranceExams: ["CUET PG"] },
+        { degree: "PhD (research) — OR — MD Microbiology (clinical, post-MBBS)", duration: "3-5 years" },
+      ],
+      finalRole: "Microbiologist — clinical lab, pharma R&D, food/agri sector, academia.",
+    },
+  },
+  {
+    name: "Geneticist / Genetic Counselor",
+    emoji: "🧬",
+    category: "medical",
+    description:
+      "Diagnose and counsel about inherited disorders. Booming field with prenatal screening, cancer genetics, rare disease panels.",
+    dayInLife:
+      "Genetic test interpretation (NGS panels), family pedigree counselling, prenatal screening reports, rare disease workups.",
+    qualifications: ["B.Sc Biotech → M.Sc Human Genetics + PG diploma in Counseling", "Or MBBS → MD + Fellowship in Medical Genetics"],
+    entranceExams: [
+      { name: "NEET UG (clinical route)", link: "https://neet.nta.nic.in", dates: "May" },
+      { name: "CUET UG", link: "https://cuet.nta.nic.in", dates: "May" },
+    ],
+    salaryRanges: { entry: 500_000, mid: 1_500_000, senior: 5_000_000 },
+    topColleges: ["AIIMS Delhi", "Sir Ganga Ram Hospital genetics dept", "MAHE Manipal"],
+    skillsRequired: ["Genetics + statistics", "Empathy", "Counselling skills"],
+    interestTags: ["biology", "medical", "research", "psychology"],
+    preferredSubjects: ["biology", "chemistry", "math"],
+    growthProspects: "MapmyGenome, Lilac Insights, Strand Lifesciences hiring. Fastest-growing medical sub-field globally.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [{ degree: "B.Sc Biotech / Genetics", duration: "3 years", entranceExams: ["CUET UG"] }],
+      postgrad: [{ degree: "M.Sc Genetics + PG Diploma Genetic Counseling", duration: "2-3 years" }],
+      finalRole: "Genetic Counselor — diagnostic lab, prenatal centre, oncology team.",
+    },
+  },
+  {
+    name: "Bioinformatician",
+    emoji: "🧪",
+    category: "research",
+    description:
+      "Computational biology — apply algorithms + statistics to genomic and biological data. Bridge between biology and CS.",
+    dayInLife:
+      "Coding Python / R analyses of sequencing data, building pipelines, statistical modeling of disease cohorts.",
+    qualifications: ["B.Sc / B.Tech Bioinformatics OR Biotech + computational", "M.Sc / PhD for advanced roles"],
+    entranceExams: [
+      { name: "GAT-B", link: "https://nta.ac.in", dates: "Apr" },
+      { name: "JEE Main + IIIT-D / B.Tech Bioinformatics", link: "https://jeemain.nta.nic.in", dates: "Jan & Apr" },
+    ],
+    salaryRanges: { entry: 600_000, mid: 1_800_000, senior: 5_500_000 },
+    topColleges: ["IIIT Delhi (Computational Biology)", "IIT Madras", "Anna University", "Madurai Kamaraj University"],
+    skillsRequired: ["Python / R", "Statistics", "Molecular biology", "Linux"],
+    interestTags: ["biology", "tech", "research", "math"],
+    preferredSubjects: ["biology", "math", "chemistry"],
+    growthProspects: "MedGenome, Roche, GSK India hire heavily. Generative AI applied to drug discovery is a huge growth area.",
+    roadmap: {
+      class12: { stream: "PCMB", coreSubjects: ["Physics", "Chemistry", "Biology", "Math"], minScore: "Recommended PCMB if available — needs both Math and Bio" },
+      undergrad: [{ degree: "B.Tech Bioinformatics / B.Sc Comp Biology", duration: "4 years" }],
+      postgrad: [{ degree: "M.Sc / PhD Computational Biology", duration: "2-5 years" }],
+      finalRole: "Bioinformatician — pharma R&D, diagnostic startup, academic lab.",
+    },
+  },
+  {
+    name: "Nutritionist / Dietitian",
+    emoji: "🥗",
+    category: "medical",
+    description:
+      "Plan diets for hospital patients, sports teams, fitness clients, lifestyle disease management. Booming with India's diabetes/obesity epidemic.",
+    dayInLife:
+      "Patient consults, individualised meal plans, follow-ups, working with physicians on diabetic/cardiac/cancer nutrition.",
+    qualifications: ["B.Sc Nutrition & Dietetics → M.Sc → Registered Dietitian (RD) cert via IDA"],
+    entranceExams: [{ name: "CUET UG", link: "https://cuet.nta.nic.in", dates: "May" }],
+    salaryRanges: { entry: 250_000, mid: 700_000, senior: 2_500_000 },
+    topColleges: ["Lady Irwin College Delhi", "SNDT Mumbai", "Manipal Academy of Higher Education"],
+    skillsRequired: ["Clinical nutrition", "Counselling", "Cultural sensitivity", "Marketing self (for private practice)"],
+    interestTags: ["biology", "medical", "social"],
+    preferredSubjects: ["biology", "chemistry"],
+    growthProspects: "D2C health (HealthifyMe, Cult, Curefit) hiring fast. Influencer dietitians on Insta scale to ₹50L+/year.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [{ degree: "B.Sc Nutrition & Dietetics", duration: "3 years", entranceExams: ["CUET UG"] }],
+      postgrad: [{ degree: "M.Sc Dietetics", duration: "2 years" }, { degree: "Registered Dietitian (RD) certification", duration: "6 months" }],
+      finalRole: "Dietitian — hospital / private clinic / sports team / D2C app.",
+    },
+  },
+  {
+    name: "Ayurvedic Doctor (BAMS)",
+    emoji: "🌿",
+    category: "medical",
+    description:
+      "Traditional Indian medicine practitioner. Modern Ayurveda combines classical principles with evidence-based wellness — growing wellness industry.",
+    dayInLife:
+      "Pulse-reading consults, prescribing herbal formulations, panchakarma therapies, lifestyle counselling.",
+    qualifications: ["BAMS (Bachelor of Ayurvedic Medicine & Surgery), 5.5 yr"],
+    entranceExams: [{ name: "NEET UG", link: "https://neet.nta.nic.in", dates: "May" }],
+    salaryRanges: { entry: 350_000, mid: 900_000, senior: 4_000_000 },
+    topColleges: ["IPGT&RA Jamnagar", "BHU Ayurveda Faculty", "Govt Ayurveda College Trivandrum", "Tilak Maharashtra Vidyapeeth"],
+    skillsRequired: ["Sanskrit basics", "Herbal pharmacology", "Patient communication"],
+    interestTags: ["medical", "biology", "humanities"],
+    preferredSubjects: ["biology", "chemistry"],
+    growthProspects: "Patanjali, Himalaya, Kapiva growing. AYUSH ministry expanding govt roles.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [{ degree: "BAMS", duration: "5.5 years (4.5 + internship)", entranceExams: ["NEET UG"] }],
+      postgrad: [{ degree: "MD (Ayurveda) — optional", duration: "3 years" }],
+      finalRole: "Ayurvedic Doctor — own clinic / wellness chain / Ayurvedic pharma.",
+    },
+  },
+  {
+    name: "Homeopath (BHMS)",
+    emoji: "💊",
+    category: "medical",
+    description:
+      "Homeopathic medicine practitioner. Strong patient base in India for chronic conditions — skin, allergies, kids' health.",
+    dayInLife:
+      "Detailed history-taking (1-hr first consults common), individualised remedy prescription, long-term follow-ups.",
+    qualifications: ["BHMS (Bachelor of Homeopathic Medicine & Surgery), 5.5 yr"],
+    entranceExams: [{ name: "NEET UG", link: "https://neet.nta.nic.in", dates: "May" }],
+    salaryRanges: { entry: 300_000, mid: 700_000, senior: 2_500_000 },
+    topColleges: ["NIH Kolkata", "Govt Homeopathic Medical College Bangalore", "JBR Pune"],
+    skillsRequired: ["Patient listening", "Materia medica", "Patience for slow-acting therapies"],
+    interestTags: ["medical", "biology", "social"],
+    preferredSubjects: ["biology", "chemistry"],
+    growthProspects: "Stable demand. Private clinic model dominant. Lifestyle disease + chronic care segment.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [{ degree: "BHMS", duration: "5.5 years (4.5 + internship)", entranceExams: ["NEET UG"] }],
+      finalRole: "Homeopathic Doctor — private clinic / online consult platform.",
+    },
+  },
+  {
+    name: "Occupational Therapist",
+    emoji: "🤝",
+    category: "medical",
+    description:
+      "Help patients regain daily-life skills after injury / disability / autism. Combines biology, psychology, and hands-on therapy.",
+    dayInLife:
+      "1-on-1 patient sessions teaching dressing, writing, walking again. Heavy use of adaptive equipment + creative exercises.",
+    qualifications: ["BOT (Bachelor of Occupational Therapy), 4.5 yr"],
+    entranceExams: [
+      { name: "NEET UG (some states)", link: "https://neet.nta.nic.in", dates: "May" },
+      { name: "AIIMS BOT entrance", link: "https://www.aiimsexams.ac.in", dates: "Varies" },
+    ],
+    salaryRanges: { entry: 250_000, mid: 700_000, senior: 2_500_000 },
+    topColleges: ["AIIMS Delhi (BOT)", "Christian Medical College Vellore", "NIEPMD Chennai"],
+    skillsRequired: ["Patience", "Creativity in therapy", "Empathy"],
+    interestTags: ["biology", "medical", "social", "psychology"],
+    preferredSubjects: ["biology", "psychology"],
+    growthProspects: "Autism + elderly care + post-stroke rehab all booming. International demand strong (UK NHS, Gulf, US).",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [{ degree: "BOT", duration: "4.5 years (3.5 + internship)" }],
+      postgrad: [{ degree: "MOT (specialisation)", duration: "2 years" }],
+      finalRole: "Occupational Therapist — hospital / autism centre / pediatric clinic / private practice.",
+    },
+  },
+  {
+    name: "Clinical Psychologist",
+    emoji: "🛋️",
+    category: "medical",
+    description:
+      "Therapy + assessment specialist (different from psychiatrist — no prescriptions, deeper therapy). RCI license required for clinical work.",
+    dayInLife:
+      "50-min therapy sessions, psychological assessments (IQ, personality), case reports, supervision.",
+    qualifications: ["BA/B.Sc Psychology → MA Clinical Psych → M.Phil Clinical Psych (RCI-licensed)"],
+    entranceExams: [
+      { name: "NIMHANS entrance", link: "https://nimhans.ac.in", dates: "Apr" },
+      { name: "CUET PG", link: "https://cuet.nta.nic.in", dates: "Mar-Apr" },
+    ],
+    salaryRanges: { entry: 400_000, mid: 1_200_000, senior: 4_000_000 },
+    topColleges: ["NIMHANS Bangalore", "CIP Ranchi", "TISS Mumbai", "Christ University Bangalore"],
+    skillsRequired: ["Therapeutic techniques (CBT, DBT)", "Empathy", "Research basics"],
+    interestTags: ["psychology", "biology", "social", "research"],
+    preferredSubjects: ["psychology", "biology"],
+    growthProspects: "Mental health awareness booming. D2C platforms (YourDOST, Wysa, MFine) hiring. Independent practice has highest ceiling.",
+    roadmap: {
+      class12: { stream: "Any", coreSubjects: ["Psychology (recommended)", "English"], notes: "Humanities + Psych is most common but any stream works" },
+      undergrad: [{ degree: "BA / B.Sc Psychology", duration: "3 years" }],
+      postgrad: [
+        { degree: "MA Clinical Psychology", duration: "2 years", entranceExams: ["NIMHANS / CUET PG"] },
+        { degree: "M.Phil Clinical Psychology (RCI-licensed)", duration: "2 years", notes: "Required for clinical practice" },
+      ],
+      finalRole: "Clinical Psychologist — hospital / private practice / corporate wellness.",
+    },
+  },
+  {
+    name: "Audiologist & Speech-Language Pathologist (BASLP — extended)",
+    emoji: "👂",
+    category: "medical",
+    description:
+      "Hearing + speech disorders. Audiologists fit hearing aids + cochlear implants. SLPs treat stuttering, autism speech, swallowing disorders.",
+    dayInLife:
+      "Hearing tests, hearing-aid fitting, 1:1 speech therapy sessions, school visits (special needs), cochlear implant programming.",
+    qualifications: ["BASLP — 4-year integrated programme", "MASLP for specialisation"],
+    entranceExams: [{ name: "AIISH entrance", link: "https://www.aiishmysore.in", dates: "Jul" }],
+    salaryRanges: { entry: 250_000, mid: 700_000, senior: 2_000_000 },
+    topColleges: ["AIISH Mysore", "AYJNIHH Mumbai", "JIPMER Puducherry"],
+    skillsRequired: ["Diagnostic skills", "Patience with kids", "Tech (audiometry, hearing aids)"],
+    interestTags: ["biology", "medical", "social", "psychology"],
+    preferredSubjects: ["biology"],
+    growthProspects: "Cochlear, Phonak, Resound hire audiologists. School-system + autism therapy demand is exploding.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [{ degree: "BASLP", duration: "4 years (3.5 + internship)" }],
+      postgrad: [{ degree: "MASLP", duration: "2 years" }],
+      finalRole: "Audiologist or SLP — hospital / school / private clinic.",
+    },
+  },
+  {
+    name: "Botanist",
+    emoji: "🌱",
+    category: "research",
+    description:
+      "Plant biologist. Roles in agriculture, conservation, pharma (plant-derived drugs), forensic botany, taxonomy.",
+    dayInLife:
+      "Field trips, herbarium work, lab assays of plant compounds, paper writing.",
+    qualifications: ["B.Sc Botany → M.Sc → PhD"],
+    entranceExams: [
+      { name: "CUET UG", link: "https://cuet.nta.nic.in", dates: "May" },
+      { name: "IIT JAM (M.Sc)", link: "https://jam.iitb.ac.in", dates: "Feb" },
+    ],
+    salaryRanges: { entry: 350_000, mid: 900_000, senior: 2_500_000 },
+    topColleges: ["BHU Varanasi", "Calcutta University", "Madurai Kamaraj", "Punjab University"],
+    skillsRequired: ["Plant taxonomy", "Field identification", "Lab techniques", "GIS basics"],
+    interestTags: ["biology", "research"],
+    preferredSubjects: ["biology", "chemistry"],
+    growthProspects: "Conservation NGOs (WWF, ATREE), pharma R&D, ICAR research institutes.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [{ degree: "B.Sc Botany", duration: "3 years" }],
+      postgrad: [{ degree: "M.Sc Botany / Plant Biology", duration: "2 years" }, { degree: "PhD (research)", duration: "4-5 years" }],
+      finalRole: "Botanist — research institute / conservation NGO / pharma / forensic.",
+    },
+  },
+  {
+    name: "Zoologist / Wildlife Biologist",
+    emoji: "🦁",
+    category: "research",
+    description:
+      "Animal biologist. Wildlife conservation (tigers, elephants, wetlands), zoo management, comparative anatomy research.",
+    dayInLife:
+      "Field surveys (camera-trapping, telemetry), specimen analysis, conservation policy work, teaching.",
+    qualifications: ["B.Sc Zoology → M.Sc Wildlife Sciences / Zoology → PhD"],
+    entranceExams: [
+      { name: "WII (Wildlife Institute of India) entrance", link: "https://wii.gov.in", dates: "Varies" },
+      { name: "CUET PG", link: "https://cuet.nta.nic.in", dates: "Mar-Apr" },
+    ],
+    salaryRanges: { entry: 350_000, mid: 800_000, senior: 2_000_000 },
+    topColleges: ["WII Dehradun", "Saurashtra University", "BHU Varanasi", "Pondicherry University"],
+    skillsRequired: ["Field stamina", "GIS", "Species identification", "Statistics"],
+    interestTags: ["biology", "research"],
+    preferredSubjects: ["biology"],
+    growthProspects: "Forest Service (IFS), WWF, Aaranyak, Wildlife Trust of India. Niche but deeply meaningful.",
+    roadmap: {
+      class12: { stream: "PCB", coreSubjects: ["Physics", "Chemistry", "Biology"] },
+      undergrad: [{ degree: "B.Sc Zoology", duration: "3 years" }],
+      postgrad: [{ degree: "M.Sc Wildlife Sciences (WII)", duration: "2 years" }, { degree: "PhD", duration: "4-5 years" }],
+      finalRole: "Wildlife Biologist — WII, IFS, conservation org, zoo, academia.",
+    },
   },
 ];

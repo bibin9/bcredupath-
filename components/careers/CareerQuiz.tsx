@@ -3,13 +3,17 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { Check, X, ArrowLeft, ArrowRight, Loader2, Sparkles } from "lucide-react";
+import { Check, X, ArrowLeft, ArrowRight, Loader2, Sparkles, BookOpen } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { CAREER_QUIZ } from "@/lib/career-matcher";
+import { CAREER_QUIZ, SUBJECT_OPTIONS } from "@/lib/career-matcher";
+
+type Phase = "subjects" | "interests";
 
 export function CareerQuiz({ defaultInterests = [] }: { defaultInterests?: string[] }) {
   const router = useRouter();
+  const [phase, setPhase] = useState<Phase>("subjects");
+  const [subjects, setSubjects] = useState<string[]>([]);
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState<Map<string, boolean>>(new Map());
   const [submitting, setSubmitting] = useState(false);
@@ -18,30 +22,45 @@ export function CareerQuiz({ defaultInterests = [] }: { defaultInterests?: strin
   const total = CAREER_QUIZ.length;
   const isLast = idx === total - 1;
 
+  function toggleSubject(id: string) {
+    setSubjects((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id]));
+  }
+
+  function startInterestPhase() {
+    if (subjects.length === 0) {
+      toast.error("Pick at least one subject you enjoy");
+      return;
+    }
+    setPhase("interests");
+  }
+
   function pick(yes: boolean) {
     setAnswers((m) => {
       const next = new Map(m);
       next.set(q.id, yes);
       return next;
     });
-    if (isLast) return; // submit on button press
+    if (isLast) return;
     setIdx((i) => i + 1);
   }
 
   function back() {
+    if (phase === "interests" && idx === 0) {
+      setPhase("subjects");
+      return;
+    }
     setIdx((i) => Math.max(0, i - 1));
   }
 
   async function submit() {
     setSubmitting(true);
-    // Collect tags from all "yes" answers
     const tags = new Set<string>(defaultInterests.filter((t) => !t.startsWith("q:")));
     for (const item of CAREER_QUIZ) {
       const yes = answers.get(item.id);
       if (yes) item.tags.forEach((t) => tags.add(t));
     }
-    if (tags.size === 0) {
-      toast.error("Pick at least one 'yes' to find matches");
+    if (tags.size === 0 && subjects.length === 0) {
+      toast.error("Pick at least one 'yes' or one subject to find matches");
       setSubmitting(false);
       return;
     }
@@ -49,7 +68,11 @@ export function CareerQuiz({ defaultInterests = [] }: { defaultInterests?: strin
       const res = await fetch("/api/careers/match", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ interests: Array.from(tags), save: true }),
+        body: JSON.stringify({
+          interests: Array.from(tags),
+          subjects,
+          save: true,
+        }),
       });
       if (!res.ok) throw new Error("Save failed");
       toast.success("Matches updated 🎯");
@@ -61,6 +84,58 @@ export function CareerQuiz({ defaultInterests = [] }: { defaultInterests?: strin
     }
   }
 
+  /* ─── SUBJECT PHASE ─── */
+  if (phase === "subjects") {
+    return (
+      <div className="mx-auto max-w-xl space-y-4">
+        <div className="card-glass">
+          <div className="mb-2 flex items-center gap-2">
+            <BookOpen className="h-4 w-4 text-neon-cyan" />
+            <span className="font-display text-base font-bold">Step 1 — Subjects you enjoy</span>
+          </div>
+          <p className="text-xs text-white/65">
+            Pick the subjects you genuinely like. We'll match careers that use them.
+          </p>
+
+          <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+            {SUBJECT_OPTIONS.map((s) => {
+              const picked = subjects.includes(s.id);
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => toggleSubject(s.id)}
+                  className={cn(
+                    "flex items-center gap-2 rounded-2xl border p-3 text-left text-sm transition-all",
+                    picked
+                      ? "border-neon-purple/60 bg-neon-purple/15 shadow-glow-purple"
+                      : "border-white/[0.08] bg-white/[0.03] hover:border-white/[0.18] hover:bg-white/[0.06]"
+                  )}
+                >
+                  <span className="text-xl">{s.emoji}</span>
+                  <span className="truncate font-semibold">{s.label}</span>
+                  {picked && <Check className="ml-auto h-4 w-4 text-neon-purple shrink-0" />}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="mt-4 text-center text-xs text-white/55">
+            <b className="text-white">{subjects.length}</b> selected · pick as many as you like
+          </div>
+        </div>
+
+        <button
+          onClick={startInterestPhase}
+          disabled={subjects.length === 0}
+          className="btn-neon w-full"
+        >
+          Next: interest questions <ArrowRight className="h-4 w-4" />
+        </button>
+      </div>
+    );
+  }
+
+  /* ─── INTEREST PHASE ─── */
   const yesCount = [...answers.values()].filter(Boolean).length;
   const noCount = [...answers.values()].filter((v) => !v).length;
   const progress = ((idx + 1) / total) * 100;
@@ -70,7 +145,7 @@ export function CareerQuiz({ defaultInterests = [] }: { defaultInterests?: strin
       <div className="card-glass !p-3">
         <div className="mb-2 flex items-center justify-between text-xs">
           <span className="text-white/55">
-            <b className="text-white">{idx + 1}</b> / {total}
+            Step 2 · <b className="text-white">{idx + 1}</b> / {total}
           </span>
           <div className="flex gap-2 text-[10px]">
             <span className="pill-neon-green !px-2 !py-0">✓ {yesCount}</span>
@@ -102,9 +177,7 @@ export function CareerQuiz({ defaultInterests = [] }: { defaultInterests?: strin
             <Sparkles className="h-3 w-3" /> Interest check
           </span>
           <div className="mt-12 mb-4 text-7xl">{q.emoji}</div>
-          <p className="font-display text-2xl font-bold leading-snug">
-            {q.text}
-          </p>
+          <p className="font-display text-2xl font-bold leading-snug">{q.text}</p>
         </motion.div>
       </AnimatePresence>
 
@@ -126,12 +199,13 @@ export function CareerQuiz({ defaultInterests = [] }: { defaultInterests?: strin
       </div>
 
       <div className="flex items-center justify-between">
-        <button onClick={back} disabled={idx === 0} className="btn-ghost text-sm disabled:opacity-30">
+        <button onClick={back} className="btn-ghost text-sm">
           <ArrowLeft className="h-4 w-4" /> Back
         </button>
         {isLast && answers.size > 0 ? (
           <button onClick={submit} disabled={submitting} className="btn-neon text-sm">
-            {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "See matches"} <ArrowRight className="h-4 w-4" />
+            {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "See matches"}{" "}
+            <ArrowRight className="h-4 w-4" />
           </button>
         ) : (
           <button onClick={() => setIdx(Math.min(total - 1, idx + 1))} className="btn-ghost text-sm">

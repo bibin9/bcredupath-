@@ -12,38 +12,86 @@ export type MatchResult = {
 };
 
 /**
- * Compute a fit score for a career given user interest tags.
+ * Compute a fit score for a career given user interest tags + preferred subjects.
  *
- *   score = overlap / max(career.interestTags.length, 1)
+ *   interest_score (70% weight) = overlap of interest tags / career.interestTags.length
+ *   subject_score  (30% weight) = overlap of subjects   / career.preferredSubjects.length
  *
- * Lightweight, deterministic, and good enough for an explainable UI.
- * Tags that begin with `q:` are quiz-question IDs from onboarding; we ignore
- * them so the matcher only considers real interest tags.
+ * If user picked subjects AND career has preferredSubjects defined, both are
+ * blended. Otherwise we fall back to whichever signal we have.
+ *
+ * Tags beginning with `q:` are quiz-question IDs from onboarding — ignored.
  */
-export function scoreCareer(career: Pick<ICareer, "interestTags">, userInterests: string[]): MatchResult["score"] {
+export function scoreCareer(
+  career: Pick<ICareer, "interestTags" | "preferredSubjects">,
+  userInterests: string[],
+  userSubjects: string[] = []
+): MatchResult["score"] {
   const userTags = new Set(userInterests.filter((t) => !t.startsWith("q:")));
-  if (userTags.size === 0 || career.interestTags.length === 0) return 0;
-  const overlap = career.interestTags.filter((t) => userTags.has(t)).length;
-  return overlap / Math.max(career.interestTags.length, 1);
+  if (userTags.size === 0 && userSubjects.length === 0) return 0;
+
+  // Interest component
+  const interestOverlap = career.interestTags.filter((t) => userTags.has(t)).length;
+  const interestScore =
+    career.interestTags.length > 0
+      ? interestOverlap / career.interestTags.length
+      : 0;
+
+  // Subject component
+  const careerSubjects = career.preferredSubjects ?? [];
+  const subjectsLC = new Set(userSubjects.map((s) => s.toLowerCase()));
+  const subjectOverlap = careerSubjects.filter((s) => subjectsLC.has(s.toLowerCase())).length;
+  const subjectScore =
+    careerSubjects.length > 0 ? subjectOverlap / careerSubjects.length : 0;
+
+  const haveSubjects = userSubjects.length > 0 && careerSubjects.length > 0;
+  if (haveSubjects && userTags.size > 0) {
+    return 0.7 * interestScore + 0.3 * subjectScore;
+  }
+  if (haveSubjects) return subjectScore;
+  return interestScore;
 }
 
-export function matchedTagsFor(career: Pick<ICareer, "interestTags">, userInterests: string[]): string[] {
+export function matchedTagsFor(
+  career: Pick<ICareer, "interestTags">,
+  userInterests: string[]
+): string[] {
   const userTags = new Set(userInterests.filter((t) => !t.startsWith("q:")));
   return career.interestTags.filter((t) => userTags.has(t));
 }
 
-export function rankCareers<T extends Pick<ICareer, "interestTags">>(
+export function rankCareers<T extends Pick<ICareer, "interestTags" | "preferredSubjects">>(
   careers: T[],
-  userInterests: string[]
+  userInterests: string[],
+  userSubjects: string[] = []
 ): Array<{ career: T; score: number; matchedTags: string[] }> {
   return careers
     .map((c) => ({
       career: c,
-      score: scoreCareer(c, userInterests),
+      score: scoreCareer(c, userInterests, userSubjects),
       matchedTags: matchedTagsFor(c, userInterests),
     }))
     .sort((a, b) => b.score - a.score);
 }
+
+/**
+ * Subject options the student picks during the career quiz.
+ * Match IDs to career.preferredSubjects.
+ */
+export const SUBJECT_OPTIONS = [
+  { id: "math", label: "Mathematics", emoji: "📐" },
+  { id: "physics", label: "Physics", emoji: "⚛️" },
+  { id: "chemistry", label: "Chemistry", emoji: "🧪" },
+  { id: "biology", label: "Biology", emoji: "🧬" },
+  { id: "computer science", label: "Computer Science", emoji: "💻" },
+  { id: "economics", label: "Economics", emoji: "📈" },
+  { id: "accountancy", label: "Accountancy", emoji: "📒" },
+  { id: "psychology", label: "Psychology", emoji: "🧠" },
+  { id: "history", label: "History", emoji: "🏛️" },
+  { id: "english", label: "English / Literature", emoji: "📖" },
+  { id: "geography", label: "Geography", emoji: "🗺️" },
+  { id: "political science", label: "Political Science", emoji: "⚖️" },
+] as const;
 
 /**
  * Expanded career interest quiz (20 questions). Used by /dashboard/careers/quiz.

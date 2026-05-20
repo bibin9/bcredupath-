@@ -10,7 +10,9 @@ import { rankCareers } from "@/lib/career-matcher";
 export const dynamic = "force-dynamic";
 
 const Body = z.object({
-  interests: z.array(z.string()).min(1).max(40),
+  interests: z.array(z.string()).max(40).optional().default([]),
+  /** Subjects the student picked in step 1 of the quiz (e.g. "math", "biology") */
+  subjects: z.array(z.string()).max(20).optional().default([]),
   /** If true, save to user.interests + careerPreferences */
   save: z.boolean().optional(),
 });
@@ -27,9 +29,14 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid body", details: parsed.error.flatten() }, { status: 400 });
   }
 
+  // Need at least one signal — interests OR subjects
+  if (parsed.data.interests.length === 0 && parsed.data.subjects.length === 0) {
+    return NextResponse.json({ error: "Pick at least one subject or one interest" }, { status: 400 });
+  }
+
   await connectDB();
   const careers = await Career.find({}).lean();
-  const ranked = rankCareers(careers, parsed.data.interests).slice(0, 10);
+  const ranked = rankCareers(careers, parsed.data.interests, parsed.data.subjects).slice(0, 10);
 
   if (parsed.data.save) {
     await User.updateOne(
@@ -37,6 +44,7 @@ export async function POST(req: Request) {
       {
         $set: {
           interests: parsed.data.interests,
+          preferredSubjects: parsed.data.subjects,
           careerPreferences: ranked.slice(0, 5).map((r) => String(r.career._id)),
         },
       }

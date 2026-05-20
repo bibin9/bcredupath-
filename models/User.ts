@@ -20,6 +20,7 @@ export interface IUser extends Document {
   rank: "Bronze" | "Silver" | "Gold" | "Platinum" | "Diamond";
   bookmarks: Types.ObjectId[];
   interests: string[];
+  preferredSubjects: string[];
   careerPreferences: string[];
   onboarded: boolean;
   parentShareToken?: string;
@@ -60,6 +61,7 @@ const userSchema = new Schema<IUser>(
     },
     bookmarks: [{ type: Schema.Types.ObjectId, ref: "Question" }],
     interests: { type: [String], default: [] },
+    preferredSubjects: { type: [String], default: [] },
     careerPreferences: { type: [String], default: [] },
     onboarded: { type: Boolean, default: false },
     parentShareToken: { type: String, index: true, sparse: true },

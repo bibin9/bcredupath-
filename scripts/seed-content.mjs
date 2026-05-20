@@ -23,15 +23,29 @@ const { COLLEGES } = await importTS("lib/seed/colleges.ts");
 const { EXAMS } = await importTS("lib/seed/exams.ts");
 const { SCHOLARSHIPS } = await importTS("lib/seed/scholarships.ts");
 const { COUNSELORS } = await importTS("lib/seed/counselors.ts");
+const { ROADMAP_OVERRIDES, DEFAULT_ROADMAP } = await importTS("lib/seed/career-roadmaps.ts");
+const { COLLEGE_CONTACTS } = await importTS("lib/seed/college-contacts.ts");
 
 // Inline minimal schemas
+const roadmapStageSchema = new mongoose.Schema({
+  degree: String, duration: String, entranceExams: [String], notes: String,
+}, { _id: false });
+
 const careerSchema = new mongoose.Schema({
   name: String, emoji: String, category: String, description: String, dayInLife: String,
   qualifications: [String],
   entranceExams: [{ name: String, link: String, dates: String, _id: false }],
   salaryRanges: { entry: Number, mid: Number, senior: Number },
   topColleges: [mongoose.Schema.Types.ObjectId],
-  skillsRequired: [String], interestTags: [String], growthProspects: String, videoUrl: String,
+  skillsRequired: [String], interestTags: [String], preferredSubjects: [String],
+  growthProspects: String, videoUrl: String,
+  roadmap: new mongoose.Schema({
+    class10: { focus: String, minScore: String, _id: false },
+    class12: { stream: String, coreSubjects: [String], minScore: String, _id: false },
+    undergrad: [roadmapStageSchema],
+    postgrad: [roadmapStageSchema],
+    finalRole: String,
+  }, { _id: false }),
 }, { timestamps: true });
 
 const collegeSchema = new mongoose.Schema({
@@ -40,6 +54,7 @@ const collegeSchema = new mongoose.Schema({
   courses: [String], fees: { min: Number, max: Number }, cutoffs: mongoose.Schema.Types.Mixed,
   website: String, admissionLink: String, hostel: Boolean, placement: mongoose.Schema.Types.Mixed,
   highlights: [String],
+  address: String, phone: String, email: String,
 }, { timestamps: true });
 
 const examSchema = new mongoose.Schema({
@@ -80,14 +95,19 @@ async function main() {
 
   // Wipe + re-seed each collection (these are static reference data)
   await College.deleteMany({});
-  const collegeDocs = await College.insertMany(COLLEGES.map((c) => ({
-    ...c,
-    country: c.country ?? "India",
-    cutoffs: {},
-    placement: {},
-  })));
+  const collegeDocs = await College.insertMany(COLLEGES.map((c) => {
+    const contact = COLLEGE_CONTACTS[c.name] ?? {};
+    return {
+      ...c,
+      country: c.country ?? "India",
+      cutoffs: {},
+      placement: {},
+      ...contact, // address, phone, email (only set if we have data)
+    };
+  }));
   const collegeByName = new Map(collegeDocs.map((c) => [c.name, c._id]));
-  console.log(`  ✓ Colleges        ${collegeDocs.length.toString().padStart(3)}`);
+  const contactCount = Object.keys(COLLEGE_CONTACTS).length;
+  console.log(`  ✓ Colleges        ${collegeDocs.length.toString().padStart(3)}  (${contactCount} with contact details)`);
 
   await Career.deleteMany({});
   const careerDocs = CAREERS.map((c) => ({
@@ -95,9 +115,12 @@ async function main() {
     topColleges: c.topColleges
       .map((name) => collegeByName.get(name))
       .filter((id) => !!id),
+    // Apply roadmap: inline > override file > default fallback
+    roadmap: c.roadmap ?? ROADMAP_OVERRIDES[c.name] ?? DEFAULT_ROADMAP,
   }));
   const careersInserted = await Career.insertMany(careerDocs);
-  console.log(`  ✓ Careers         ${careersInserted.length.toString().padStart(3)}`);
+  const withRoadmap = careerDocs.filter((c) => c.roadmap && c.roadmap !== DEFAULT_ROADMAP).length;
+  console.log(`  ✓ Careers         ${careersInserted.length.toString().padStart(3)}  (${withRoadmap} with curated roadmaps)`);
 
   await ExamInfo.deleteMany({});
   const examDocs = EXAMS.map((e) => ({

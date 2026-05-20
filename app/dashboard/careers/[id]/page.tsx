@@ -5,6 +5,7 @@ import { connectDB } from "@/lib/db";
 import { Career } from "@/models/Career";
 import { College } from "@/models/College";
 import { formatNumber } from "@/lib/utils";
+import { CareerRoadmap } from "@/components/careers/CareerRoadmap";
 import { ArrowLeft, ExternalLink, GraduationCap, Briefcase, BookOpenCheck, Clock, TrendingUp } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -79,6 +80,15 @@ export default async function CareerDetailPage({ params }: { params: { id: strin
           <p className="text-sm leading-relaxed text-white/75">{career.description}</p>
         </section>
       </div>
+
+      {/* ROADMAP — 10th → 12th → UG → PG → Career */}
+      {career.roadmap && (
+        <CareerRoadmap
+          roadmap={career.roadmap}
+          careerId={String(career._id)}
+          careerName={career.name}
+        />
+      )}
 
       {/* QUALIFICATIONS + SKILLS */}
       <div className="grid gap-5 lg:grid-cols-2">

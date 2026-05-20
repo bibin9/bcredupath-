@@ -16,6 +16,10 @@ export interface ICollege extends Document {
   hostel: boolean;
   placement: Record<string, unknown>;
   highlights?: string[]; // 1-3 bullet points
+  /** Full postal address for contact details panel */
+  address?: string;
+  phone?: string;
+  email?: string;
 }
 
 const collegeSchema = new Schema<ICollege>(
@@ -35,6 +39,9 @@ const collegeSchema = new Schema<ICollege>(
     hostel: { type: Boolean, default: false },
     placement: { type: Schema.Types.Mixed, default: {} },
     highlights: { type: [String], default: [] },
+    address: String,
+    phone: String,
+    email: String,
   },
   { timestamps: true }
 );
