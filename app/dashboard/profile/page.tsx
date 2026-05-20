@@ -11,7 +11,9 @@ import { rankFromXP, RANK_EMOJI, BADGES, type BadgeId } from "@/lib/gamification
 import { LocaleToggle } from "@/components/shared/LocaleToggle";
 import { ParentShareSettings } from "@/components/shared/ParentShareSettings";
 import { InstallSettingsRow } from "@/components/shared/InstallSettingsRow";
-import { LogOut, Settings, Languages, Users } from "lucide-react";
+import { AcademicEditor } from "@/components/shared/AcademicEditor";
+import type { Stream } from "@/lib/constants";
+import { LogOut, Settings, Languages, Users, GraduationCap } from "lucide-react";
 
 export default async function ProfilePage() {
   const session = await getServerSession(authOptions);
@@ -95,6 +97,17 @@ export default async function ProfilePage() {
           </div>
 
           <InstallSettingsRow />
+
+          <div className="border-t border-white/[0.06] pt-4">
+            <div className="mb-3 flex items-center gap-2">
+              <GraduationCap className="h-4 w-4 text-neon-cyan" />
+              <span className="font-semibold">Class & stream</span>
+            </div>
+            <AcademicEditor
+              initialClass={(user.class as 10 | 12 | null) ?? null}
+              initialStream={(user.stream as Stream | null) ?? null}
+            />
+          </div>
 
           <div className="border-t border-white/[0.06] pt-4">
             <div className="mb-2 flex items-center gap-2">

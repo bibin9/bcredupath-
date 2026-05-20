@@ -14,6 +14,7 @@ import {
   type Stream,
   type ClassNum,
 } from "@/lib/constants";
+import { BOARD_YEAR } from "@/lib/academic-year";
 
 type State = {
   name: string;
@@ -257,7 +258,7 @@ function StepClass({
             <div className="font-display text-5xl font-black">{c}</div>
             <div className="mt-1 text-sm text-white/65">Class {c} • CBSE</div>
             <div className="mt-3 text-[10px] font-bold uppercase tracking-wider text-neon-cyan">
-              Boards Feb 2026
+              Boards Feb {BOARD_YEAR}
             </div>
           </button>
         ))}
