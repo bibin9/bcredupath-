@@ -25,7 +25,10 @@ export function TopBar({
   const rank = rankFromXP(xp);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-white/[0.06] bg-bg/70 backdrop-blur-xl">
+    <header
+      className="sticky top-0 z-30 border-b border-white/[0.06] bg-bg/70 backdrop-blur-xl"
+      style={{ paddingTop: "env(safe-area-inset-top)" }}
+    >
       <div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3 lg:px-8">
         <Link href="/dashboard" className="flex items-center gap-2 lg:hidden">
           <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-grad-pink-purple text-lg shadow-glow-pink">
