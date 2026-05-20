@@ -110,9 +110,10 @@ export function MobileMenu({ showAdmin = false }: { showAdmin?: boolean }) {
       <button
         onClick={() => setOpen(true)}
         aria-label="Open menu"
-        className="relative inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] hover:bg-white/[0.08] lg:hidden"
+        type="button"
+        className="relative z-10 inline-flex h-10 w-10 items-center justify-center rounded-2xl border border-white/[0.08] bg-white/[0.04] active:scale-95 hover:bg-white/[0.08] lg:hidden touch-manipulation"
       >
-        <Menu className="h-4 w-4" />
+        <Menu className="h-5 w-5" />
       </button>
 
       <AnimatePresence>

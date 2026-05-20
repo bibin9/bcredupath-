@@ -4,7 +4,7 @@
  * - Stale-while-revalidate for question-bank pages so offline reading works
  */
 
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v2"; // bump on shipping major UI changes to invalidate stale clients
 const STATIC_CACHE = `bcr-static-${CACHE_VERSION}`;
 const PAGE_CACHE = `bcr-pages-${CACHE_VERSION}`;
 
