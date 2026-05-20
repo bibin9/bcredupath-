@@ -13,6 +13,7 @@
     "seed": "node scripts/seed.mjs",
     "seed:ai": "node scripts/seed-ai.mjs",
     "seed:ai:retry": "node scripts/seed-ai-retry.mjs",
+    "seed:augment": "node scripts/seed-ai-augment.mjs",
     "seed:content": "node scripts/seed-content.mjs",
     "test:mongo": "node scripts/test-mongo.mjs"
   },
