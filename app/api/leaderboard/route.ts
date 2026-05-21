@@ -6,7 +6,7 @@ import { User } from "@/models/User";
 
 export const dynamic = "force-dynamic";
 
-type Scope = "all-india" | "state" | "city" | "school";
+type Scope = "global" | "country" | "state" | "city" | "school" | "all-india";
 type Period = "daily" | "weekly" | "monthly" | "alltime";
 
 const PERIOD_HOURS: Record<Period, number | null> = {
@@ -31,13 +31,14 @@ export async function GET(req: Request) {
     : null;
 
   const { searchParams } = new URL(req.url);
-  const scope = (searchParams.get("scope") ?? "all-india") as Scope;
+  const scope = (searchParams.get("scope") ?? "global") as Scope;
   const period = (searchParams.get("period") ?? "alltime") as Period;
   const limit = Math.min(Number(searchParams.get("limit") ?? 50), 100);
 
-  // Scope filter — restricts to the user's state/city/school for non-global scopes
+  // Scope filter — restricts to country/state/city/school
   const scopeFilter: Record<string, unknown> = { onboarded: true };
-  if (scope === "state" && me?.state) scopeFilter.state = me.state;
+  if (scope === "country" && me?.country) scopeFilter.country = me.country;
+  else if (scope === "state" && me?.state) scopeFilter.state = me.state;
   else if (scope === "city" && me?.city) scopeFilter.city = me.city;
   else if (scope === "school" && me?.school) scopeFilter.school = me.school;
 
@@ -45,7 +46,7 @@ export async function GET(req: Request) {
 
   if (period === "alltime") {
     const users = await User.find(scopeFilter)
-      .select("name avatar xp level streak state city school rank")
+      .select("name avatar xp level streak country state city school rank")
       .sort({ xp: -1 })
       .limit(limit)
       .lean();

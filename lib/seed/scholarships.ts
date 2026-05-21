@@ -6,13 +6,17 @@
 export type SeedScholarship = {
   name: string;
   provider: string;
-  type: "govt" | "private" | "merit" | "need";
+  type: "govt" | "private" | "merit" | "need" | "nri";
   state: string | null; // null = all-India
-  amount: number; // approximate annual
+  amount: number; // approximate annual (in INR)
   eligibility: string;
   applicationLink?: string;
   deadline?: string;
   documents: string[];
+  /** Open to NRI / Overseas Indian students */
+  nriEligible?: boolean;
+  /** Specific NRI country target (null = open to NRIs in any country) */
+  targetCountry?: string | null;
 };
 
 export const SCHOLARSHIPS: SeedScholarship[] = [
@@ -106,6 +110,7 @@ export const SCHOLARSHIPS: SeedScholarship[] = [
     applicationLink: "https://www.scholarships.reliancefoundation.org",
     deadline: "2026-09-30",
     documents: ["Class 12 marksheet", "College admission letter", "Income cert", "Statement of purpose"],
+    nriEligible: true,
   },
   {
     name: "L'Oréal India For Young Women in Science",
@@ -128,6 +133,7 @@ export const SCHOLARSHIPS: SeedScholarship[] = [
     applicationLink: "https://www.adityabirlascholars.net",
     deadline: "2026-07-31",
     documents: ["Admission letter", "Class 12 marksheet", "Income proof"],
+    nriEligible: true,
   },
   {
     name: "Tata Trusts Education Grants",
@@ -253,5 +259,114 @@ export const SCHOLARSHIPS: SeedScholarship[] = [
     applicationLink: "https://scholarships.gov.in",
     deadline: "2026-11-30",
     documents: ["Disability cert", "Income cert", "Marksheet"],
+  },
+
+  /* ─── NRI / Overseas Indian scholarships ─── */
+  {
+    name: "Scholarship for Diaspora Children (SPDC)",
+    provider: "Ministry of External Affairs, Govt of India",
+    type: "nri",
+    state: null,
+    amount: 332000,
+    eligibility:
+      "NRI / PIO / OCI students with family income ≤ USD 100K/yr. Pursuing UG in India in selected courses. Max tuition + living grant up to $4,000/yr.",
+    applicationLink: "https://www.spdcindia.gov.in",
+    deadline: "2026-09-30",
+    documents: ["NRI/PIO/OCI proof", "Family income statement (USD)", "Class 12 marksheet", "Admission letter", "Passport copy"],
+    nriEligible: true,
+  },
+  {
+    name: "ICCR Scholarship for International Students",
+    provider: "Indian Council for Cultural Relations",
+    type: "nri",
+    state: null,
+    amount: 300000,
+    eligibility:
+      "Foreign nationals + OCI/PIO students seeking UG/PG in India. Country quotas vary. Includes tuition waiver + monthly stipend ₹18,000.",
+    applicationLink: "https://a2ascholarships.iccr.gov.in",
+    deadline: "2026-04-30",
+    documents: ["Nationality proof", "Class 12 transcript", "Recommendation letters", "Medical fitness cert"],
+    nriEligible: true,
+  },
+  {
+    name: "Gulf Education Loan + Scholarship (Federal Bank NRI)",
+    provider: "Federal Bank — Gulf NRI Cell",
+    type: "nri",
+    state: null,
+    amount: 1500000,
+    eligibility:
+      "NRI students of Indian origin in UAE / Saudi / Qatar / Oman / Kuwait / Bahrain. Available for UG abroad or in India. Subsidized rate + partial grant.",
+    applicationLink: "https://www.federalbank.co.in/nri-banking",
+    deadline: "Rolling",
+    documents: ["NRI/OCI proof", "Parent UAE residency", "Admission letter", "Income proof from sponsor"],
+    nriEligible: true,
+    targetCountry: "United Arab Emirates",
+  },
+  {
+    name: "Sharjah Ruler Indian School Scholarship",
+    provider: "Sharjah Indian Schools Trust",
+    type: "nri",
+    state: null,
+    amount: 200000,
+    eligibility:
+      "Indian students in UAE Sharjah Indian schools pursuing UG. Merit + need based. Apply through school CBSE coordinator.",
+    applicationLink: "https://www.dpis.sch.ae",
+    deadline: "Annual cycle — Apr",
+    documents: ["UAE residency", "School recommendation", "Class 12 marksheet", "Parent income cert"],
+    nriEligible: true,
+    targetCountry: "United Arab Emirates",
+  },
+  {
+    name: "OCI/PIO Direct Admission of Students Abroad (DASA)",
+    provider: "Ministry of Education — DASA scheme",
+    type: "nri",
+    state: null,
+    amount: 0,
+    eligibility:
+      "OCI/PIO/NRI students for B.Tech at NITs/IIITs/SPAs. No tuition grant — but unique cutoff path (SAT score) + lower than domestic Indian competition. ~10-15% supernumerary seats.",
+    applicationLink: "https://www.dasanit.org",
+    deadline: "2026-06-30",
+    documents: ["NRI/OCI proof", "SAT score (>1450 typical)", "Class 12 marksheet", "Passport copy"],
+    nriEligible: true,
+  },
+  {
+    name: "Khalifa University Scholarship (UAE)",
+    provider: "Khalifa University of Science & Technology",
+    type: "nri",
+    state: null,
+    amount: 2500000,
+    eligibility:
+      "Top Class 12 PCM students globally for UG Engineering at Khalifa Uni, Abu Dhabi. Covers full tuition + monthly stipend + accommodation. Highly competitive.",
+    applicationLink: "https://www.ku.ac.ae/admissions",
+    deadline: "2026-03-31",
+    documents: ["Class 12 transcript (predicted + actual)", "SAT score", "TOEFL/IELTS", "Recommendation letters"],
+    nriEligible: true,
+    targetCountry: "United Arab Emirates",
+  },
+  {
+    name: "Higher Education Loan — NRI (HDFC Credila)",
+    provider: "HDFC Credila",
+    type: "nri",
+    state: null,
+    amount: 7500000,
+    eligibility:
+      "NRI students for higher education in India OR abroad (US/UK/Canada/Australia). Co-signed by Indian parent/relative. Up to ₹75L loan at ~10-11% interest.",
+    applicationLink: "https://www.hdfccredila.com",
+    deadline: "Rolling",
+    documents: ["NRI/OCI proof", "Admission letter", "Co-signer KYC + ITR", "Sponsor income proof"],
+    nriEligible: true,
+  },
+  {
+    name: "Manipal NRI Scholarship",
+    provider: "Manipal Academy of Higher Education",
+    type: "nri",
+    state: null,
+    amount: 1000000,
+    eligibility:
+      "Top-ranking NRI students admitted to MAHE programs. Merit-based partial fee waiver. Decided post-admission.",
+    applicationLink: "https://manipal.edu/mu/admission.html",
+    deadline: "Post-admission review",
+    documents: ["MAHE admission offer", "NRI/OCI proof", "Class 12 marksheet (>90%)"],
+    nriEligible: true,
   },
 ];

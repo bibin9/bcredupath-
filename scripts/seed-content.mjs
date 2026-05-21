@@ -77,6 +77,8 @@ const scholarshipSchema = new mongoose.Schema({
   name: String, provider: String, type: String, state: String,
   amount: Number, eligibility: String, applicationLink: String, deadline: Date,
   documents: [String],
+  nriEligible: { type: Boolean, default: false },
+  targetCountry: String,
 }, { timestamps: true });
 
 const counselorSchema = new mongoose.Schema({
@@ -149,10 +151,18 @@ async function main() {
   await Scholarship.deleteMany({});
   const schDocs = SCHOLARSHIPS.map((s) => ({
     ...s,
-    deadline: s.deadline === "Rolling" || s.deadline === "Varies" ? undefined : parseDate(s.deadline),
+    deadline:
+      !s.deadline ||
+      s.deadline === "Rolling" ||
+      s.deadline === "Varies" ||
+      s.deadline.startsWith("Annual") ||
+      s.deadline.startsWith("Post-")
+        ? undefined
+        : parseDate(s.deadline),
   }));
   const schInserted = await Scholarship.insertMany(schDocs);
-  console.log(`  ✓ Scholarships    ${schInserted.length.toString().padStart(3)}`);
+  const nriSchCount = schDocs.filter((s) => s.nriEligible).length;
+  console.log(`  ✓ Scholarships    ${schInserted.length.toString().padStart(3)}  (${nriSchCount} NRI-eligible)`);
 
   await Counselor.deleteMany({});
   const counselorsInserted = await Counselor.insertMany(COUNSELORS);

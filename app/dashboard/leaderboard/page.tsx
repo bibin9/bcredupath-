@@ -6,11 +6,12 @@ import { Tabs } from "@/components/leaderboard/ScopeTabs";
 import { Podium, type PodiumPlayer } from "@/components/leaderboard/Podium";
 import { LeaderboardRow, type LbEntry } from "@/components/leaderboard/LeaderboardRow";
 import { Trophy, Sparkles, AlertCircle } from "lucide-react";
+import { isNRI } from "@/lib/constants";
 
 export const dynamic = "force-dynamic";
 
 type SearchParams = {
-  scope?: "all-india" | "state" | "city" | "school";
+  scope?: "global" | "country" | "state" | "city" | "school";
   period?: "daily" | "weekly" | "monthly" | "alltime";
 };
 
@@ -31,12 +32,16 @@ export default async function LeaderboardPage({
   const me = await User.findOne({ email: session!.user!.email!.toLowerCase() }).lean();
   if (!me) return null;
 
-  const scope = searchParams.scope ?? "all-india";
+  // NRI students default to "country" scope; domestic default to "global"
+  const userIsNRI = isNRI(me.country);
+  const defaultScope = userIsNRI ? "country" : "global";
+  const scope = (searchParams.scope ?? defaultScope) as NonNullable<SearchParams["scope"]>;
   const period = searchParams.period ?? "alltime";
 
   // Build scope filter
   const scopeFilter: Record<string, unknown> = { onboarded: true };
-  if (scope === "state" && me.state) scopeFilter.state = me.state;
+  if (scope === "country" && me.country) scopeFilter.country = me.country;
+  else if (scope === "state" && me.state) scopeFilter.state = me.state;
   else if (scope === "city" && me.city) scopeFilter.city = me.city;
   else if (scope === "school" && me.school) scopeFilter.school = me.school;
 
@@ -129,13 +134,21 @@ export default async function LeaderboardPage({
     state: e.state,
   }));
 
-  // Scope tab availability — only show options the user has data for
-  const scopeOptions = [
-    { id: "all-india", label: "All India", emoji: "🇮🇳" },
-    { id: "state", label: me.state ?? "State", emoji: "📍", disabled: !me.state, tooltip: !me.state ? "Set state in onboarding" : undefined },
-    { id: "city", label: me.city ?? "City", emoji: "🏙️", disabled: !me.city, tooltip: !me.city ? "Set city in profile" : undefined },
-    { id: "school", label: "School", emoji: "🏫", disabled: !me.school, tooltip: !me.school ? "Set school in profile" : undefined },
-  ];
+  // Scope tab availability — varies by domestic vs NRI student
+  const countryFlag = userIsNRI ? "🌍" : "🇮🇳";
+  const scopeOptions = userIsNRI
+    ? [
+        { id: "global", label: "Global", emoji: "🌐" },
+        { id: "country", label: me.country ?? "Country", emoji: countryFlag },
+        { id: "city", label: me.city ?? "City", emoji: "🏙️", disabled: !me.city, tooltip: !me.city ? "Add your city in Profile" : undefined },
+        { id: "school", label: "School", emoji: "🏫", disabled: !me.school, tooltip: !me.school ? "Add your school in Profile" : undefined },
+      ]
+    : [
+        { id: "global", label: "All India", emoji: "🇮🇳" },
+        { id: "state", label: me.state ?? "State", emoji: "📍", disabled: !me.state, tooltip: !me.state ? "Set state in onboarding" : undefined },
+        { id: "city", label: me.city ?? "City", emoji: "🏙️", disabled: !me.city, tooltip: !me.city ? "Set city in profile" : undefined },
+        { id: "school", label: "School", emoji: "🏫", disabled: !me.school, tooltip: !me.school ? "Set school in profile" : undefined },
+      ];
 
   const periodOptions = [
     { id: "daily", label: "Today", emoji: "🌅" },
@@ -158,7 +171,8 @@ export default async function LeaderboardPage({
             Leaderboard <span className="grad-text-yellow">🏆</span>
           </h1>
           <p className="mt-2 text-sm text-white/65 md:text-base">
-            {scope === "all-india" && "Top students across India."}
+            {scope === "global" && (userIsNRI ? "Top students worldwide (all CBSE)." : "Top students across India.")}
+            {scope === "country" && `Top students in ${me.country ?? "your country"}.`}
             {scope === "state" && `Top students in ${me.state ?? "your state"}.`}
             {scope === "city" && `Top students in ${me.city ?? "your city"}.`}
             {scope === "school" && `Top students at ${me.school ?? "your school"}.`}
@@ -170,7 +184,7 @@ export default async function LeaderboardPage({
 
       {/* TABS */}
       <div className="space-y-3">
-        <Tabs param="scope" options={scopeOptions} defaultValue="all-india" />
+        <Tabs param="scope" options={scopeOptions} defaultValue={defaultScope} />
         <Tabs param="period" options={periodOptions} defaultValue="alltime" />
       </div>
 
@@ -234,7 +248,7 @@ export default async function LeaderboardPage({
               key={e.userId}
               entry={e}
               isMe={e.userId === String(me._id)}
-              showLocation={scope === "all-india"}
+              showLocation={scope === "global"}
             />
           ))
         )}
@@ -262,7 +276,7 @@ export default async function LeaderboardPage({
                 tierEmoji: rankEmoji(me.rank),
               }}
               isMe={true}
-              showLocation={scope === "all-india"}
+              showLocation={scope === "global"}
             />
           </>
         )}

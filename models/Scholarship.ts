@@ -3,13 +3,17 @@ import { Schema, model, models, type Model, type Document } from "mongoose";
 export interface IScholarship extends Document {
   name: string;
   provider: string;
-  type: "govt" | "private" | "merit" | "need";
+  type: "govt" | "private" | "merit" | "need" | "nri";
   state: string | null;
   amount: number;
   eligibility: string;
   applicationLink?: string;
   deadline?: Date;
   documents: string[];
+  /** Is this scholarship open to NRI / Overseas Indian students? */
+  nriEligible?: boolean;
+  /** Targets specific country (e.g. "United Arab Emirates"), null = open globally */
+  targetCountry?: string | null;
 }
 
 const scholarshipSchema = new Schema<IScholarship>(
@@ -18,7 +22,7 @@ const scholarshipSchema = new Schema<IScholarship>(
     provider: String,
     type: {
       type: String,
-      enum: ["govt", "private", "merit", "need"],
+      enum: ["govt", "private", "merit", "need", "nri"],
       default: "govt",
       index: true,
     },
@@ -28,6 +32,8 @@ const scholarshipSchema = new Schema<IScholarship>(
     applicationLink: String,
     deadline: Date,
     documents: { type: [String], default: [] },
+    nriEligible: { type: Boolean, default: false, index: true },
+    targetCountry: { type: String, default: null, index: true },
   },
   { timestamps: true }
 );

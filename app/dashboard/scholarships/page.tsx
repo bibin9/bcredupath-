@@ -4,8 +4,9 @@ import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import { User } from "@/models/User";
 import { Scholarship } from "@/models/Scholarship";
-import { formatNumber } from "@/lib/utils";
-import { Coins, ExternalLink, Sparkles, CalendarDays, FileText } from "lucide-react";
+import { isNRI } from "@/lib/constants";
+import { formatAmount, isCurrency, type CurrencyCode } from "@/lib/currency";
+import { Coins, ExternalLink, Sparkles, CalendarDays, FileText, Globe } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -14,20 +15,33 @@ const TYPE_COLOR: Record<string, string> = {
   private: "text-neon-pink",
   merit: "text-neon-yellow",
   need: "text-neon-green",
+  nri: "text-neon-purple",
 };
 
 export default async function ScholarshipsPage({
   searchParams,
 }: {
-  searchParams: { type?: string; matchMe?: string };
+  searchParams: { type?: string; matchMe?: string; nri?: string };
 }) {
   const session = await getServerSession(authOptions);
   await connectDB();
   const user = await User.findOne({ email: session!.user!.email!.toLowerCase() }).lean();
 
+  const userIsNRI = isNRI(user?.country);
+  // NRI students default to nri-only view unless they opted out
+  const nriOnly = searchParams.nri ? searchParams.nri === "true" : userIsNRI;
+  const currency: CurrencyCode = isCurrency(user?.preferredCurrency)
+    ? (user!.preferredCurrency as CurrencyCode)
+    : "INR";
+
   const filter: Record<string, unknown> = {};
   if (searchParams.type) filter.type = searchParams.type;
-  if (searchParams.matchMe === "true" && user?.state) {
+  if (nriOnly) {
+    filter.$or = [
+      { nriEligible: true },
+      { targetCountry: user?.country },
+    ];
+  } else if (searchParams.matchMe === "true" && user?.state) {
     filter.$or = [{ state: null }, { state: user.state }];
   }
 
@@ -47,15 +61,38 @@ export default async function ScholarshipsPage({
             Govt + private + state-level. Find ones that match your profile.
           </p>
         </div>
-        {user?.state && (
-          <Link
-            href={`/dashboard/scholarships?matchMe=true${searchParams.type ? `&type=${searchParams.type}` : ""}`}
-            className={`btn-${searchParams.matchMe === "true" ? "neon" : "ghost"} text-sm`}
-          >
-            🎯 Match my profile ({user.state})
-          </Link>
-        )}
+        <div className="flex flex-wrap items-center gap-2">
+          {userIsNRI && (
+            <Link
+              href={`/dashboard/scholarships?nri=${nriOnly ? "false" : "true"}${searchParams.type ? `&type=${searchParams.type}` : ""}`}
+              className={`btn-${nriOnly ? "neon" : "ghost"} text-sm`}
+            >
+              🌍 {nriOnly ? "NRI-only ✓" : "Show all (incl. Indian)"}
+            </Link>
+          )}
+          {!userIsNRI && user?.state && (
+            <Link
+              href={`/dashboard/scholarships?matchMe=true${searchParams.type ? `&type=${searchParams.type}` : ""}`}
+              className={`btn-${searchParams.matchMe === "true" ? "neon" : "ghost"} text-sm`}
+            >
+              🎯 Match my profile ({user.state})
+            </Link>
+          )}
+        </div>
       </header>
+
+      {userIsNRI && nriOnly && (
+        <div className="rounded-2xl border border-neon-purple/25 bg-neon-purple/8 p-3 text-xs">
+          <div className="flex items-center gap-1.5 font-bold text-neon-purple">
+            <Globe className="h-3.5 w-3.5" /> NRI scholarships
+          </div>
+          <p className="mt-1 text-white/75">
+            Showing schemes open to Overseas Indian / NRI / PIO / OCI students
+            (and a few targeted at <b className="text-white">{user?.country}</b> specifically).
+            Most need NRI/OCI proof + parent sponsor income statement in USD.
+          </p>
+        </div>
+      )}
 
       <div className="card-glass !p-3">
         <form className="flex flex-wrap items-center gap-2 text-sm">
@@ -69,8 +106,10 @@ export default async function ScholarshipsPage({
             <option value="private">Private</option>
             <option value="merit">Merit-based</option>
             <option value="need">Need-based</option>
+            <option value="nri">NRI / Overseas</option>
           </select>
           {searchParams.matchMe && <input type="hidden" name="matchMe" value="true" />}
+          {searchParams.nri && <input type="hidden" name="nri" value={searchParams.nri} />}
           <button type="submit" className="btn-ghost !py-1.5 text-xs">Apply</button>
           {(searchParams.type || searchParams.matchMe) && (
             <Link href="/dashboard/scholarships" className="text-xs text-neon-pink hover:underline">Clear</Link>
@@ -96,12 +135,21 @@ export default async function ScholarshipsPage({
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span className={`pill !px-2 !py-0 text-[9px] capitalize ${TYPE_COLOR[s.type] ?? ""}`}>
-                        {s.type}
+                        {s.type === "nri" ? "🌍 NRI" : s.type}
                       </span>
+                      {s.targetCountry ? (
+                        <span className="pill !px-2 !py-0 text-[9px] text-neon-purple">
+                          🎯 {s.targetCountry}
+                        </span>
+                      ) : s.nriEligible && s.type !== "nri" ? (
+                        <span className="pill !px-2 !py-0 text-[9px] text-neon-purple">
+                          🌍 NRI-eligible
+                        </span>
+                      ) : null}
                       {s.state && (
                         <span className="pill !px-2 !py-0 text-[9px]">📍 {s.state}</span>
                       )}
-                      {!s.state && (
+                      {!s.state && !s.targetCountry && (
                         <span className="pill !px-2 !py-0 text-[9px]">🇮🇳 All India</span>
                       )}
                     </div>
@@ -109,10 +157,18 @@ export default async function ScholarshipsPage({
                     <p className="text-[11px] text-white/55">{s.provider}</p>
                   </div>
                   <div className="text-right shrink-0">
-                    <div className="stat-num text-2xl text-neon-yellow">
-                      ₹{formatNumber(s.amount)}
-                    </div>
-                    <div className="text-[10px] uppercase tracking-widest text-white/45">/year</div>
+                    {s.amount > 0 ? (
+                      <>
+                        <div className="stat-num text-2xl text-neon-yellow">
+                          {formatAmount(s.amount, currency)}
+                        </div>
+                        <div className="text-[10px] uppercase tracking-widest text-white/45">/year</div>
+                      </>
+                    ) : (
+                      <div className="text-[10px] uppercase tracking-widest text-white/55">
+                        Admission<br/>route
+                      </div>
+                    )}
                   </div>
                 </div>
 
