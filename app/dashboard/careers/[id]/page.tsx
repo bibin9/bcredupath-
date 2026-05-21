@@ -1,11 +1,14 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import mongoose from "mongoose";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { connectDB } from "@/lib/db";
 import { Career } from "@/models/Career";
 import { College } from "@/models/College";
-import { formatNumber } from "@/lib/utils";
+import { User } from "@/models/User";
 import { CareerRoadmap } from "@/components/careers/CareerRoadmap";
+import { formatSalary, isCurrency, CURRENCY_META, type CurrencyCode } from "@/lib/currency";
 import { ArrowLeft, ExternalLink, GraduationCap, Briefcase, BookOpenCheck, Clock, TrendingUp } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -15,8 +18,19 @@ export default async function CareerDetailPage({ params }: { params: { id: strin
   await connectDB();
   // Ensure the College model is registered for populate to work
   void College;
-  const career = await Career.findById(params.id).populate("topColleges").lean();
+  const [career, session] = await Promise.all([
+    Career.findById(params.id).populate("topColleges").lean(),
+    getServerSession(authOptions),
+  ]);
   if (!career) notFound();
+  const me = session?.user?.email
+    ? await User.findOne({ email: session.user.email.toLowerCase() })
+        .select("preferredCurrency country")
+        .lean()
+    : null;
+  const currency: CurrencyCode = isCurrency(me?.preferredCurrency)
+    ? (me!.preferredCurrency as CurrencyCode)
+    : "INR";
 
   return (
     <div className="space-y-6">
@@ -47,10 +61,19 @@ export default async function CareerDetailPage({ params }: { params: { id: strin
 
         {/* Salary strip */}
         <div className="relative mt-6 grid grid-cols-3 gap-2">
-          <SalaryTile label="Entry" amount={career.salaryRanges.entry} />
-          <SalaryTile label="Mid (5-8y)" amount={career.salaryRanges.mid} accent />
-          <SalaryTile label="Senior (10y+)" amount={career.salaryRanges.senior} />
+          <SalaryTile label="Entry" amount={career.salaryRanges.entry} currency={currency} />
+          <SalaryTile label="Mid (5-8y)" amount={career.salaryRanges.mid} currency={currency} accent />
+          <SalaryTile label="Senior (10y+)" amount={career.salaryRanges.senior} currency={currency} />
         </div>
+        {currency !== "INR" && (
+          <div className="relative mt-2 text-right text-[10px] text-white/45">
+            Showing in {CURRENCY_META[currency].flag} {currency} · indicative
+            India salary ranges converted at snapshot rate.{" "}
+            <Link href="/dashboard/profile" className="text-neon-cyan hover:underline">
+              Change
+            </Link>
+          </div>
+        )}
       </section>
 
       {/* WHAT YOU'LL ACTUALLY DO — top section, prominent */}
@@ -87,6 +110,8 @@ export default async function CareerDetailPage({ params }: { params: { id: strin
           roadmap={career.roadmap}
           careerId={String(career._id)}
           careerName={career.name}
+          viewerIsNRI={!!me?.country && me.country !== "India"}
+          viewerCurrency={currency}
         />
       )}
 
@@ -187,12 +212,22 @@ export default async function CareerDetailPage({ params }: { params: { id: strin
   );
 }
 
-function SalaryTile({ label, amount, accent }: { label: string; amount: number; accent?: boolean }) {
+function SalaryTile({
+  label,
+  amount,
+  currency,
+  accent,
+}: {
+  label: string;
+  amount: number;
+  currency: CurrencyCode;
+  accent?: boolean;
+}) {
   return (
     <div className={`rounded-2xl border bg-white/[0.04] p-3 text-center ${accent ? "border-neon-yellow/30 shadow-glow-yellow" : "border-white/[0.06]"}`}>
       <div className="text-[10px] font-bold uppercase tracking-widest text-white/45">{label}</div>
       <div className={`stat-num mt-1 text-lg ${accent ? "text-neon-yellow" : "text-white"}`}>
-        ₹{formatNumber(amount)}
+        {formatSalary(amount, currency)}
       </div>
       <div className="text-[10px] text-white/45">per year</div>
     </div>

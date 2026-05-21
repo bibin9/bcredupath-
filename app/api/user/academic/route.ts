@@ -20,6 +20,7 @@ const Body = z
     country: z.string().min(2).max(60).optional(),
     state: z.string().nullable().optional(),
     city: z.string().nullable().optional(),
+    preferredCurrency: z.string().min(3).max(4).optional(),
   })
   .refine(
     (d) => (d.class === 12 ? !!d.stream : true),
@@ -49,6 +50,9 @@ export async function PATCH(req: Request) {
   if (parsed.data.country !== undefined) set.country = parsed.data.country;
   if (parsed.data.state !== undefined) set.state = parsed.data.state ?? null;
   if (parsed.data.city !== undefined) set.city = parsed.data.city ?? null;
+  if (parsed.data.preferredCurrency !== undefined) {
+    set.preferredCurrency = parsed.data.preferredCurrency.toUpperCase();
+  }
 
   if (Object.keys(set).length === 0) {
     return NextResponse.json({ error: "Nothing to update" }, { status: 400 });

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, ExternalLink, Phone, Mail, MapPin, Loader2, X, Globe, GraduationCap } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatAmount, isCurrency, type CurrencyCode } from "@/lib/currency";
 
 export type RoadmapStage = {
   degree: string;
@@ -40,6 +41,13 @@ type College = {
   phone?: string;
   email?: string;
   highlights?: string[];
+  nriQuota?: {
+    available: boolean;
+    annualFeeINR?: number;
+    cutoffNotes?: string;
+    seatPercent?: number;
+    notes?: string;
+  };
 };
 
 const STREAM_COLOR: Record<string, string> = {
@@ -55,10 +63,16 @@ export function CareerRoadmap({
   roadmap,
   careerId,
   careerName,
+  viewerIsNRI = false,
+  viewerCurrency = "INR",
 }: {
   roadmap: CareerRoadmapData;
   careerId: string;
   careerName: string;
+  /** Whether the logged-in student lives outside India (drives NRI quota banner) */
+  viewerIsNRI?: boolean;
+  /** ISO currency code for display of NRI fees */
+  viewerCurrency?: string;
 }) {
   const [openDegree, setOpenDegree] = useState<string | null>(null);
   const [colleges, setColleges] = useState<College[]>([]);
@@ -192,6 +206,8 @@ export function CareerRoadmap({
             degree={openDegree}
             colleges={colleges}
             loading={loadingColleges}
+            viewerIsNRI={viewerIsNRI}
+            viewerCurrency={viewerCurrency}
             onClose={() => {
               setOpenDegree(null);
               setColleges([]);
@@ -309,11 +325,15 @@ function CollegesPanel({
   colleges,
   loading,
   onClose,
+  viewerIsNRI,
+  viewerCurrency,
 }: {
   degree: string;
   colleges: College[];
   loading: boolean;
   onClose: () => void;
+  viewerIsNRI: boolean;
+  viewerCurrency: string;
 }) {
   return (
     <motion.div
@@ -336,6 +356,19 @@ function CollegesPanel({
         </button>
       </div>
 
+      {viewerIsNRI && !loading && colleges.some((c) => c.nriQuota?.available) && (
+        <div className="mb-3 rounded-2xl border border-neon-purple/30 bg-neon-purple/10 p-3 text-[11px]">
+          <div className="mb-1 flex items-center gap-1.5 font-bold text-neon-purple">
+            <Globe className="h-3 w-3" /> NRI quota available
+          </div>
+          <p className="text-white/75">
+            As an NRI student, you qualify for separate counselling at the
+            colleges below. Fees are higher (typically 2-5× domestic) but
+            cutoffs are friendlier. Tap a college to see its NRI fee + how to apply.
+          </p>
+        </div>
+      )}
+
       {loading ? (
         <div className="rounded-2xl border border-white/[0.06] bg-white/[0.03] p-6 text-center text-xs text-white/55">
           <Loader2 className="mx-auto mb-2 h-4 w-4 animate-spin" />
@@ -348,7 +381,12 @@ function CollegesPanel({
       ) : (
         <div className="grid gap-2 sm:grid-cols-2">
           {colleges.map((c) => (
-            <CollegeContactCard key={c._id} college={c} />
+            <CollegeContactCard
+              key={c._id}
+              college={c}
+              showNRI={viewerIsNRI}
+              currency={viewerCurrency}
+            />
           ))}
         </div>
       )}
@@ -356,10 +394,27 @@ function CollegesPanel({
   );
 }
 
-function CollegeContactCard({ college: c }: { college: College }) {
+function CollegeContactCard({
+  college: c,
+  showNRI = false,
+  currency = "INR",
+}: {
+  college: College;
+  showNRI?: boolean;
+  currency?: string;
+}) {
   const isAbroad = c.country && c.country !== "India";
+  const curr: CurrencyCode = isCurrency(currency) ? currency : "INR";
+  const nri = c.nriQuota;
   return (
-    <article className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-3">
+    <article
+      className={cn(
+        "rounded-2xl border bg-white/[0.03] p-3",
+        showNRI && nri?.available
+          ? "border-neon-purple/30"
+          : "border-white/[0.08]"
+      )}
+    >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
           <div className="font-display text-sm font-bold leading-tight">{c.name}</div>
@@ -377,6 +432,28 @@ function CollegeContactCard({ college: c }: { college: College }) {
           </span>
         )}
       </div>
+
+      {showNRI && nri?.available && (
+        <div className="mt-2 rounded-xl border border-neon-purple/25 bg-neon-purple/8 px-2.5 py-2 text-[10px]">
+          <div className="flex items-center justify-between gap-2">
+            <span className="font-bold text-neon-purple">🌍 NRI quota</span>
+            {nri.seatPercent && (
+              <span className="text-white/65">{nri.seatPercent}% seats</span>
+            )}
+          </div>
+          {nri.annualFeeINR && (
+            <div className="mt-0.5 text-white/85">
+              Fees: <b className="text-white">{formatAmount(nri.annualFeeINR, curr)}/yr</b>
+            </div>
+          )}
+          {nri.cutoffNotes && (
+            <div className="mt-0.5 text-white/65">{nri.cutoffNotes}</div>
+          )}
+          {nri.notes && (
+            <div className="mt-0.5 text-[9px] italic text-white/55">{nri.notes}</div>
+          )}
+        </div>
+      )}
 
       {c.address && (
         <p className="mt-2 text-[10px] text-white/65">{c.address}</p>

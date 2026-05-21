@@ -11,6 +11,8 @@ export interface IUser extends Document {
   stream: "pcm" | "pcb" | "commerce" | "humanities" | null;
   /** ISO-style country name. "India" by default; NRI students can pick another. */
   country: string;
+  /** ISO-4217 code: INR, USD, AED, SGD, etc. Defaults based on country. */
+  preferredCurrency: string;
   state?: string;
   city?: string;
   school?: string;
@@ -49,6 +51,7 @@ const userSchema = new Schema<IUser>(
     class: { type: Number, enum: [10, 12, null], default: null },
     stream: { type: String, enum: ["pcm", "pcb", "commerce", "humanities", null], default: null },
     country: { type: String, default: "India", index: true },
+    preferredCurrency: { type: String, default: "INR" },
     state: { type: String },
     city: { type: String },
     school: { type: String },

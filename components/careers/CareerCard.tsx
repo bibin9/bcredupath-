@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { formatNumber } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { formatSalary, type CurrencyCode } from "@/lib/currency";
 
 const categoryColor: Record<string, string> = {
   engineering: "border-neon-cyan/30 hover:shadow-glow-cyan",
@@ -28,6 +28,7 @@ export function CareerCard({
   salaryMid,
   matchScore,
   matchedTags,
+  currency = "INR",
 }: {
   id: string;
   name: string;
@@ -38,6 +39,7 @@ export function CareerCard({
   salaryMid: number;
   matchScore?: number;
   matchedTags?: string[];
+  currency?: CurrencyCode;
 }) {
   return (
     <Link
@@ -66,7 +68,7 @@ export function CareerCard({
 
       <div className="mt-3 flex items-baseline justify-between">
         <span className="stat-num text-sm text-neon-yellow">
-          ₹{formatNumber(salaryEntry)}–{formatNumber(salaryMid)}
+          {formatSalary(salaryEntry, currency)}–{formatSalary(salaryMid, currency)}
         </span>
         <ArrowRight className="h-3.5 w-3.5 text-white/45 transition-transform group-hover:translate-x-1 group-hover:text-white" />
       </div>

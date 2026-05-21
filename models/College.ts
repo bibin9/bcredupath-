@@ -20,6 +20,22 @@ export interface ICollege extends Document {
   address?: string;
   phone?: string;
   email?: string;
+  /**
+   * Whether this college offers NRI quota seats. Roughly 15% at AIIMS, IITs,
+   * NITs and most private medical/engineering colleges. Fees are higher
+   * (often 2-5x) and cutoffs slightly easier.
+   */
+  nriQuota?: {
+    available: boolean;
+    /** Annual fee in INR for NRI seats (typically much higher than domestic) */
+    annualFeeINR?: number;
+    /** Approx cutoff drop for NRI candidates (e.g. "NEET 50th percentile vs 95th for domestic") */
+    cutoffNotes?: string;
+    /** % of seats reserved for NRI candidates */
+    seatPercent?: number;
+    /** Free-text notes — application route, documents needed, etc. */
+    notes?: string;
+  };
 }
 
 const collegeSchema = new Schema<ICollege>(
@@ -42,6 +58,14 @@ const collegeSchema = new Schema<ICollege>(
     address: String,
     phone: String,
     email: String,
+    nriQuota: {
+      available: { type: Boolean, default: false },
+      annualFeeINR: Number,
+      cutoffNotes: String,
+      seatPercent: Number,
+      notes: String,
+      _id: false,
+    },
   },
   { timestamps: true }
 );

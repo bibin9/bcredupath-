@@ -47,6 +47,13 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     phone?: string;
     email?: string;
     highlights?: string[];
+    nriQuota?: {
+      available: boolean;
+      annualFeeINR?: number;
+      cutoffNotes?: string;
+      seatPercent?: number;
+      notes?: string;
+    };
   }>;
 
   // Try to filter by degree match (courses array contains keywords from degree)
@@ -111,6 +118,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     phone: c.phone,
     email: c.email,
     highlights: c.highlights ?? [],
+    nriQuota: c.nriQuota,
   }));
 
   return NextResponse.json({ colleges, total: colleges.length, degree });

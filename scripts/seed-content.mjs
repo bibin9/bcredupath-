@@ -25,6 +25,7 @@ const { SCHOLARSHIPS } = await importTS("lib/seed/scholarships.ts");
 const { COUNSELORS } = await importTS("lib/seed/counselors.ts");
 const { ROADMAP_OVERRIDES, DEFAULT_ROADMAP } = await importTS("lib/seed/career-roadmaps.ts");
 const { COLLEGE_CONTACTS } = await importTS("lib/seed/college-contacts.ts");
+const { NRI_QUOTA } = await importTS("lib/seed/nri-quota.ts");
 
 // Inline minimal schemas
 const roadmapStageSchema = new mongoose.Schema({
@@ -55,6 +56,14 @@ const collegeSchema = new mongoose.Schema({
   website: String, admissionLink: String, hostel: Boolean, placement: mongoose.Schema.Types.Mixed,
   highlights: [String],
   address: String, phone: String, email: String,
+  nriQuota: {
+    available: Boolean,
+    annualFeeINR: Number,
+    cutoffNotes: String,
+    seatPercent: Number,
+    notes: String,
+    _id: false,
+  },
 }, { timestamps: true });
 
 const examSchema = new mongoose.Schema({
@@ -97,17 +106,22 @@ async function main() {
   await College.deleteMany({});
   const collegeDocs = await College.insertMany(COLLEGES.map((c) => {
     const contact = COLLEGE_CONTACTS[c.name] ?? {};
+    const quota = NRI_QUOTA[c.name];
     return {
       ...c,
       country: c.country ?? "India",
       cutoffs: {},
       placement: {},
-      ...contact, // address, phone, email (only set if we have data)
+      ...contact,
+      ...(quota ? { nriQuota: quota } : {}),
     };
   }));
   const collegeByName = new Map(collegeDocs.map((c) => [c.name, c._id]));
   const contactCount = Object.keys(COLLEGE_CONTACTS).length;
-  console.log(`  ✓ Colleges        ${collegeDocs.length.toString().padStart(3)}  (${contactCount} with contact details)`);
+  const nriCount = collegeDocs.filter((c) => c.nriQuota?.available).length;
+  console.log(
+    `  ✓ Colleges        ${collegeDocs.length.toString().padStart(3)}  (${contactCount} with contacts, ${nriCount} with NRI quota)`
+  );
 
   await Career.deleteMany({});
   const careerDocs = CAREERS.map((c) => ({

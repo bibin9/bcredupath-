@@ -6,6 +6,7 @@ import { User } from "@/models/User";
 import { Career } from "@/models/Career";
 import { CareerCard } from "@/components/careers/CareerCard";
 import { rankCareers } from "@/lib/career-matcher";
+import { isCurrency, type CurrencyCode } from "@/lib/currency";
 import { ArrowRight, Sparkles, Target } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -33,6 +34,9 @@ export default async function CareersIndex({
   await connectDB();
   const user = await User.findOne({ email: session!.user!.email!.toLowerCase() }).lean();
   if (!user) return null;
+  const currency: CurrencyCode = isCurrency(user.preferredCurrency)
+    ? (user.preferredCurrency as CurrencyCode)
+    : "INR";
 
   const cat = searchParams.category ?? "all";
   const filter = cat === "all" ? {} : { category: cat };
@@ -118,6 +122,7 @@ export default async function CareersIndex({
                 salaryMid={r.career.salaryRanges.mid}
                 matchScore={r.score}
                 matchedTags={r.matchedTags}
+                currency={currency}
               />
             ))}
           </div>
@@ -159,6 +164,7 @@ export default async function CareersIndex({
               category={c.category}
               salaryEntry={c.salaryRanges.entry}
               salaryMid={c.salaryRanges.mid}
+              currency={currency}
             />
           ))}
         </div>

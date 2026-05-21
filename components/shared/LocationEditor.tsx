@@ -6,6 +6,7 @@ import { Loader2, MapPin, Check, Globe } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { INDIAN_STATES, NRI_COUNTRIES } from "@/lib/constants";
+import { defaultCurrencyForCountry } from "@/lib/currency";
 
 export function LocationEditor({
   initialCountry,
@@ -40,6 +41,12 @@ export function LocationEditor({
           country,
           state: isIndia ? state : null,
           city: city || null,
+          // When user flips countries, default their currency too — they
+          // can override afterwards in the currency picker.
+          preferredCurrency:
+            country !== initialCountry
+              ? defaultCurrencyForCountry(country)
+              : undefined,
         }),
       });
       if (!res.ok) {
