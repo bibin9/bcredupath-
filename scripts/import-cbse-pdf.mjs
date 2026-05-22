@@ -126,29 +126,71 @@ function clean(text) {
  * Looks for the first standalone "1." or "Q.NO. QUESTION MARKS" header pattern.
  */
 function trimToQuestions(text) {
-  // Drop everything before "Q.NO" header or before first "1." that's at line start
-  const headerIdx = text.search(/Q\.\s*NO\.?\s*QUESTION\s*MARKS/i);
+  // Strongest signal — header row above the questions table
+  const headerIdx = text.search(/Q\.\s*NO\.?\s*(QUESTION\s*MARKS|MARKS)/i);
   if (headerIdx !== -1) return text.slice(headerIdx + 18);
+
+  // Find the first 1./Q1 anchor. Then check what kind of chain follows it
+  // (i.e. is there a 2. or Q2 within reasonable reading distance).
   const oneIdx = text.search(/\n\s*1\.\s/);
-  return oneIdx !== -1 ? text.slice(oneIdx) : text;
+  const qOneIdx = text.search(/\n\s*Q\s*\.?\s*1\b/);
+
+  // Helper: does the candidate index have a "2." chain within 2000 chars?
+  const has1to2Chain = (idx) =>
+    idx !== -1 &&
+    /\n\s*1\.\s[\s\S]{1,2000}\n\s*2\.\s/.test(text.slice(idx, idx + 4000));
+  const hasQ1toQ2Chain = (idx) =>
+    idx !== -1 &&
+    /\n\s*Q\s*\.?\s*1\b[\s\S]{1,2000}\n\s*Q\s*\.?\s*2\b/.test(text.slice(idx, idx + 4000));
+
+  // Prefer "1." style when its chain exists and starts earlier than the Q1 chain
+  if (has1to2Chain(oneIdx) && (qOneIdx === -1 || oneIdx <= qOneIdx)) {
+    return text.slice(oneIdx);
+  }
+  if (hasQ1toQ2Chain(qOneIdx)) {
+    return text.slice(qOneIdx);
+  }
+  // Last resort
+  if (oneIdx !== -1) return text.slice(oneIdx);
+  return text;
 }
 
 /**
  * Parse a question paper text into an array of {num, body, optionsRaw, marks}.
- * Splits on lines starting with `\d+\.` (question numbers).
+ *
+ * Supports two CBSE numbering styles:
+ *   • "1.", "2.", "3." (Business Studies, Economics, Accountancy, Maths, etc.)
+ *   • "Q 1", "Q.1", "Q1." (Psychology, Sociology, some Hindi papers)
+ *
+ * Section headers ("SECTION A", "SECTION B") are stripped so they don't
+ * end up inside a question block.
  */
 function splitQuestions(text) {
-  const cleaned = trimToQuestions(clean(text));
-  // Add a sentinel so the last block also gets captured
-  const sentinel = cleaned + "\n9999. SENTINEL";
+  const cleaned = trimToQuestions(clean(text))
+    .replace(/\n\s*SECTION\s+[A-F]\s*\n/g, "\n")
+    .replace(/\n\s*S\.\s*NO\.?\s+Marks?\s*\n/gi, "\n");
+
+  // Detect numbering style: does the paper use "Q N" (Psychology, Sociology
+  // style) or "N." (Business Studies, Maths style)?
+  const usesQPrefix = /\n\s*Q\s*\.?\s*1\b/.test(cleaned) && !/\n\s*1\.\s+[A-Z]/.test(cleaned);
+
+  // Build the matcher accordingly. Each form requires a separator (newline)
+  // and the question text must START with a letter/quote/bracket to avoid
+  // false matches on stray digits mid-sentence.
+  const numPattern = usesQPrefix
+    ? String.raw`(?:^|\n)\s*Q\s*\.?\s*(\d{1,2})\.?\s+([\s\S]*?)(?=\n\s*Q\s*\.?\s*\d{1,2}\.?\s+|$)`
+    : String.raw`(?:^|\n)\s*(\d{1,2})\.\s+([\s\S]*?)(?=\n\s*\d{1,2}\.\s+|$)`;
+
+  const sentinel = cleaned + (usesQPrefix ? "\nQ 9999 SENTINEL" : "\n9999. SENTINEL");
+  const re = new RegExp(numPattern, "g");
   const parts = [];
-  const re = /(?:^|\n)\s*(\d{1,2})\.\s+([\s\S]*?)(?=\n\s*\d{1,2}\.\s+|$)/g;
   let m;
   while ((m = re.exec(sentinel)) !== null) {
     const num = Number(m[1]);
     if (num === 9999) break;
     const body = m[2].trim();
     if (!body || body.length < 8) continue;
+    if (/^SECTION\s+[A-F]$/i.test(body)) continue;
     parts.push({ num, body });
   }
   return parts;
@@ -216,10 +258,15 @@ function extractQuestionParts(block) {
  * Parse marking scheme: returns Map<questionNum, { answerLetter, answerText }>.
  */
 function parseMarkingScheme(text) {
-  const cleaned = clean(text);
-  const sentinel = cleaned + "\n9999. SENTINEL";
+  const cleaned = clean(text)
+    .replace(/\n\s*SECTION\s+[A-F]\s*\n/g, "\n");
+  const usesQPrefix = /\n\s*(?:Ans\s*)?Q\s*\.?\s*1\b/.test(cleaned);
+  const pattern = usesQPrefix
+    ? String.raw`(?:^|\n)\s*(?:Ans\s*)?Q\s*\.?\s*(\d{1,2})\.?\s+([\s\S]*?)(?=\n\s*(?:Ans\s*)?Q\s*\.?\s*\d{1,2}\.?\s+|$)`
+    : String.raw`(?:^|\n)\s*(\d{1,2})\.\s+([\s\S]*?)(?=\n\s*\d{1,2}\.\s+|$)`;
+  const sentinel = cleaned + (usesQPrefix ? "\nQ 9999 SENTINEL" : "\n9999. SENTINEL");
+  const re = new RegExp(pattern, "g");
   const map = new Map();
-  const re = /(?:^|\n)\s*(\d{1,2})\.\s+([\s\S]*?)(?=\n\s*\d{1,2}\.\s+|$)/g;
   let m;
   while ((m = re.exec(sentinel)) !== null) {
     const num = Number(m[1]);
