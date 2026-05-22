@@ -45,9 +45,6 @@ const NAV: Item[] = [
   { href: "/dashboard/bookmarks", label: "Bookmarks", icon: Bookmark, emoji: "🔖", group: "Study" },
   { href: "/dashboard/predictor", label: "AI Predictor", icon: Sparkles, emoji: "🔮", hot: true, group: "Study" },
   { href: "/dashboard/practice", label: "Practice", icon: Target, emoji: "🎯", group: "Study" },
-  { href: "/dashboard/doubt", label: "Ask AI", icon: Brain, emoji: "🤔", hot: true, group: "Study" },
-  { href: "/dashboard/notes", label: "Revision Notes", icon: FileText, emoji: "📓", group: "Study" },
-  { href: "/dashboard/generate", label: "Generate Qs", icon: Wand2, emoji: "🪄", group: "Study" },
   { href: "/dashboard/planner", label: "Study Planner", icon: CalendarDays, emoji: "⏱️", group: "Study" },
 
   /* You */
