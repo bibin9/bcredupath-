@@ -228,11 +228,69 @@ export const NRI_QUOTA: Record<string, NRIQuotaInfo> = {
     cutoffNotes: "NEET-UG required. Women only.",
   },
 
+  // ─── Newer IITs (DASA route) ──────────────────────────────────────────
+  "IIT (BHU) Varanasi": { available: true, annualFeeINR: 3_500_000, seatPercent: 10, cutoffNotes: "DASA route via SAT (>1450) or JEE Main." },
+  "IIT (ISM) Dhanbad": { available: true, annualFeeINR: 3_500_000, seatPercent: 10, cutoffNotes: "DASA route. Strong for petroleum + mining tracks." },
+  "IIT Indore": { available: true, annualFeeINR: 3_500_000, seatPercent: 10, cutoffNotes: "DASA route via SAT." },
+  "IIT Mandi": { available: true, annualFeeINR: 3_500_000, seatPercent: 10, cutoffNotes: "DASA route." },
+  "IIT Gandhinagar": { available: true, annualFeeINR: 3_500_000, seatPercent: 10, cutoffNotes: "DASA route via SAT." },
+  "IIT Ropar": { available: true, annualFeeINR: 3_500_000, seatPercent: 10, cutoffNotes: "DASA route." },
+  "IIT Bhubaneswar": { available: true, annualFeeINR: 3_500_000, seatPercent: 10, cutoffNotes: "DASA route." },
+  "IIT Jodhpur": { available: true, annualFeeINR: 3_500_000, seatPercent: 10, cutoffNotes: "DASA route." },
+  "IIT Patna": { available: true, annualFeeINR: 3_500_000, seatPercent: 10, cutoffNotes: "DASA route." },
+
+  // ─── More NITs ────────────────────────────────────────────────────────
+  "NIT Calicut": { available: true, annualFeeINR: 1_500_000, seatPercent: 15, cutoffNotes: "DASA route via SAT (>1300) or JEE Main." },
+  "NIT Rourkela": { available: true, annualFeeINR: 1_500_000, seatPercent: 15, cutoffNotes: "DASA route." },
+  "NIT Jaipur (MNIT)": { available: true, annualFeeINR: 1_500_000, seatPercent: 15, cutoffNotes: "DASA route." },
+  "NIT Nagpur (VNIT)": { available: true, annualFeeINR: 1_500_000, seatPercent: 15, cutoffNotes: "DASA route." },
+  "NIT Durgapur": { available: true, annualFeeINR: 1_500_000, seatPercent: 15, cutoffNotes: "DASA route." },
+  "NIT Kurukshetra": { available: true, annualFeeINR: 1_500_000, seatPercent: 15, cutoffNotes: "DASA route." },
+  "NIT Allahabad (MNNIT)": { available: true, annualFeeINR: 1_500_000, seatPercent: 15, cutoffNotes: "DASA route." },
+
+  // ─── IIIT additions ───────────────────────────────────────────────────
+  "IIIT Delhi": { available: true, annualFeeINR: 1_200_000, seatPercent: 10, cutoffNotes: "DASA-style admission via SAT + Class 12 marks." },
+  "IIIT Allahabad": { available: true, annualFeeINR: 800_000, seatPercent: 10, cutoffNotes: "DASA route." },
+
+  // ─── New AIIMS branches ───────────────────────────────────────────────
+  "AIIMS Patna": { available: true, annualFeeINR: 1_500_000, seatPercent: 7, cutoffNotes: "NEET-UG required, NRI cutoff lower than domestic." },
+  "AIIMS Raipur": { available: true, annualFeeINR: 1_500_000, seatPercent: 7, cutoffNotes: "NEET-UG required." },
+  "AIIMS Bhubaneswar": { available: true, annualFeeINR: 1_500_000, seatPercent: 7, cutoffNotes: "NEET-UG required." },
+  "AIIMS Nagpur": { available: true, annualFeeINR: 1_500_000, seatPercent: 7, cutoffNotes: "NEET-UG required." },
+
+  // ─── Private engineering ──────────────────────────────────────────────
+  "VIT Vellore": { available: true, annualFeeINR: 2_500_000, seatPercent: 20, cutoffNotes: "Direct NRI seat via VITEEE or SAT score. Popular among Gulf students." },
+  "SRM Chennai": { available: true, annualFeeINR: 2_000_000, seatPercent: 20, cutoffNotes: "SRMJEEE NRI seat or direct via SAT." },
+  "Thapar University Patiala": { available: true, annualFeeINR: 1_800_000, seatPercent: 15, cutoffNotes: "NRI seat via direct application + Class 12 marks." },
+  "Manipal Institute of Technology": { available: true, annualFeeINR: 2_000_000, seatPercent: 20, cutoffNotes: "Manipal Online Entrance Test (MET) or direct NRI route." },
+  "Amrita Vishwa Vidyapeetham": { available: true, annualFeeINR: 1_500_000, seatPercent: 15, cutoffNotes: "Amrita Engineering Entrance Exam (AEEE) NRI seat." },
+
+  // ─── Architecture + design ────────────────────────────────────────────
+  "School of Planning & Architecture Delhi": { available: true, annualFeeINR: 800_000, seatPercent: 10, cutoffNotes: "Foreign nationals via NATA + portfolio." },
+  "CEPT University Ahmedabad": { available: true, annualFeeINR: 1_500_000, seatPercent: 15, cutoffNotes: "Direct application + portfolio + interview." },
+  "NIFT Delhi": { available: true, annualFeeINR: 1_200_000, seatPercent: 15, cutoffNotes: "NIFT entrance for NRI category." },
+
+  // ─── Top state medical ────────────────────────────────────────────────
+  "KGMU Lucknow": { available: true, annualFeeINR: 2_500_000, seatPercent: 15, cutoffNotes: "NEET-UG required, state quota + NRI quota both available." },
+  "Armed Forces Medical College Pune": { available: false, notes: "No NRI seats — fully Defense Services bonded admission." },
+
+  // ─── More NLUs ────────────────────────────────────────────────────────
+  "NLU Hyderabad": { available: true, annualFeeINR: 1_500_000, seatPercent: 15, cutoffNotes: "CLAT score required; NRI supernumerary seats." },
+  "NLU Kolkata (WBNUJS)": { available: true, annualFeeINR: 1_500_000, seatPercent: 15, cutoffNotes: "CLAT score." },
+  "Gujarat National Law University": { available: true, annualFeeINR: 1_500_000, seatPercent: 15, cutoffNotes: "CLAT + foreign national category." },
+
+  // ─── Maritime + Defense ──────────────────────────────────────────────
+  "Indian Maritime University Chennai": { available: true, annualFeeINR: 600_000, seatPercent: 15, cutoffNotes: "IMU CET — NRI category available." },
+
   // ─── Notable colleges WITHOUT NRI quota (or unavailable) ──────────────
   "Tata Memorial Mumbai": {
     available: false,
     notes: "Post-grad only — DM/MCh; no NRI quota at PG level.",
   },
+  "National Defence Academy Khadakwasla": { available: false, notes: "Indian citizens only — Defense Services entry." },
+  "Indian Military Academy Dehradun": { available: false, notes: "Indian citizens only." },
+  "Indian Naval Academy Ezhimala": { available: false, notes: "Indian citizens only." },
+  "Air Force Academy Hyderabad": { available: false, notes: "Indian citizens only." },
 };
 
 /**

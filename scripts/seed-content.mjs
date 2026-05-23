@@ -18,14 +18,32 @@ async function importTS(path) {
   return import(pathToFileURL(out).href);
 }
 
-const { CAREERS } = await importTS("lib/seed/careers.ts");
-const { COLLEGES } = await importTS("lib/seed/colleges.ts");
+const { CAREERS: CAREERS_V1 } = await importTS("lib/seed/careers.ts");
+const { CAREERS_EXTENDED } = await importTS("lib/seed/careers-extended.ts");
+const { COLLEGES: COLLEGES_V1 } = await importTS("lib/seed/colleges.ts");
+const { COLLEGES_EXTENDED } = await importTS("lib/seed/colleges-extended.ts");
 const { EXAMS } = await importTS("lib/seed/exams.ts");
 const { SCHOLARSHIPS } = await importTS("lib/seed/scholarships.ts");
 const { COUNSELORS } = await importTS("lib/seed/counselors.ts");
 const { ROADMAP_OVERRIDES, DEFAULT_ROADMAP } = await importTS("lib/seed/career-roadmaps.ts");
+const { ROADMAP_OVERRIDES_EXTENDED } = await importTS("lib/seed/career-roadmaps-extended.ts");
 const { COLLEGE_CONTACTS } = await importTS("lib/seed/college-contacts.ts");
 const { NRI_QUOTA } = await importTS("lib/seed/nri-quota.ts");
+
+// Merge v1 + extended (later entries don't overwrite v1 if name clashes)
+const seen = new Set();
+const CAREERS = [...CAREERS_V1, ...CAREERS_EXTENDED].filter((c) => {
+  if (seen.has(c.name)) return false;
+  seen.add(c.name);
+  return true;
+});
+const collegeSeen = new Set();
+const COLLEGES = [...COLLEGES_V1, ...COLLEGES_EXTENDED].filter((c) => {
+  if (collegeSeen.has(c.name)) return false;
+  collegeSeen.add(c.name);
+  return true;
+});
+const ROADMAPS_ALL = { ...ROADMAP_OVERRIDES, ...ROADMAP_OVERRIDES_EXTENDED };
 
 // Inline minimal schemas
 const roadmapStageSchema = new mongoose.Schema({
@@ -131,12 +149,12 @@ async function main() {
     topColleges: c.topColleges
       .map((name) => collegeByName.get(name))
       .filter((id) => !!id),
-    // Apply roadmap: inline > override file > default fallback
-    roadmap: c.roadmap ?? ROADMAP_OVERRIDES[c.name] ?? DEFAULT_ROADMAP,
+    // Apply roadmap: inline > override file (v1 or extended) > default fallback
+    roadmap: c.roadmap ?? ROADMAPS_ALL[c.name] ?? DEFAULT_ROADMAP,
   }));
   const careersInserted = await Career.insertMany(careerDocs);
   const withRoadmap = careerDocs.filter((c) => c.roadmap && c.roadmap !== DEFAULT_ROADMAP).length;
-  console.log(`  ✓ Careers         ${careersInserted.length.toString().padStart(3)}  (${withRoadmap} with curated roadmaps)`);
+  console.log(`  ✓ Careers         ${careersInserted.length.toString().padStart(3)}  (${withRoadmap} with curated roadmaps, ${CAREERS_EXTENDED.length} new this run)`);
 
   await ExamInfo.deleteMany({});
   const examDocs = EXAMS.map((e) => ({
