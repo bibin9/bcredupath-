@@ -5,6 +5,7 @@ import { connectDB } from "@/lib/db";
 import { User } from "@/models/User";
 import { Career } from "@/models/Career";
 import { CareerCard } from "@/components/careers/CareerCard";
+import { CareerSearch, type CareerListItem } from "@/components/careers/CareerSearch";
 import { rankCareers } from "@/lib/career-matcher";
 import { isCurrency, type CurrencyCode } from "@/lib/currency";
 import { ArrowRight, Sparkles, Target } from "lucide-react";
@@ -145,29 +146,27 @@ export default async function CareersIndex({
         </section>
       )}
 
-      {/* ALL OTHERS */}
+      {/* ALL OTHERS — searchable + sortable */}
       <section>
         <div className="mb-3 flex items-end justify-between">
           <h2 className="font-display text-xl font-bold md:text-2xl">
             {cat === "all" ? "Browse all careers" : `${CATEGORIES.find((c) => c.id === cat)?.label} careers`}
           </h2>
-          <span className="text-xs text-white/45">{others.length} listed</span>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {others.map((c) => (
-            <CareerCard
-              key={String(c._id)}
-              id={String(c._id)}
-              name={c.name}
-              emoji={c.emoji}
-              description={c.description}
-              category={c.category}
-              salaryEntry={c.salaryRanges.entry}
-              salaryMid={c.salaryRanges.mid}
-              currency={currency}
-            />
-          ))}
-        </div>
+        <CareerSearch
+          careers={others.map((c): CareerListItem => ({
+            _id: String(c._id),
+            name: c.name,
+            emoji: c.emoji,
+            description: c.description,
+            category: c.category,
+            salaryRanges: c.salaryRanges,
+            skillsRequired: c.skillsRequired,
+            interestTags: c.interestTags,
+            preferredSubjects: c.preferredSubjects,
+          }))}
+          currency={currency}
+        />
       </section>
     </div>
   );
