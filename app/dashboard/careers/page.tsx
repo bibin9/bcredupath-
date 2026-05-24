@@ -43,11 +43,19 @@ export default async function CareersIndex({
   const filter = cat === "all" ? {} : { category: cat };
   const careers = await Career.find(filter).lean();
 
-  // If user has interests, show matched section first
+  // Matched section is ONLY shown on the "all" tab. When a category filter
+  // is active we don't deduct matched IDs from the grid below — otherwise a
+  // small category (Law: 5, Design: 4) would render an empty grid because
+  // every entry got swallowed by the (hidden) matched section.
   const hasInterests = user.interests.filter((t) => !t.startsWith("q:")).length > 0;
-  const ranked = hasInterests ? rankCareers(careers, user.interests).slice(0, 6) : [];
-  const matchedIds = new Set(ranked.map((r) => String(r.career._id)));
-  const others = careers.filter((c) => !matchedIds.has(String(c._id)));
+  const showMatched = hasInterests && cat === "all";
+  const ranked = showMatched ? rankCareers(careers, user.interests).slice(0, 6) : [];
+  const matchedIds = showMatched
+    ? new Set(ranked.map((r) => String(r.career._id)))
+    : new Set<string>();
+  const others = showMatched
+    ? careers.filter((c) => !matchedIds.has(String(c._id)))
+    : careers;
 
   // Total count across DB (not just current category filter)
   const totalCareers = await Career.countDocuments({});
