@@ -1,7 +1,7 @@
 {
-  "name": "BCRedupath — Crack Boards 2026",
+  "name": "BCRedupath — Crack Board & Career",
   "short_name": "BCRedupath",
-  "description": "Gamified CBSE Class 10 & 12 prep with AI-predicted questions, PYQs, streaks and leaderboards.",
+  "description": "Gamified CBSE Class 10 & 12 prep + career guidance. PYQs, AI predictor, 130+ career roadmaps, colleges and scholarships.",
   "start_url": "/dashboard",
   "scope": "/",
   "display": "standalone",

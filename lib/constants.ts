@@ -81,7 +81,6 @@ export const SUBJECTS_BY_CLASS: Record<
       { id: "civics", name: "Civics", emoji: "🗳️", color: "neon-purple" },
       { id: "economics", name: "Economics", emoji: "📈", color: "neon-green" },
       { id: "english", name: "English", emoji: "📖", color: "neon-pink" },
-      { id: "hindi", name: "Hindi", emoji: "📜", color: "neon-purple" },
     ],
   },
   12: {

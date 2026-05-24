@@ -40,16 +40,17 @@ export default async function LandingPage() {
       <section className="mx-auto max-w-7xl px-5 pb-16 pt-10 lg:px-8 lg:pt-20">
         <div className="mx-auto max-w-3xl text-center">
           <span className="pill-neon-yellow mx-auto">
-            <Sparkles className="h-3 w-3" /> Built for CBSE Boards 2026
+            <Sparkles className="h-3 w-3" /> Built for CBSE 2026-27 Session
           </span>
           <h1 className="mt-5 font-display text-5xl font-black leading-[1.05] tracking-tight md:text-7xl">
-            Crack boards like
+            Crack <span className="grad-text">board</span>
             <br />
-            it's a <span className="grad-text">game.</span>
+            &amp; pick your <span className="grad-text">career.</span>
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-base text-white/65 md:text-lg">
-            AI predicts what'll be asked. PYQs from a decade of papers. Streaks,
-            XP and a leaderboard that actually makes you study.
+            CBSE PYQs + AI question predictor for Boards 2027. Plus 130+ career
+            roadmaps with colleges, scholarships and NRI seat info. Streaks, XP
+            and leaderboards that actually make you study.
           </p>
           <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link href="/signup" className="btn-neon w-full sm:w-auto">

@@ -28,17 +28,21 @@ const mono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BCRedupath — Crack Boards 2026",
+  title: "BCRedupath — Crack Board & Career",
   description:
-    "Gamified CBSE Class 10 & 12 prep with AI-predicted questions, PYQs, streaks and leaderboards. Built for India by Bibin CutRiver.",
+    "Gamified CBSE Class 10 & 12 prep + career guidance. AI-predicted board questions, 2,400+ PYQs, 130+ career roadmaps, college info and scholarships. Built for India + NRI students by Bibin CutRiver.",
   authors: [{ name: "Bibin CutRiver" }],
   creator: "Bibin CutRiver",
   keywords: [
-    "CBSE 2026",
+    "CBSE 2026-27",
+    "CBSE Boards 2027",
     "Class 10 board",
     "Class 12 board",
     "PYQ",
     "question predictor",
+    "career guidance",
+    "career roadmap",
+    "NRI students",
     "NCERT",
   ],
   manifest: "/manifest.webmanifest",
@@ -52,9 +56,9 @@ export const metadata: Metadata = {
     apple: [{ url: "/icon.svg", sizes: "180x180" }],
   },
   openGraph: {
-    title: "BCRedupath — Crack Boards 2026",
+    title: "BCRedupath — Crack Board & Career",
     description:
-      "Gamified CBSE Class 10 & 12 prep with AI predictions and 900+ PYQs.",
+      "Gamified CBSE Class 10 & 12 prep + 130+ career roadmaps. 2,400+ PYQs, AI predictions, college info.",
     type: "website",
     locale: "en_IN",
   },

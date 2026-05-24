@@ -16,8 +16,8 @@ export const LOCALES: { id: Locale; label: string; flag: string }[] = [
 export const DICT: Record<string, Record<Locale, string>> = {
   /* Landing page */
   "landing.tagline": {
-    en: "Crack boards like it's a game.",
-    hi: "बोर्ड्स को एक खेल की तरह क्रैक करें।",
+    en: "Crack board & pick your career.",
+    hi: "बोर्ड क्रैक करें और अपना करियर चुनें।",
   },
   "landing.sub": {
     en: "AI predicts what'll be asked. PYQs from a decade. Streaks, XP and a leaderboard.",
