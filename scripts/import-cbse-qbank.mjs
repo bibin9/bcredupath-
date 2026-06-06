@@ -78,6 +78,7 @@ const PAPERS = [
     class: 12,
     subject: "math",
     url: BASE_XII + "MathematicsXII.pdf",
+    format: "A",
     chapters: [
       "Relations and Functions",
       "Inverse Trigonometric Functions",
@@ -98,6 +99,7 @@ const PAPERS = [
     class: 12,
     subject: "business",
     url: BASE_XII + "BusinessStudiesXII.pdf",
+    format: "C",
     chapters: [
       "Nature and Significance of Management",
       "Principles of Management",
@@ -117,6 +119,7 @@ const PAPERS = [
     class: 12,
     subject: "accountancy",
     url: BASE_XII + "AccountancyXII.pdf",
+    format: "A",
     chapters: [
       "Accounting for Partnership Firms",
       "Dissolution of Partnership",
@@ -130,6 +133,7 @@ const PAPERS = [
     class: 12,
     subject: "economics",
     url: BASE_XII + "EconomicsXII.pdf",
+    format: "A",
     chapters: [
       "Introductory Microeconomics",
       "Theory of Consumer Behaviour",
@@ -146,6 +150,7 @@ const PAPERS = [
     class: 12,
     subject: "history",
     url: BASE_XII + "HistoryXII.pdf",
+    format: "D",
     chapters: [
       "Bricks Beads and Bones",
       "Kings Farmers and Towns",
@@ -168,6 +173,7 @@ const PAPERS = [
     class: 12,
     subject: "polsci",
     url: BASE_XII + "PoliticalScienceXII.pdf",
+    format: "D",
     chapters: [
       "The Cold War Era",
       "The End of Bipolarity",
@@ -193,6 +199,7 @@ const PAPERS = [
     class: 12,
     subject: "sociology",
     url: BASE_XII + "SociologyXII.pdf",
+    format: "D",
     chapters: [
       "Demographic Structure of Indian Society",
       "Social Institutions Continuity and Change",
@@ -755,6 +762,125 @@ function parseFormatC(text, paper) {
   return docs;
 }
 
+/**
+ * FORMAT D — humanities (History, PolSci, Sociology XII).
+ *
+ * Open-ended "Source Based Questions" or "Passage Based Questions" —
+ * no MCQ options. Each question has 3-5 sub-parts (a, b, c, d, i, ii)
+ * that are short-answer; the reference answer follows each sub-part
+ * inline (Sociology) or after the whole question (PolSci).
+ *
+ * We extract these as SA-type questions with reference answers in
+ * solution.steps, so students get the source passage + the question +
+ * a model answer.
+ */
+function parseFormatD(text, paper) {
+  const cleaned = clean(text);
+  const headers = indexChapterHeaders(cleaned, paper.chapters);
+  // If <2 chapter headers found, the PDF doesn't separate by chapter
+  // — use a generic catch-all label so students aren't misled.
+  const useGeneric = headers.length < 2;
+
+  // Top-level questions are numbered: \n  1. / \n  2. / \n  3.
+  // Each question has sub-parts: a. / b. / c. / d.   OR   (i) / (ii) / (iii)
+  const docs = [];
+
+  // Walk top-level questions
+  const qRe = /(?:^|\n)\s*(\d+)\.\s*([\s\S]*?)(?=\n\s*\d+\.\s|$)/g;
+  let m;
+  while ((m = qRe.exec(cleaned + "\n999. END")) !== null) {
+    const qNum = Number(m[1]);
+    if (qNum === 999) break;
+    if (qNum < 1 || qNum > 40) continue;
+    const block = m[2].trim();
+    if (block.length < 40) continue;
+
+    // Determine chapter from position
+    let chapter;
+    if (useGeneric) {
+      chapter = "Source-Based Questions (Mixed Chapters)";
+    } else {
+      chapter = paper.chapters[0];
+      const pos = m.index;
+      for (const h of headers) {
+        if (h.pos < pos) chapter = h.chapter;
+        else break;
+      }
+    }
+
+    // Split into source/passage (everything before first sub-part) + sub-parts
+    const subRe = /\n\s*(?:([a-eA-E])\.|\(([ivx]+)\))\s+([\s\S]*?)(?=\n\s*(?:[a-eA-E]\.|\([ivx]+\))\s|$)/g;
+    const subMatches = [...block.matchAll(subRe)];
+    if (subMatches.length === 0) continue;
+
+    const firstSubPos = subMatches[0].index;
+    const passage = block.slice(0, firstSubPos).trim();
+
+    for (const sm of subMatches) {
+      const letter = (sm[1] || sm[2] || "").toLowerCase();
+      const raw = sm[3].trim();
+      if (raw.length < 5) continue;
+
+      // Some Sociology PDFs put answer on the line after the question
+      // separated by a single newline. Split: question = first line(s)
+      // up to a sentence-ending punctuation; answer = the rest.
+      const lines = raw.split("\n").filter((l) => l.trim());
+      let qText = lines[0] || raw;
+      let aText = lines.slice(1).join(" ").trim();
+      // If the first line doesn't end with ? or :, include more lines
+      // until we hit one that does.
+      let idx = 1;
+      while (!/[?:]\s*$/.test(qText.trim()) && idx < lines.length) {
+        qText += " " + lines[idx];
+        aText = lines.slice(idx + 1).join(" ").trim();
+        idx++;
+      }
+      qText = qText.trim();
+      // If still no '?' at end, treat whole block as question and skip
+      if (qText.length < 8) continue;
+
+      const fullQuestion = passage
+        ? `[Source-Based Question] ${passage}\n\nSub-question (${letter}): ${qText}`
+        : `${qText}`;
+
+      docs.push({
+        subject: paper.subject,
+        class: paper.class,
+        chapter,
+        topic: `Source-Based Q${qNum}`,
+        type: "SA",
+        marks: 2,
+        difficulty: "Medium",
+        question: fullQuestion,
+        options: null,
+        answer: "(Model answer below)",
+        solution: {
+          steps: aText
+            ? `Reference answer: ${aText}`
+            : "Refer to NCERT chapter for the model answer.",
+          videoUrl: null,
+          commonMistakes: [],
+          relatedConcepts: [],
+        },
+        yearsAsked: [],
+        examType: "Board",
+        region: "All-India",
+        frequencyScore: 7,
+        predictedProbability: 0.7,
+        bloomLevel: "Understand",
+        expectedTime: 180,
+        xpReward: 20,
+        tags: ["cbse-official", `qbank-class${paper.class}`],
+        aiGenerated: false,
+        verified: true,
+        verifiedBy: "CBSE Academic (cbseacademic.nic.in QBank)",
+        verifiedAt: new Date(),
+      });
+    }
+  }
+  return docs;
+}
+
 async function importPaper(paper) {
   const cls = paper.class === 12 ? "XII" : "X";
   process.stdout.write(
@@ -763,10 +889,16 @@ async function importPaper(paper) {
   const text = await fetchPdfText(paper.url);
 
   let docs = [];
-  if (paper.class === 12) {
-    // Class 12 PDFs use Format C
+  // Default format: Format A for Class 10 (CASE STUDY N + a) options),
+  // can be overridden with paper.format
+  const fmt = paper.format ?? (paper.class === 10 ? "A" : "C");
+
+  if (fmt === "D") {
+    docs = parseFormatD(text, paper);
+  } else if (fmt === "C") {
     docs = parseFormatC(text, paper);
   } else {
+    // Format A (also fallback for B detection inside splitCaseStudies)
     const chunks = splitCaseStudies(text, paper.chapters);
     for (const c of chunks) {
       try {
