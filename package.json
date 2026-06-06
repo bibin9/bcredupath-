@@ -15,6 +15,7 @@
     "seed:ai:retry": "node scripts/seed-ai-retry.mjs",
     "seed:augment": "node scripts/seed-ai-augment.mjs",
     "import:cbse": "node scripts/import-cbse-pdf.mjs",
+    "import:qbank": "node scripts/import-cbse-qbank.mjs",
     "seed:content": "node scripts/seed-content.mjs",
     "test:mongo": "node scripts/test-mongo.mjs"
   },
