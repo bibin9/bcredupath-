@@ -29,6 +29,7 @@ const { COUNSELORS } = await importTS("lib/seed/counselors.ts");
 const { ROADMAP_OVERRIDES, DEFAULT_ROADMAP } = await importTS("lib/seed/career-roadmaps.ts");
 const { ROADMAP_OVERRIDES_EXTENDED } = await importTS("lib/seed/career-roadmaps-extended.ts");
 const { COLLEGE_CONTACTS } = await importTS("lib/seed/college-contacts.ts");
+const { EXAMS_EXTENDED } = await importTS("lib/seed/exams-extended.ts");
 const { NRI_QUOTA } = await importTS("lib/seed/nri-quota.ts");
 
 // Merge v1 + extended (later entries don't overwrite v1 if name clashes)
@@ -87,9 +88,12 @@ const collegeSchema = new mongoose.Schema({
 
 const examSchema = new mongoose.Schema({
   name: String, fullName: String, category: String,
+  field: String, level: String, international: Boolean,
   applicationStart: Date, applicationEnd: Date, examDate: Date, resultDate: Date,
-  eligibility: String, syllabus: String, pattern: String, officialWebsite: String,
-  fees: Number, description: String,
+  eligibility: String, syllabus: String, pattern: String,
+  applyHow: [String],
+  officialWebsite: String, fees: Number, description: String,
+  careersUnlocked: [String], collegesAccepting: [String],
 }, { timestamps: true });
 
 const scholarshipSchema = new mongoose.Schema({
@@ -158,14 +162,21 @@ async function main() {
   console.log(`  ✓ Careers         ${careersInserted.length.toString().padStart(3)}  (${withRoadmap} with curated roadmaps, +${HUMANITIES_COMMERCE_CAREERS.length} humanities/commerce)`);
 
   await ExamInfo.deleteMany({});
-  const examDocs = EXAMS.map((e) => ({
+  const examSeen = new Set();
+  const ALL_EXAMS = [...EXAMS, ...EXAMS_EXTENDED].filter((e) => {
+    if (examSeen.has(e.name)) return false;
+    examSeen.add(e.name);
+    return true;
+  });
+  const examDocs = ALL_EXAMS.map((e) => ({
     ...e,
     applicationStart: parseDate(e.applicationStart),
     applicationEnd: parseDate(e.applicationEnd),
     examDate: parseDate(e.examDate),
   }));
   const examsInserted = await ExamInfo.insertMany(examDocs);
-  console.log(`  ✓ Exams           ${examsInserted.length.toString().padStart(3)}`);
+  const intlCount = examDocs.filter((e) => e.international).length;
+  console.log(`  ✓ Exams           ${examsInserted.length.toString().padStart(3)}  (${intlCount} international, +${EXAMS_EXTENDED.length} new)`);
 
   await Scholarship.deleteMany({});
   const schDocs = SCHOLARSHIPS.map((s) => ({
