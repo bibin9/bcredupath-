@@ -44,6 +44,7 @@ const NAV: NavItem[] = [
   { href: "/dashboard/colleges", label: "Colleges", icon: Building2, emoji: "🏛️" },
   { href: "/dashboard/scholarships", label: "Scholarships", icon: Coins, emoji: "💰" },
   { href: "/dashboard/exams", label: "Exams", icon: CalendarDays, emoji: "📅" },
+  { href: "/dashboard/resources", label: "Resources", icon: BookOpen, emoji: "📚" },
   { href: "/dashboard/counselors", label: "Counselors", icon: Users, emoji: "🧭" },
   { href: "/dashboard/planner", label: "Planner", icon: CalendarDays, emoji: "⏱️" },
   { href: "/dashboard/profile", label: "Profile", icon: UserCircle2, emoji: "👤" },

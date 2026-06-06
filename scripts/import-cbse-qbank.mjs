@@ -19,12 +19,15 @@ const args = parseArgs(process.argv.slice(2));
 const DRY = !!args["dry-run"];
 const SUBJECTS_FILTER = args.subjects ? String(args.subjects).split(",") : null;
 
-const BASE = "https://cbseacademic.nic.in/web_material/QuestionBank/ClassX/";
+const BASE_X = "https://cbseacademic.nic.in/web_material/QuestionBank/ClassX/";
+const BASE_XII = "https://cbseacademic.nic.in/web_material/QuestionBank/ClassXII/";
 
 const PAPERS = [
+  /* ─────────── CLASS 10 ─────────── */
   {
+    class: 10,
     subject: "math",
-    file: "MathsX.pdf",
+    url: BASE_X + "MathsX.pdf",
     chapters: [
       "Real Numbers",
       "Polynomials",
@@ -43,8 +46,9 @@ const PAPERS = [
     ],
   },
   {
+    class: 10,
     subject: "science",
-    file: "ScienceX.pdf",
+    url: BASE_X + "ScienceX.pdf",
     chapters: [
       "Chemical Reactions and Equations",
       "Acids, Bases and Salts",
@@ -63,13 +67,154 @@ const PAPERS = [
     ],
   },
   {
+    class: 10,
     subject: "english",
-    file: "EnglishX.pdf",
-    chapters: ["Reading Comprehension"], // best-effort, English bank is passage-heavy
+    url: BASE_X + "EnglishX.pdf",
+    chapters: ["Reading Comprehension"],
+  },
+
+  /* ─────────── CLASS 12 ─────────── */
+  {
+    class: 12,
+    subject: "math",
+    url: BASE_XII + "MathematicsXII.pdf",
+    chapters: [
+      "Relations and Functions",
+      "Inverse Trigonometric Functions",
+      "Matrices",
+      "Determinants",
+      "Continuity and Differentiability",
+      "Application of Derivatives",
+      "Integrals",
+      "Application of Integrals",
+      "Differential Equations",
+      "Vector Algebra",
+      "Three Dimensional Geometry",
+      "Linear Programming",
+      "Probability",
+    ],
+  },
+  {
+    class: 12,
+    subject: "business",
+    url: BASE_XII + "BusinessStudiesXII.pdf",
+    chapters: [
+      "Nature and Significance of Management",
+      "Principles of Management",
+      "Business Environment",
+      "Planning",
+      "Organising",
+      "Staffing",
+      "Directing",
+      "Controlling",
+      "Financial Management",
+      "Financial Markets",
+      "Marketing Management",
+      "Consumer Protection",
+    ],
+  },
+  {
+    class: 12,
+    subject: "accountancy",
+    url: BASE_XII + "AccountancyXII.pdf",
+    chapters: [
+      "Accounting for Partnership Firms",
+      "Dissolution of Partnership",
+      "Accounting for Companies",
+      "Accounting for Debentures",
+      "Analysis of Financial Statements",
+      "Cash Flow Statement",
+    ],
+  },
+  {
+    class: 12,
+    subject: "economics",
+    url: BASE_XII + "EconomicsXII.pdf",
+    chapters: [
+      "Introductory Microeconomics",
+      "Theory of Consumer Behaviour",
+      "Production and Costs",
+      "Forms of Market",
+      "National Income Accounting",
+      "Money and Banking",
+      "Income Determination",
+      "Government Budget",
+      "Balance of Payments",
+    ],
+  },
+  {
+    class: 12,
+    subject: "history",
+    url: BASE_XII + "HistoryXII.pdf",
+    chapters: [
+      "Bricks Beads and Bones",
+      "Kings Farmers and Towns",
+      "Kinship Caste and Class",
+      "Thinkers Beliefs and Buildings",
+      "Through the Eyes of Travellers",
+      "Bhakti Sufi Traditions",
+      "An Imperial Capital Vijayanagara",
+      "Peasants Zamindars and the State",
+      "Kings and Chronicles",
+      "Colonialism and the Countryside",
+      "Rebels and the Raj",
+      "Colonial Cities",
+      "Mahatma Gandhi and the Nationalist Movement",
+      "Understanding Partition",
+      "Framing the Constitution",
+    ],
+  },
+  {
+    class: 12,
+    subject: "polsci",
+    url: BASE_XII + "PoliticalScienceXII.pdf",
+    chapters: [
+      "The Cold War Era",
+      "The End of Bipolarity",
+      "US Hegemony in World Politics",
+      "Alternative Centres of Power",
+      "Contemporary South Asia",
+      "International Organisations",
+      "Security in the Contemporary World",
+      "Environment and Natural Resources",
+      "Globalisation",
+      "Challenges of Nation Building",
+      "Era of One-Party Dominance",
+      "Politics of Planned Development",
+      "India's External Relations",
+      "Challenges to and Restoration of the Congress System",
+      "The Crisis of Democratic Order",
+      "Rise of Popular Movements",
+      "Regional Aspirations",
+      "Recent Developments in Indian Politics",
+    ],
+  },
+  {
+    class: 12,
+    subject: "sociology",
+    url: BASE_XII + "SociologyXII.pdf",
+    chapters: [
+      "Demographic Structure of Indian Society",
+      "Social Institutions Continuity and Change",
+      "The Market as a Social Institution",
+      "Patterns of Social Inequality",
+      "The Challenges of Cultural Diversity",
+      "Structural Change",
+      "Cultural Change",
+      "The Story of Indian Democracy",
+      "Change and Development in Rural Society",
+      "Change and Development in Industrial Society",
+      "Globalisation and Social Change",
+      "Mass Media and Communications",
+      "Social Movements",
+    ],
   },
 ];
 
+const TARGET_CLASS = args.class ? Number(args.class) : null;
+
 let queue = PAPERS;
+if (TARGET_CLASS) queue = queue.filter((p) => p.class === TARGET_CLASS);
 if (SUBJECTS_FILTER) queue = queue.filter((p) => SUBJECTS_FILTER.includes(p.subject));
 
 console.log("\n────────────────────────────────────────");
@@ -337,18 +482,18 @@ function parseCaseStudy(chunk, paper) {
   // For each sub, split out 4 options
   const docs = [];
   for (const sub of subs) {
-    const optRe = /\n\s*([a-d])\s*\)\s*([^\n]+)/gi;
+    // Accept either "a)" or "a." or "(a)" option markers
+    const optRe = /\n\s*\(?([a-d])\s*[\)\.]\s+([^\n]+)/gi;
     const opts = [];
-    let lastEnd = 0;
     let om;
     while ((om = optRe.exec("\n" + sub.raw)) !== null) {
       opts.push({ letter: om[1].toUpperCase(), text: om[2].trim() });
-      lastEnd = om.index + om[0].length;
     }
-    if (opts.length !== 4) continue;
+    if (opts.length < 4) continue;
+    const four = opts.slice(0, 4);
 
-    // Question text = sub.raw before the first "a)"
-    const firstOpt = sub.raw.search(/\n\s*a\s*\)/i);
+    // Question text = sub.raw before the first option marker
+    const firstOpt = sub.raw.search(/\n\s*\(?a\s*[\)\.]/i);
     const qText = (firstOpt > 0 ? sub.raw.slice(0, firstOpt) : sub.raw).trim();
     if (qText.length < 5) continue;
 
@@ -361,7 +506,7 @@ function parseCaseStudy(chunk, paper) {
     } else if (ans.explanation) {
       // Format B without letter — match the answer text against options
       const t = ans.explanation.toLowerCase().replace(/\s+/g, " ").trim();
-      const best = opts.findIndex((o) =>
+      const best = four.findIndex((o) =>
         o.text.toLowerCase().replace(/\s+/g, " ").trim().includes(t.slice(0, 30))
         || t.includes(o.text.toLowerCase().replace(/\s+/g, " ").trim().slice(0, 30))
       );
@@ -373,15 +518,15 @@ function parseCaseStudy(chunk, paper) {
       ? `[Case Study] ${passage}\n\nQuestion: ${qText}`
       : qText;
 
-    const optionStrings = opts.map((o) => `${o.letter}. ${o.text}`);
-    const correctOptionText = opts[ansIdx].text;
+    const optionStrings = four.map((o) => `${o.letter}. ${o.text}`);
+    const correctOptionText = four[ansIdx].text;
     const solution = ans.explanation
       ? `Correct option: ${ans.letter}. ${ans.explanation}`
       : `Correct option: ${ans.letter}. ${correctOptionText}`;
 
     docs.push({
       subject: paper.subject,
-      class: 10,
+      class: paper.class,
       chapter: chunk.chapter,
       topic: `Case Study ${chunk.csNum}`,
       type: "MCQ",
@@ -404,7 +549,7 @@ function parseCaseStudy(chunk, paper) {
       bloomLevel: "Apply",
       expectedTime: 90,
       xpReward: 10,
-      tags: ["cbse-official", "qbank-class10"],
+      tags: ["cbse-official", `qbank-class${paper.class}`],
       aiGenerated: false,
       verified: true,
       verifiedBy: "CBSE Academic (cbseacademic.nic.in QBank)",
@@ -414,19 +559,221 @@ function parseCaseStudy(chunk, paper) {
   return docs;
 }
 
-async function importPaper(paper) {
-  process.stdout.write(
-    `  X ${paper.subject.padEnd(8)} | ${paper.file.padEnd(14)} → `
-  );
-  const url = BASE + paper.file;
-  const text = await fetchPdfText(url);
-  const chunks = splitCaseStudies(text, paper.chapters);
+/**
+ * FORMAT C — Class 12 QBank layout.
+ *
+ *   <CHAPTER NAME ON ITS OWN LINE>
+ *   Read the following text and answer the following questions...
+ *   <passage>
+ *   Q.1  <question>
+ *   (A) opt
+ *   (B) opt
+ *   (C) opt
+ *   (D) opt
+ *   Q.2  ...
+ *   ...
+ *   Q.4  ...
+ *   <CHAPTER NAME>          ← next chapter starts the next case study
+ *   Read the following ...
+ *   ...
+ *   <Answer section at END of document>
+ *   <CHAPTER NAME>
+ *   Ans.1 (X) text
+ *   Ans.2 (X) text
+ *   ...
+ *   (some chapters have CASE-1 / Case-2 sub-labels with their own Ans.1-4 each)
+ */
+function parseFormatC(text, paper) {
+  const cleaned = clean(text);
+
+  // Find the first "Ans.N" — split into questions vs answers sections
+  const ansStart = cleaned.search(/\n\s*Ans\s*\.\s*1\b/i);
+  if (ansStart === -1) return [];
+  const qSection = cleaned.slice(0, ansStart);
+  const aSection = cleaned.slice(ansStart);
+
+  const qHeaders = indexChapterHeaders(qSection, paper.chapters);
+  const aHeaders = indexChapterHeaders(aSection, paper.chapters);
+
+  // questionsByChapter: chapter -> [{ passage, qs: [{ qNum, qText, opts[4] }] }]
+  const questionsByChapter = {};
+  for (let i = 0; i < qHeaders.length; i++) {
+    const chap = qHeaders[i].chapter;
+    const start = qHeaders[i].pos;
+    const end = i + 1 < qHeaders.length ? qHeaders[i + 1].pos : qSection.length;
+    const body = qSection.slice(start, end);
+
+    // Split into case studies — markers: "Read the following", "Read the case", "CASE-N", "Case-N"
+    // Or just split by Q.1 occurrences (each Q.1 starts a new case study within a chapter)
+    const caseStarts = [];
+    const csRe = /(?:^|\n)\s*(?:Read the (?:following|case|below)|CASE\s*-?\s*\d+|Case\s*-?\s*\d+)/gi;
+    let cm;
+    while ((cm = csRe.exec(body)) !== null) caseStarts.push(cm.index);
+    if (caseStarts.length === 0) caseStarts.push(0);
+
+    const cases = [];
+    for (let j = 0; j < caseStarts.length; j++) {
+      const cStart = caseStarts[j];
+      const cEnd = j + 1 < caseStarts.length ? caseStarts[j + 1] : body.length;
+      const cBody = body.slice(cStart, cEnd);
+
+      // Find Q.N blocks
+      const qRe = /Q\s*\.\s*(\d+)\s+([\s\S]*?)(?=\n\s*Q\s*\.\s*\d+\s|$)/g;
+      const qs = [];
+      let qm;
+      while ((qm = qRe.exec(cBody)) !== null) {
+        const qNum = Number(qm[1]);
+        if (qNum < 1 || qNum > 8) continue;
+        const raw = qm[2];
+        // Extract 4 options in (A) (B) (C) (D)
+        const optRe = /\(([A-Da-d])\)\s*([^\n(]+?)(?=\n|$|\([A-Da-d]\))/g;
+        const opts = [];
+        let om;
+        while ((om = optRe.exec(raw)) !== null) {
+          opts.push({ letter: om[1].toUpperCase(), text: om[2].trim() });
+        }
+        if (opts.length < 4) continue;
+        const four = opts.slice(0, 4);
+        const firstOpt = raw.search(/\(A\)/i);
+        const qText = (firstOpt > 0 ? raw.slice(0, firstOpt) : raw).trim();
+        if (qText.length < 5) continue;
+        qs.push({ qNum, qText, opts: four });
+      }
+
+      const firstQ = cBody.search(/Q\s*\.\s*1\s/);
+      const passage = firstQ > 0 ? cBody.slice(0, firstQ).trim() : "";
+      // Strip the case-study trigger line from the passage
+      const cleanedPassage = passage
+        .replace(/^(Read the (?:following|case|below)[^\n]*\n)/i, "")
+        .replace(/^(CASE\s*-?\s*\d+\s*\n)/i, "")
+        .replace(/^(Case\s*-?\s*\d+\s*\n)/i, "")
+        .trim();
+
+      if (qs.length > 0) cases.push({ passage: cleanedPassage, qs });
+    }
+
+    if (!questionsByChapter[chap]) questionsByChapter[chap] = [];
+    questionsByChapter[chap].push(...cases);
+  }
+
+  // answersByChapter: chapter -> [Map(qNum -> { letter, text })]
+  const answersByChapter = {};
+  for (let i = 0; i < aHeaders.length; i++) {
+    const chap = aHeaders[i].chapter;
+    const start = aHeaders[i].pos;
+    const end = i + 1 < aHeaders.length ? aHeaders[i + 1].pos : aSection.length;
+    const body = aSection.slice(start, end);
+
+    // Split into segments by CASE-N / Case-N if present
+    const segStarts = [];
+    const segRe = /(?:^|\n)\s*(?:CASE\s*-?\s*\d+|Case\s*-?\s*\d+)/g;
+    let sm;
+    while ((sm = segRe.exec(body)) !== null) segStarts.push(sm.index);
+    const segments = [];
+    if (segStarts.length === 0) {
+      segments.push(body);
+    } else {
+      if (segStarts[0] > 5) segments.push(body.slice(0, segStarts[0]));
+      for (let j = 0; j < segStarts.length; j++) {
+        const s = segStarts[j];
+        const e = j + 1 < segStarts.length ? segStarts[j + 1] : body.length;
+        segments.push(body.slice(s, e));
+      }
+    }
+
+    for (const seg of segments) {
+      const map = new Map();
+      for (const am of seg.matchAll(/Ans\s*\.\s*(\d+)\s*\(?([A-Za-z])\)?[\.)]?\s*([^\n]*)/gi)) {
+        map.set(Number(am[1]), {
+          letter: am[2].toUpperCase(),
+          explanation: (am[3] ?? "").trim(),
+        });
+      }
+      if (map.size > 0) {
+        if (!answersByChapter[chap]) answersByChapter[chap] = [];
+        answersByChapter[chap].push(map);
+      }
+    }
+  }
+
+  // Zip
   const docs = [];
-  for (const c of chunks) {
-    try {
-      docs.push(...parseCaseStudy(c, paper));
-    } catch (err) {
-      // skip bad chunks
+  for (const chap of Object.keys(questionsByChapter)) {
+    const qsCases = questionsByChapter[chap];
+    const ansCases = answersByChapter[chap] ?? [];
+    const n = Math.min(qsCases.length, ansCases.length);
+    for (let i = 0; i < n; i++) {
+      const { passage, qs } = qsCases[i];
+      const ans = ansCases[i];
+      for (const q of qs) {
+        const a = ans.get(q.qNum);
+        if (!a) continue;
+        const ansIdx = "ABCD".indexOf(a.letter);
+        if (ansIdx < 0) continue;
+
+        const fullQ = passage
+          ? `[Case Study] ${passage}\n\nQuestion: ${q.qText}`
+          : q.qText;
+        const optionStrings = q.opts.map((o) => `${o.letter}. ${o.text}`);
+
+        docs.push({
+          subject: paper.subject,
+          class: paper.class,
+          chapter: chap,
+          topic: `Case Study ${i + 1}`,
+          type: "MCQ",
+          marks: 1,
+          difficulty: "Medium",
+          question: fullQ,
+          options: optionStrings,
+          answer: ansIdx,
+          solution: {
+            steps: a.explanation
+              ? `Correct option: ${a.letter}. ${a.explanation}`
+              : `Correct option: ${a.letter}. ${q.opts[ansIdx].text}`,
+            videoUrl: null,
+            commonMistakes: [],
+            relatedConcepts: [],
+          },
+          yearsAsked: [],
+          examType: "Board",
+          region: "All-India",
+          frequencyScore: 8,
+          predictedProbability: 0.78,
+          bloomLevel: "Apply",
+          expectedTime: 90,
+          xpReward: 10,
+          tags: ["cbse-official", `qbank-class${paper.class}`],
+          aiGenerated: false,
+          verified: true,
+          verifiedBy: "CBSE Academic (cbseacademic.nic.in QBank)",
+          verifiedAt: new Date(),
+        });
+      }
+    }
+  }
+  return docs;
+}
+
+async function importPaper(paper) {
+  const cls = paper.class === 12 ? "XII" : "X";
+  process.stdout.write(
+    `  ${cls.padEnd(3)} ${paper.subject.padEnd(12)} | ${paper.url.split("/").pop().padEnd(28)} → `
+  );
+  const text = await fetchPdfText(paper.url);
+
+  let docs = [];
+  if (paper.class === 12) {
+    // Class 12 PDFs use Format C
+    docs = parseFormatC(text, paper);
+  } else {
+    const chunks = splitCaseStudies(text, paper.chapters);
+    for (const c of chunks) {
+      try {
+        docs.push(...parseCaseStudy(c, paper));
+      } catch (err) {
+        // skip bad chunks
+      }
     }
   }
 
@@ -444,7 +791,11 @@ async function importPaper(paper) {
   }
 
   if (docs.length > 0) {
-    await Question.deleteMany({ tags: { $all: ["qbank-class10"] }, subject: paper.subject });
+    await Question.deleteMany({
+      tags: { $all: [`qbank-class${paper.class}`] },
+      subject: paper.subject,
+      class: paper.class,
+    });
     await Question.insertMany(docs, { ordered: false });
   }
   console.log(`${docs.length.toString().padStart(3)} inserted`);

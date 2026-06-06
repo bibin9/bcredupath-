@@ -57,6 +57,7 @@ const NAV: Item[] = [
   { href: "/dashboard/colleges", label: "Colleges", icon: Building2, emoji: "🏛️", group: "Explore" },
   { href: "/dashboard/scholarships", label: "Scholarships", icon: Coins, emoji: "💰", group: "Explore" },
   { href: "/dashboard/exams", label: "Entrance Exams", icon: CalendarDays, emoji: "📅", group: "Explore" },
+  { href: "/dashboard/resources", label: "Other Resources", icon: BookOpen, emoji: "📚", group: "Explore" },
   { href: "/dashboard/counselors", label: "Counselors", icon: Users, emoji: "🧭", group: "Explore" },
 
   /* App */
