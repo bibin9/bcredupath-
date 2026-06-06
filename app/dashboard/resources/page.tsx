@@ -8,6 +8,8 @@ import {
   Globe,
   GraduationCap,
   ShieldCheck,
+  Trophy,
+  MapPin,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -30,10 +32,18 @@ const FREE: Resource[] = [
     source: "govt",
   },
   {
-    name: "NCERT — Textbooks & Exemplar",
+    name: "NCERT — Textbooks",
     url: "https://ncert.nic.in/textbook.php",
     description:
-      "Free official NCERT textbooks (PDFs), Exemplar problems (extra practice — the cult favourite for serious CBSE prep), lab manuals, Class 1-12 across all subjects.",
+      "Free official NCERT textbooks (PDFs) for Class 1-12. The base layer of every CBSE syllabus — start here, then move to practice.",
+    type: "free",
+    source: "govt",
+  },
+  {
+    name: "NCERT Exemplar Problems",
+    url: "https://ncert.nic.in/exemplar-problems.php",
+    description:
+      "Extra practice problems published by NCERT — the cult favourite for serious CBSE prep. Higher difficulty than the textbook, perfect for board-level mastery.",
     type: "free",
     source: "govt",
   },
@@ -62,12 +72,106 @@ const FREE: Resource[] = [
     source: "govt",
   },
   {
+    name: "PRASHAST — Inclusive CBSE",
+    url: "https://www.cbse.gov.in/cbsenew/cbse.html",
+    description:
+      "CBSE's disability-friendly question banks + screening tools. Built for students with learning differences but useful as practice for everyone.",
+    type: "free",
+    source: "govt",
+  },
+  {
     name: "Khan Academy — Indian Edition",
     url: "https://www.khanacademy.org/",
     description:
       "World-class free Math + Science explainers, available in English + Hindi. Great companion for tough concepts.",
     type: "free",
     source: "ngo",
+  },
+];
+
+const OLYMPIADS: Resource[] = [
+  {
+    name: "SOF — Olympiad Foundation",
+    url: "https://sofworld.org/",
+    description:
+      "Runs IMO (Math), NSO (Science), IEO (English), NCO (Computers), IGKO (GK) for Class 1-12. Free sample papers + registration via school.",
+    type: "free",
+    source: "ngo",
+  },
+  {
+    name: "Indian Talent Olympiad",
+    url: "https://www.indiantalent.org/",
+    description:
+      "ITO conducts Math, English, Reasoning, Drawing, Talent Search olympiads. Free sample papers + workbooks for purchase.",
+    type: "freemium",
+    source: "ngo",
+  },
+  {
+    name: "Silverzone Olympiads",
+    url: "https://www.silverzone.org/",
+    description:
+      "Silverzone runs iOM (Maths), iIO (Informatics), Smart Kid Genius. Past papers on the site, registration via school.",
+    type: "free",
+    source: "ngo",
+  },
+  {
+    name: "HBCSE — Indian Olympiads",
+    url: "https://olympiads.hbcse.tifr.res.in/",
+    description:
+      "Govt-backed pathway to International Olympiads in Physics, Chemistry, Math, Biology, Astronomy. Free past papers + selection-process info.",
+    type: "free",
+    source: "govt",
+  },
+];
+
+const STATE_BOARDS: Resource[] = [
+  {
+    name: "CISCE — ICSE / ISC",
+    url: "https://www.cisce.org/",
+    description:
+      "Council for the Indian School Certificate Examinations. Sister to CBSE — many CBSE schools also accept ICSE-style practice.",
+    type: "free",
+    source: "govt",
+  },
+  {
+    name: "Karnataka SEEB",
+    url: "https://kseab.karnataka.gov.in/",
+    description:
+      "Karnataka State Education Examination Board. Class 10 (SSLC) + Class 12 (PUC) past papers and model question papers.",
+    type: "free",
+    source: "govt",
+  },
+  {
+    name: "Tamil Nadu DGE",
+    url: "https://dge.tn.gov.in/",
+    description:
+      "Tamil Nadu Directorate of Government Examinations. Class 10 + 12 model question papers + syllabus.",
+    type: "free",
+    source: "govt",
+  },
+  {
+    name: "Bihar BSEB",
+    url: "https://biharboardonline.bihar.gov.in/",
+    description:
+      "Bihar School Examination Board. Class 10 (Matric) + 12 (Intermediate) sample papers + previous-year questions.",
+    type: "free",
+    source: "govt",
+  },
+  {
+    name: "Kerala SCERT",
+    url: "https://www.scert.kerala.gov.in/",
+    description:
+      "Kerala State Council of Educational Research and Training. Textbooks, sample papers, and teacher resources for SSLC + Plus 2.",
+    type: "free",
+    source: "govt",
+  },
+  {
+    name: "Maharashtra MSBSHSE",
+    url: "https://mahahsscboard.in/",
+    description:
+      "Maharashtra State Board of Secondary and Higher Secondary Education. SSC + HSC question papers, syllabus, results.",
+    type: "free",
+    source: "govt",
   },
 ];
 
@@ -200,6 +304,22 @@ export default function ResourcesPage() {
         icon={<BookOpen className="h-5 w-5 text-neon-yellow" />}
         accent="yellow"
         items={PAID}
+      />
+
+      <Section
+        title="Olympiads & competitions"
+        subtitle="National & international olympiads. Most have free sample papers and the exams themselves are low-cost."
+        icon={<Trophy className="h-5 w-5 text-neon-orange" />}
+        accent="cyan"
+        items={OLYMPIADS}
+      />
+
+      <Section
+        title="State boards & ICSE — for extra practice"
+        subtitle="Most state boards publish their own model papers free. Their math/science papers often overlap heavily with CBSE."
+        icon={<MapPin className="h-5 w-5 text-neon-purple" />}
+        accent="cyan"
+        items={STATE_BOARDS}
       />
 
       <Section
