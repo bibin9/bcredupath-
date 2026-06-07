@@ -35,10 +35,13 @@ async function importTS(tsPath) {
   return import(pathToFileURL(out).href);
 }
 
-const { CBSE_PAPERS_2024_25, cbseUrl } = await importTS("lib/seed/cbse-papers-manifest.ts");
+const { CBSE_PAPERS_2024_25, CBSE_PRACTICE_QUESTIONS, cbseUrl } = await importTS("lib/seed/cbse-papers-manifest.ts");
 const { BOARD_YEAR } = await importTS("lib/academic-year.ts");
 
-let papers = CBSE_PAPERS_2024_25;
+let papers = [...CBSE_PAPERS_2024_25, ...CBSE_PRACTICE_QUESTIONS];
+// Hindi was removed from the bank per user request (no Hindi UI surface).
+// Drop these PDFs at import time so re-runs don't keep re-adding them.
+papers = papers.filter((p) => p.subject !== "hindi");
 if (TARGET_CLASS) papers = papers.filter((p) => p.class === TARGET_CLASS);
 if (SUBJECTS_FILTER) papers = papers.filter((p) => SUBJECTS_FILTER.includes(p.subject));
 if (YEAR_FILTER) papers = papers.filter((p) => p.year === YEAR_FILTER);
@@ -349,7 +352,13 @@ function mergeQuestionWithAnswer(qParts, ans, paper) {
     bloomLevel: "Apply",
     expectedTime,
     xpReward,
-    tags: ["cbse-official", `sqp-${paper.year}`],
+    tags: [
+      "cbse-official",
+      `sqp-${paper.year}`,
+      // Unique per-PDF tag so re-imports dedupe correctly when multiple
+      // PDFs share the same (year, subject, class) — e.g. SQP + PQ Set 1 + PQ Set 2.
+      `cbse-${paper.sqpPath.split("/").pop().replace(/\.pdf$/i, "")}`,
+    ],
     aiGenerated: false,
     verified: true,
     verifiedBy: "CBSE Academic (cbseacademic.nic.in)",
@@ -388,11 +397,12 @@ async function importPaper(paper) {
     }
 
     if (docs.length > 0) {
-      // Delete previous import of the same paper before re-inserting
+      // Delete previous import of THIS exact paper before re-inserting
+      const pdfTag = `cbse-${paper.sqpPath.split("/").pop().replace(/\.pdf$/i, "")}`;
       await Question.deleteMany({
         class: paper.class,
         subject: paper.subject,
-        tags: { $all: ["cbse-official", `sqp-${paper.year}`] },
+        tags: { $all: ["cbse-official", pdfTag] },
       });
       await Question.insertMany(docs, { ordered: false });
     }
