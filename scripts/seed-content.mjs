@@ -21,6 +21,7 @@ async function importTS(path) {
 const { CAREERS: CAREERS_V1 } = await importTS("lib/seed/careers.ts");
 const { CAREERS_EXTENDED } = await importTS("lib/seed/careers-extended.ts");
 const { HUMANITIES_COMMERCE_CAREERS } = await importTS("lib/seed/careers-humanities-commerce.ts");
+const { CAREERS_GENZ } = await importTS("lib/seed/careers-genz.ts");
 const { COLLEGES: COLLEGES_V1 } = await importTS("lib/seed/colleges.ts");
 const { COLLEGES_EXTENDED } = await importTS("lib/seed/colleges-extended.ts");
 const { EXAMS } = await importTS("lib/seed/exams.ts");
@@ -34,7 +35,7 @@ const { NRI_QUOTA } = await importTS("lib/seed/nri-quota.ts");
 
 // Merge v1 + extended (later entries don't overwrite v1 if name clashes)
 const seen = new Set();
-const CAREERS = [...CAREERS_V1, ...CAREERS_EXTENDED, ...HUMANITIES_COMMERCE_CAREERS].filter((c) => {
+const CAREERS = [...CAREERS_V1, ...CAREERS_EXTENDED, ...HUMANITIES_COMMERCE_CAREERS, ...CAREERS_GENZ].filter((c) => {
   if (seen.has(c.name)) return false;
   seen.add(c.name);
   return true;
@@ -159,7 +160,7 @@ async function main() {
   }));
   const careersInserted = await Career.insertMany(careerDocs);
   const withRoadmap = careerDocs.filter((c) => c.roadmap && c.roadmap !== DEFAULT_ROADMAP).length;
-  console.log(`  ✓ Careers         ${careersInserted.length.toString().padStart(3)}  (${withRoadmap} with curated roadmaps, +${HUMANITIES_COMMERCE_CAREERS.length} humanities/commerce)`);
+  console.log(`  ✓ Careers         ${careersInserted.length.toString().padStart(3)}  (+${HUMANITIES_COMMERCE_CAREERS.length} humanities/commerce, +${CAREERS_GENZ.length} gen-z/emerging)`);
 
   await ExamInfo.deleteMany({});
   const examSeen = new Set();
