@@ -20,13 +20,14 @@ export default async function CounselorsPage({
     <div className="space-y-6">
       <header>
         <span className="pill-neon-pink">
-          <Sparkles className="h-3 w-3" /> Verified career & wellness support
+          <Sparkles className="h-3 w-3" /> Free 24×7 support · govt + NGO verified
         </span>
         <h1 className="mt-3 font-display text-3xl font-bold md:text-4xl">
-          Counselors & Helplines 🧭
+          Helplines & Support 🧭
         </h1>
         <p className="mt-1 text-sm text-white/65">
-          Career counselors near you, plus 24×7 free mental health helplines.
+          Confidential, free helplines for exam stress, mental health and career
+          questions. All numbers verified — last checked this month.
         </p>
       </header>
 
@@ -57,6 +58,26 @@ export default async function CounselorsPage({
                 <div className="flex items-center gap-2 text-white/65">
                   <span className="text-[10px] uppercase tracking-widest text-white/45">Hours</span>
                   <span>{h.hours}</span>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  {h.email && (
+                    <a
+                      href={`mailto:${h.email}`}
+                      className="inline-flex items-center gap-1 text-[10px] text-white/65 hover:text-white"
+                    >
+                      <Mail className="h-2.5 w-2.5" /> {h.email}
+                    </a>
+                  )}
+                  {h.website && (
+                    <a
+                      href={h.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-[10px] text-neon-cyan hover:underline"
+                    >
+                      <ExternalLink className="h-2.5 w-2.5" /> Website
+                    </a>
+                  )}
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {h.languages.slice(0, 4).map((l) => (

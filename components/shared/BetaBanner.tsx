@@ -56,7 +56,7 @@ export function BetaBanner() {
       </div>
 
       <Link
-        href="mailto:feedback@bcredupath.example?subject=BCRedupath%20Beta%20feedback"
+        href="/dashboard/feedback"
         className="inline-flex shrink-0 items-center gap-1 rounded-xl border border-neon-yellow/30 bg-neon-yellow/10 px-2.5 py-1 text-[11px] font-semibold text-neon-yellow transition-all hover:border-neon-yellow/60 hover:bg-neon-yellow/20"
       >
         <MessageCircle className="h-3 w-3" />

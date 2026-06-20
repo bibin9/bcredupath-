@@ -25,6 +25,7 @@ import {
   Shield,
   Smartphone,
   UserCircle2,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsStandalone } from "@/lib/hooks/useIsStandalone";
@@ -52,6 +53,7 @@ const NAV: Item[] = [
   { href: "/dashboard/analytics", label: "My Progress", icon: BarChart3, emoji: "📊", group: "You" },
   { href: "/dashboard/leaderboard", label: "Leaderboard", icon: Trophy, emoji: "🏆", group: "You" },
   { href: "/dashboard/profile", label: "Profile", icon: UserCircle2, emoji: "👤", group: "You" },
+  { href: "/dashboard/feedback", label: "Send feedback", icon: MessageSquare, emoji: "💬", group: "You" },
 
   /* Explore */
   { href: "/dashboard/careers", label: "Careers", icon: GraduationCap, emoji: "💼", group: "Explore" },
@@ -59,7 +61,7 @@ const NAV: Item[] = [
   { href: "/dashboard/scholarships", label: "Scholarships", icon: Coins, emoji: "💰", group: "Explore" },
   { href: "/dashboard/exams", label: "Entrance Exams", icon: CalendarDays, emoji: "📅", group: "Explore" },
   { href: "/dashboard/resources", label: "Other Resources", icon: BookOpen, emoji: "📚", group: "Explore" },
-  { href: "/dashboard/counselors", label: "Counselors", icon: Users, emoji: "🧭", group: "Explore" },
+  { href: "/dashboard/counselors", label: "Helplines & Support", icon: Users, emoji: "🧭", group: "Explore" },
 
   /* App */
   { href: "/dashboard/install", label: "Install App", icon: Smartphone, emoji: "📲", group: "App" },

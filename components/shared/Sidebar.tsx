@@ -20,6 +20,7 @@ import {
   FileText,
   BarChart3,
   Shield,
+  MessageSquare,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsStandalone } from "@/lib/hooks/useIsStandalone";
@@ -46,9 +47,10 @@ const NAV: NavItem[] = [
   { href: "/dashboard/scholarships", label: "Scholarships", icon: Coins, emoji: "💰" },
   { href: "/dashboard/exams", label: "Exams", icon: CalendarDays, emoji: "📅" },
   { href: "/dashboard/resources", label: "Resources", icon: BookOpen, emoji: "📚" },
-  { href: "/dashboard/counselors", label: "Counselors", icon: Users, emoji: "🧭" },
+  { href: "/dashboard/counselors", label: "Helplines", icon: Users, emoji: "🧭" },
   { href: "/dashboard/planner", label: "Planner", icon: CalendarDays, emoji: "⏱️" },
   { href: "/dashboard/profile", label: "Profile", icon: UserCircle2, emoji: "👤" },
+  { href: "/dashboard/feedback", label: "Send feedback", icon: MessageSquare, emoji: "💬" },
 ];
 
 export function Sidebar({ showAdmin = false }: { showAdmin?: boolean }) {
