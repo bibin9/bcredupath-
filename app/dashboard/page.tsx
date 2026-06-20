@@ -155,7 +155,7 @@ export default async function DashboardHome() {
           </div>
           <div className="grid grid-cols-2 gap-2.5">
             <QuickMode href="/dashboard/predictor" emoji="🔮" label="Hot 20" tint="pink" />
-            <QuickMode href="/dashboard/practice" emoji="⚡" label="Rapid Fire" tint="yellow" />
+            <QuickMode href="/dashboard/mock-test" emoji="📝" label="Mock Test" tint="yellow" />
             <QuickMode href="/dashboard/practice" emoji="📅" label="PYQ Marathon" tint="cyan" />
             <QuickMode href="/dashboard/practice" emoji="🎲" label="Random" tint="green" />
           </div>

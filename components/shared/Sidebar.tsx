@@ -38,6 +38,7 @@ const NAV: NavItem[] = [
   { href: "/dashboard/bookmarks", label: "Bookmarks", icon: Bookmark, emoji: "🔖" },
   { href: "/dashboard/predictor", label: "Predictor", icon: Sparkles, emoji: "🔮", hot: true },
   { href: "/dashboard/practice", label: "Practice", icon: Target, emoji: "🎯" },
+  { href: "/dashboard/mock-test", label: "Mock Test", icon: FileText, emoji: "📝", hot: true },
   { href: "/dashboard/analytics", label: "My Progress", icon: BarChart3, emoji: "📊" },
   { href: "/dashboard/leaderboard", label: "Leaderboard", icon: Trophy, emoji: "🏆" },
   { href: "/dashboard/careers", label: "Careers", icon: GraduationCap, emoji: "💼" },

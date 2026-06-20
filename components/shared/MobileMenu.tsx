@@ -45,6 +45,7 @@ const NAV: Item[] = [
   { href: "/dashboard/bookmarks", label: "Bookmarks", icon: Bookmark, emoji: "🔖", group: "Study" },
   { href: "/dashboard/predictor", label: "AI Predictor", icon: Sparkles, emoji: "🔮", hot: true, group: "Study" },
   { href: "/dashboard/practice", label: "Practice", icon: Target, emoji: "🎯", group: "Study" },
+  { href: "/dashboard/mock-test", label: "Mock Test (3hr)", icon: FileText, emoji: "📝", hot: true, group: "Study" },
   { href: "/dashboard/planner", label: "Study Planner", icon: CalendarDays, emoji: "⏱️", group: "Study" },
 
   /* You */
