@@ -17,6 +17,7 @@
     "import:cbse": "node scripts/import-cbse-pdf.mjs",
     "import:qbank": "node scripts/import-cbse-qbank.mjs",
     "seed:content": "node scripts/seed-content.mjs",
+    "gen:papers": "node scripts/generate-mock-papers.mjs",
     "test:mongo": "node scripts/test-mongo.mjs"
   },
   "dependencies": {

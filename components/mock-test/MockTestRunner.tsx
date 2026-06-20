@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+// (useEffect is used inside ScoreReport too)
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Clock,
@@ -40,6 +41,8 @@ type Section = {
 };
 
 type Paper = {
+  id?: string;
+  paperNumber?: number;
   subject: string;
   class: number;
   title: string;
@@ -50,7 +53,13 @@ type Paper = {
 
 type Phase = "loading" | "instructions" | "running" | "submitted";
 
-export function MockTestRunner({ subject }: { subject: string }) {
+export function MockTestRunner({
+  subject,
+  paperId,
+}: {
+  subject?: string;
+  paperId?: string;
+}) {
   const [phase, setPhase] = useState<Phase>("loading");
   const [paper, setPaper] = useState<Paper | null>(null);
   const [secondsLeft, setSecondsLeft] = useState(0);
@@ -60,10 +69,13 @@ export function MockTestRunner({ subject }: { subject: string }) {
   const [perQTime, setPerQTime] = useState<Map<string, number>>(new Map());
   const lastTickRef = useRef<number>(Date.now());
 
-  // ── Fetch paper on mount
+  // ── Fetch paper on mount (by paperId or subject fallback)
   useEffect(() => {
     let cancelled = false;
-    fetch(`/api/mock-test/start?subject=${subject}`)
+    const url = paperId
+      ? `/api/mock-test/start?paperId=${paperId}`
+      : `/api/mock-test/start?subject=${subject}`;
+    fetch(url)
       .then((r) => r.json())
       .then((data) => {
         if (cancelled) return;
@@ -81,7 +93,7 @@ export function MockTestRunner({ subject }: { subject: string }) {
     return () => {
       cancelled = true;
     };
-  }, [subject]);
+  }, [subject, paperId]);
 
   // ── Flat list of all questions in paper order
   const flat = useMemo(() => {
@@ -157,6 +169,8 @@ export function MockTestRunner({ subject }: { subject: string }) {
       />
     );
   }
+
+  // (submit POST happens lazily inside ScoreReport via an effect — see below)
 
   // ─── RUNNING ───
   const { q, section, idxInSection } = flat[activeQ];
@@ -540,6 +554,35 @@ function ScoreReport({
   perQTime: Map<string, number>;
   secondsRemaining: number;
 }) {
+  // Record the attempt (fire once)
+  useEffect(() => {
+    if (!paper.paperNumber) return;
+    let mcq = 0;
+    for (const { q } of flat) {
+      const ans = answers.get(q._id);
+      if (
+        (q.type === "MCQ" || q.type === "AssertionReason") &&
+        typeof ans === "number" &&
+        ans === Number(q.answer)
+      ) {
+        mcq += q.marks;
+      }
+    }
+    const timeSpent = paper.durationMinutes * 60 - secondsRemaining;
+    fetch("/api/mock-test/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        subject: paper.subject,
+        paperNumber: paper.paperNumber,
+        score: Math.min(mcq, paper.totalMarks),
+        total: paper.totalMarks,
+        timeSpentSeconds: timeSpent,
+      }),
+    }).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   // Auto-grade MCQ + AR — SA/LA self-assessed (we count them as attempted if non-empty)
   let mcqScore = 0;
   let mcqAttempted = 0;
