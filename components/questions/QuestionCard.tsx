@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Eye } from "lucide-react";
+import { ChevronDown, Eye, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Latex } from "./Latex";
 import { PredictionBadge } from "./PredictionBadge";
 import { SolutionPanel } from "./SolutionPanel";
 import { BookmarkButton } from "./BookmarkButton";
+import { Confetti } from "./Confetti";
 
 export type QuestionDoc = {
   _id: string;
@@ -52,10 +53,42 @@ export function QuestionCard({
 }) {
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
+  const [confettiTrigger, setConfettiTrigger] = useState(0);
+  const [shake, setShake] = useState(false);
+  const [xpToast, setXpToast] = useState(false);
   const isMCQ = q.type === "MCQ" && q.options && q.options.length > 0;
 
+  function handlePick(i: number) {
+    if (show || selected !== null) return;
+    setSelected(i);
+    const correct = i === Number(q.answer);
+    if (correct) {
+      setConfettiTrigger((t) => t + 1);
+      setXpToast(true);
+      setTimeout(() => setXpToast(false), 1800);
+    } else {
+      setShake(true);
+      setTimeout(() => setShake(false), 500);
+    }
+    // Auto-reveal solution after answering
+    setTimeout(() => setShow(true), 300);
+  }
+
   return (
-    <article className="card-glass card-glass-hover">
+    <article className={cn("card-glass card-glass-hover relative", shake && "animate-[shake_0.4s]")}>
+      <Confetti trigger={confettiTrigger} />
+      <AnimatePresence>
+        {xpToast && (
+          <motion.div
+            initial={{ y: 16, opacity: 0, scale: 0.9 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: -10, opacity: 0 }}
+            className="absolute right-4 top-4 z-40 inline-flex items-center gap-1.5 rounded-full border border-neon-yellow/50 bg-neon-yellow/15 px-3 py-1.5 text-xs font-bold text-neon-yellow shadow-glow-yellow"
+          >
+            <Sparkles className="h-3.5 w-3.5" /> +{q.xpReward} XP
+          </motion.div>
+        )}
+      </AnimatePresence>
       <header className="mb-3 flex flex-wrap items-center gap-2">
         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/[0.06] text-xs font-bold text-white/65">
           Q{index + 1}
@@ -109,8 +142,8 @@ export function QuestionCard({
             return (
               <li key={i}>
                 <button
-                  onClick={() => !show && setSelected(i)}
-                  disabled={show}
+                  onClick={() => handlePick(i)}
+                  disabled={show || selected !== null}
                   className={cn(
                     "flex w-full items-start gap-3 rounded-2xl border px-4 py-2.5 text-left text-sm transition-all",
                     !show &&

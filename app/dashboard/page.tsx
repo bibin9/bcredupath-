@@ -12,6 +12,7 @@ import { StreakCounter } from "@/components/game/StreakCounter";
 import { DailyChallengeCard } from "@/components/game/DailyChallengeCard";
 import { SubjectCard } from "@/components/game/SubjectCard";
 import { BadgeChip } from "@/components/game/BadgeChip";
+import { TodayCard } from "@/components/game/TodayCard";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { BOARD_YEAR, ACADEMIC_YEAR_LABEL } from "@/lib/academic-year";
 
@@ -118,6 +119,23 @@ export default async function DashboardHome() {
           </div>
         </div>
       </section>
+
+      {/* TODAY — streak status + one-tap actions */}
+      <TodayCard
+        streak={user.streak}
+        practicedToday={(() => {
+          const last = user.lastActiveDate ? new Date(user.lastActiveDate) : null;
+          if (!last) return false;
+          const today = new Date();
+          return (
+            last.getDate() === today.getDate() &&
+            last.getMonth() === today.getMonth() &&
+            last.getFullYear() === today.getFullYear()
+          );
+        })()}
+        challengeDone={dailyChallengeProps.completed}
+        challengeQuestions={dailyChallengeProps.questions}
+      />
 
       {/* STATS STRIP */}
       <section className="grid grid-cols-2 gap-3 md:grid-cols-4">
